@@ -26,7 +26,7 @@ export function Navbar() {
         </Link>
         <div className="flex items-center gap-4">
           <Link href="/partner" className="text-secondary-600 hover:text-primary-600 font-medium hidden sm:block">
-            {locale === 'ar' ? 'كن شريكاً' : 'Become a Partner'}
+            {locale === 'ar' ? 'انضم إلينا' : 'Become a Partner'}
           </Link>
           <Button variant="ghost" onClick={toggleLanguage} size="sm" className="gap-2">
             <Globe className="h-4 w-4" />

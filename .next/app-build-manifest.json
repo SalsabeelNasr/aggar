@@ -16,20 +16,10 @@
       "static/chunks/main-app.js",
       "static/chunks/app/[locale]/not-found.js"
     ],
-    "/[locale]/evaluate/page": [
+    "/_not-found/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/[locale]/evaluate/page.js"
-    ],
-    "/[locale]/partner/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/[locale]/partner/page.js"
-    ],
-    "/[locale]/results/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/[locale]/results/page.js"
+      "static/chunks/app/_not-found/page.js"
     ]
   }
 }

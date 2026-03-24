@@ -6,35 +6,40 @@ export function ServicesSection() {
   const locale = useLocale();
 
   return (
-    <section className="w-full py-24 bg-white border-b border-secondary-200 overflow-hidden">
-      <div className="container mx-auto px-4 max-w-6xl">
-        
-        {/* Why Use Aggar */}
-        <div className="mb-24 text-center">
-          <h2 className="text-3xl md:text-4xl font-heading font-bold text-secondary-900 mb-8">
-            {locale === 'ar' ? 'ليه تستخدم Aggar؟' : 'Why Use Aggar?'}
-          </h2>
-          <p className="text-xl text-secondary-600 max-w-3xl mx-auto mb-10 leading-relaxed font-medium">
-            {locale === 'ar' 
-              ? 'لأن أغلب الشقق في مصر ممكن تكسب أكتر بكتير… بس أصحابها مش عارفين إيه اللي ناقصها.'
-              : 'Because most apartments in Egypt could earn much more... but owners don\'t know what\'s missing.'}
-          </p>
-          
-          <div className="flex flex-col md:flex-row justify-center gap-6 max-w-4xl mx-auto text-start">
-            {[
-              locale === 'ar' ? 'تفهم شقتك جاهزة للإيجار ولا لأ' : 'Understand if your apartment is rental-ready',
-              locale === 'ar' ? 'تعرف الدخل المتوقع منها' : 'Know the expected revenue',
-              locale === 'ar' ? 'تعرف إيه التحسينات اللي تزود دخلها' : 'Know what improvements to make',
-            ].map((item, i) => (
-              <div key={i} className="flex-1 flex items-center justify-center text-center p-6 bg-secondary-50 rounded-2xl border border-secondary-100 shadow-sm">
-                <span className="font-bold text-secondary-900 font-heading text-lg">{item}</span>
-              </div>
-            ))}
+    <div className="w-full flex-col flex">
+      <section className="w-full py-24 bg-secondary-900 text-white overflow-hidden relative">
+        <div className="absolute inset-0 bg-accent-900/20 mix-blend-multiply opacity-50" />
+        <div className="container mx-auto px-4 max-w-6xl relative z-10">
+          {/* Why Use Aggar */}
+          <div className="text-center">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-extrabold mb-8 tracking-tight">
+              {locale === 'ar' ? 'ليه تستخدم Aggar؟' : 'Why Use Aggar?'}
+            </h2>
+            <p className="text-xl md:text-2xl text-secondary-300 max-w-4xl mx-auto mb-16 leading-relaxed font-medium">
+              {locale === 'ar' 
+                ? 'لأن أغلب الشقق في مصر ممكن تكسب أكتر بكتير… بس أصحابها مش عارفين إيه اللي ناقصها.'
+                : 'Because most apartments in Egypt could earn much more... but owners don\'t know what\'s missing.'}
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+              {[
+                locale === 'ar' ? 'تفهم شقتك جاهزة للإيجار ولا لأ' : 'Understand if your apartment is rental-ready',
+                locale === 'ar' ? 'تعرف الدخل المتوقع منها' : 'Know the expected revenue',
+                locale === 'ar' ? 'تعرف إيه التحسينات اللي تزود دخلها' : 'Know what improvements to make',
+              ].map((item, i) => (
+                <div key={i} className="flex flex-col items-center justify-center text-center p-8 bg-white/5 hover:bg-white/10 transition-colors backdrop-blur-sm rounded-3xl border border-white/10 shadow-xl">
+                  <span className="font-bold text-white font-heading text-xl leading-relaxed">{item}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
+      </section>
 
-        {/* State-based services */}
-        <div className="mb-16 text-center">
+      <section className="w-full py-24 bg-white border-b border-secondary-200 overflow-hidden">
+        <div className="container mx-auto px-4 max-w-6xl">
+          {/* State-based services */}
+          <div className="mb-16 text-center">
           <h2 className="text-3xl md:text-4xl font-heading font-bold text-secondary-900 mb-4">
             {locale === 'ar' ? 'حسب حالة شقتك… هنوصلك بالخبراء المناسبين' : 'Depending on your apartment\'s state... we connect you with the right experts'}
           </h2>
@@ -165,6 +170,7 @@ export function ServicesSection() {
         </div>
         
       </div>
-    </section>
+      </section>
+    </div>
   );
 }

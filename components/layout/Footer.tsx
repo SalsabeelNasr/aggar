@@ -21,7 +21,7 @@ export function Footer() {
         
         <div className="flex items-center gap-6">
           <Link href="/partner" className="text-secondary-600 hover:text-primary-600 text-sm font-bold font-heading">
-            {locale === 'ar' ? 'كن شريكاً' : 'Become a Partner'}
+            {locale === 'ar' ? 'انضم إلينا' : 'Become a Partner'}
           </Link>
           <Button variant="outline" className="gap-2 text-green-600 border-green-200 hover:bg-green-50 shadow-none">
             <MessageCircle className="h-4 w-4" />

@@ -33,12 +33,12 @@ export function FAQSection() {
             {locale === 'ar' ? 'دور Aggar إيه؟' : 'What is Aggar\'s role?'}
           </div>
           <h2 className="text-3xl lg:text-4xl font-heading font-extrabold text-secondary-900 mb-6 tracking-tight">
-            {locale === 'ar' ? 'Aggar مش شركة إدارة عقارات' : 'Aggar is not a property management company'}
+            {locale === 'ar' ? 'Aggar مش شركة إدارة عقارات' : 'Aggar helps you find your apartment potential and connects you to trusted partners.'}
           </h2>
           <p className="text-lg text-secondary-600 font-medium leading-relaxed max-w-xl mx-auto">
             {locale === 'ar' 
               ? 'إحنا منصة تساعدك تفهم إمكانيات شقتك وتعطيك توصيات دقيقة وتوصلك مع شركاء مستقلين لأفضل النتائج.'
-              : 'We are a platform that helps you understand your apartment\'s potential and gives you accurate recommendations with independent partners.'}
+              : 'We are a platform that '}
           </p>
         </div>
 

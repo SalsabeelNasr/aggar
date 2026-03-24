@@ -94,14 +94,6 @@ export function PreviewSection() {
               <div className="w-20 h-20 bg-white shadow-xl shadow-secondary-900/10 rounded-full flex items-center justify-center mb-6 text-primary-600 border-4 border-primary-50">
                 <Lock className="w-8 h-8" />
               </div>
-              <h3 className="text-3xl font-heading font-extrabold text-secondary-900 mb-3">
-                {locale === 'ar' ? 'تقرير عقارك مقفول دلوقتي' : 'Your property report is locked'}
-              </h3>
-              <p className="text-secondary-600 font-bold mb-8 max-w-sm text-center text-lg">
-                {locale === 'ar' 
-                  ? 'قيم شقتك مجاناً علشان تفتح التقرير الكامل الخاص بيك وتعرف هتحقق كام وكيف.' 
-                  : 'Assess your apartment for free now to unlock your custom report.'}
-              </p>
               <Button size="lg" onClick={() => router.push('/evaluate')} className="px-12 h-16 text-xl shadow-xl shadow-primary-500/30">
                 {locale === 'ar' ? 'افتح التقرير الخاص بيا' : 'Unlock My Custom Report'}
               </Button>

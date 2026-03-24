@@ -21,18 +21,18 @@ export function HeroSection() {
           <h1 className="text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-heading font-extrabold text-secondary-900 tracking-tight leading-tight">
             {locale === 'ar' 
               ? 'خلي شقتك تشتغل وتكسب… بدل ما تفضل فاضية' 
-              : 'Make your apartment work and earn... instead of sitting empty'}
+              : 'Find out how much your apartment could earn'}
           </h1>
           
           <p className="mt-6 text-lg md:text-xl text-secondary-600 font-medium leading-relaxed">
             {locale === 'ar'
               ? 'اعرف شقتك ممكن تكسب كام من التأجير القصير خلال دقيقتين بس. وهنوصلك بالخبراء اللي يقدروا يجهزوها علشان تحقق أعلى دخل.'
-              : 'Find out how much your apartment could earn from short-term rentals in just 2 minutes. We\'ll connect you with the experts to prepare it for maximum income.'}
+              : 'Evaluate your property in minutes and discover the fastest path to rental income.'}
           </p>
           
           <div className="mt-10 flex flex-col sm:flex-row gap-4 items-center w-full sm:w-auto">
             <Button size="lg" onClick={() => router.push('/evaluate')} className="w-full sm:w-auto px-10 shadow-lg shadow-primary-500/20 text-lg">
-              {locale === 'ar' ? 'ابدأ تقييم شقتك' : 'Start Assessment'}
+              {locale === 'ar' ? 'ابدأ تقييم شقتك' : 'Start your evaluation'}
             </Button>
           </div>
           

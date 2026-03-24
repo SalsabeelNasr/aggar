@@ -18,7 +18,7 @@ export function HowItWorksSection() {
     <section id="how-it-works" className="w-full py-24 bg-white border-y border-secondary-200 relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         <h2 className="text-3xl md:text-4xl font-heading font-bold text-center text-secondary-900 mb-16">
-          {locale === 'ar' ? 'كيف يتم تقييم شقتك؟' : 'How does it work?'}
+          {locale === 'ar' ? 'إزاي تقييم شقتك؟' : 'How does it work?'}
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
