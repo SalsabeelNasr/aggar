@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import Image from 'next/image';
 import { useLocale } from 'next-intl';
 import { Link, usePathname, useRouter } from '@/lib/navigation';
 import { Button } from '@/components/ui/Button';
@@ -20,9 +21,17 @@ export function Navbar() {
     <nav className="sticky top-0 z-50 w-full border-b border-secondary-200 bg-white/80 backdrop-blur-md">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <span className="font-heading text-2xl font-bold text-primary-600">
-            {locale === 'ar' ? 'عقار' : 'Aggar'}
-          </span>
+          <div className="relative h-8 w-28 overflow-hidden">
+            <Image
+              src="/images/logo.svg"
+              alt="Aggar"
+              fill
+              unoptimized
+              priority
+              sizes="(max-width: 640px) 7rem, 11rem"
+              className="object-cover"
+            />
+          </div>
         </Link>
         <div className="flex items-center gap-4">
           <Link href="/partner" className="text-secondary-600 hover:text-primary-600 font-medium hidden sm:block">

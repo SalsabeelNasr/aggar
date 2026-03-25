@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { useLocale } from 'next-intl';
 import { Link } from '@/lib/navigation';
 import { MessageCircle } from 'lucide-react';
@@ -10,9 +11,16 @@ export function Footer() {
     <footer className="border-t border-secondary-200 bg-white py-8 mt-auto">
       <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
         <div className="flex flex-col md:flex-row items-center gap-6">
-          <span className="font-heading text-xl font-bold text-secondary-900">
-            {locale === 'ar' ? 'عقار' : 'Aggar'}
-          </span>
+          <div className="relative h-7 w-32 overflow-hidden">
+            <Image
+              src="/images/logo.svg"
+              alt="Aggar"
+              fill
+              unoptimized
+              sizes="(max-width: 768px) 8rem, 10rem"
+              className="object-cover"
+            />
+          </div>
           <div className="flex gap-4 text-sm text-secondary-500">
             <span className="cursor-pointer hover:text-secondary-900">{locale === 'ar' ? 'الخصوصية' : 'Privacy'}</span>
             <span className="cursor-pointer hover:text-secondary-900">{locale === 'ar' ? 'الشروط' : 'Terms'}</span>
