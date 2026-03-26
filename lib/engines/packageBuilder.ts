@@ -165,6 +165,31 @@ export function computeCustomTotals(services: Service[], enabledIds: string[]): 
   };
 }
 
+/** Compute break-even and year-1 net from cost totals + revenue scenarios. */
+export function computePlanFinancials(
+  costTotals: { total_cost_min: number; total_cost_max: number },
+  currentNet: number,
+  optimizedNet: number
+): {
+  breakEvenMonths: { min: number; max: number } | null;
+  year1ProjectedNet: { min: number; max: number } | null;
+} {
+  const delta = Math.max(1, optimizedNet - currentNet);
+  const minMonths = Math.ceil(costTotals.total_cost_min / delta);
+  const maxMonths = Math.ceil(costTotals.total_cost_max / delta);
+
+  const annualNet = optimizedNet * 12;
+  const year1Min = Math.round(annualNet - costTotals.total_cost_max);
+  const year1Max = Math.round(annualNet - costTotals.total_cost_min);
+
+  return {
+    breakEvenMonths: costTotals.total_cost_min === 0 && costTotals.total_cost_max === 0
+      ? null
+      : { min: minMonths, max: maxMonths },
+    year1ProjectedNet: { min: Math.max(0, year1Min), max: Math.max(0, year1Max) },
+  };
+}
+
 /**
  * Derive a revenue multiplier from the total score contribution of enabled services.
  * Maps 0 score → 1.0× and max score (~50 pts) → 1.4×.
