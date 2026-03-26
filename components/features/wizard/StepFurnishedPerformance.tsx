@@ -4,13 +4,10 @@ import * as React from 'react';
 import { useLocale } from 'next-intl';
 import { useEvaluationStore } from '@/lib/store';
 import type {
-  FurnishedBuildingSecurity,
   FurnishedGuestResponseTime,
   FurnishedLeadQualification,
   FurnishedOccupancyBand,
   FurnishedPricingStrategy,
-  FurnishedStrInsuranceCoverage,
-  FurnishedTourismLicenseStatus,
   ListingStatus,
   ManagementMode,
 } from '@/models';
@@ -25,9 +22,6 @@ const PERF_STEP_ERROR_KEYS = [
   'monthlyRevenueEgp',
   'occupancyBand',
   'pricingStrategy',
-  'buildingSecurity',
-  'tourismLicenseStatus',
-  'strInsuranceCoverage',
 ] as const;
 
 function listingHint(status: ListingStatus | undefined, isAr: boolean): string {
@@ -75,13 +69,6 @@ export function StepFurnishedPerformance() {
             <p className="text-secondary-600 text-sm mt-3 max-w-xl mx-auto">{listingHint(listed, isAr)}</p>
           </div>
 
-          <div className="rounded-xl border border-primary-200 bg-primary-50/50 px-4 py-3 text-sm text-secondary-800">
-            <span className="font-heading font-bold text-primary-900">{isAr ? 'حالة الإعلان: ' : 'Listing status: '}</span>
-            {listed === 'not_listed' && (isAr ? 'غير مُعلن بعد' : 'Not listed yet')}
-            {listed === 'listed_doing_well' && (isAr ? 'مُعلن — أداء قوي' : 'Listed — doing well')}
-            {listed === 'listed_underperform' && (isAr ? 'مُعلن — حجوزات ضعيفة' : 'Listed — underperforming')}
-            {listed === 'listed_barely_any_bookings' && (isAr ? 'مُعلن — بالكاد حجوزات' : 'Listed — barely any bookings')}
-          </div>
         </>
       )}
 
@@ -257,69 +244,6 @@ export function StepFurnishedPerformance() {
         </div>
       )}
 
-      {vis('compliance') && (
-        <div className="bg-white border border-secondary-200 rounded-2xl p-6 shadow-sm space-y-4">
-          <div className="font-heading font-bold text-secondary-900">
-            {isAr ? 'الأمان والامتثال' : 'Safety & compliance'}
-          </div>
-          <p className="text-secondary-600 text-xs">
-            {isAr
-              ? 'خطوة «الوصول» لاحقًا تتعامل مع تسليم المفاتيح بالتفصيل — هنا نركز على نوع العقار.'
-              : 'The later “Access” step covers key handoff in detail — here we focus on building type.'}
-          </p>
-          <div>
-            <label className="font-semibold text-secondary-900 text-sm block mb-2">
-              {isAr ? 'أمان المبنى' : 'Building security'}
-            </label>
-            <select
-              className="border-2 border-secondary-200 rounded-lg p-3 bg-white w-full"
-              value={flq?.buildingSecurity ?? ''}
-              onChange={(e) =>
-                patchFlq({ buildingSecurity: (e.target.value || undefined) as FurnishedBuildingSecurity | undefined })
-              }
-            >
-              <option value="">{isAr ? 'اختر' : 'Select'}</option>
-              <option value="compound_24_7">{isAr ? 'كمبوند بحماية 24/7' : '24/7 gated / compound security'}</option>
-              <option value="bawab">{isAr ? 'عمارة مع بوّاب' : 'Building with doorman (bawab)'}</option>
-              <option value="unsecured_street">{isAr ? 'وصول من الشارع بدون حراسة ثابتة' : 'Street-level / unsecured access'}</option>
-            </select>
-          </div>
-          <div>
-            <label className="font-semibold text-secondary-900 text-sm block mb-2">
-              {isAr ? 'ترخيص سياحي/تجاري للوحدة؟' : 'Commercial / tourism license for this unit?'}
-            </label>
-            <select
-              className="border-2 border-secondary-200 rounded-lg p-3 bg-white w-full"
-              value={flq?.tourismLicenseStatus ?? ''}
-              onChange={(e) =>
-                patchFlq({ tourismLicenseStatus: (e.target.value || undefined) as FurnishedTourismLicenseStatus | undefined })
-              }
-            >
-              <option value="">{isAr ? 'اختر' : 'Select'}</option>
-              <option value="yes">{isAr ? 'نعم' : 'Yes'}</option>
-              <option value="no">{isAr ? 'لا' : 'No'}</option>
-              <option value="need_help">{isAr ? 'أحتاج مساعدة للحصول عليه' : 'I need help getting one'}</option>
-            </select>
-          </div>
-          <div>
-            <label className="font-semibold text-secondary-900 text-sm block mb-2">
-              {isAr ? 'هل يغطي التأمين أضرار الإيجار قصير الأمد؟' : 'Does insurance cover short-term rental damage?'}
-            </label>
-            <select
-              className="border-2 border-secondary-200 rounded-lg p-3 bg-white w-full"
-              value={flq?.strInsuranceCoverage ?? ''}
-              onChange={(e) =>
-                patchFlq({ strInsuranceCoverage: (e.target.value || undefined) as FurnishedStrInsuranceCoverage | undefined })
-              }
-            >
-              <option value="">{isAr ? 'اختر' : 'Select'}</option>
-              <option value="yes">{isAr ? 'نعم' : 'Yes'}</option>
-              <option value="no">{isAr ? 'لا' : 'No'}</option>
-              <option value="unknown">{isAr ? 'لا أعرف' : "I don't know"}</option>
-            </select>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

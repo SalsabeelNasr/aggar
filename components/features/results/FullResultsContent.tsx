@@ -149,6 +149,7 @@ export default function FullResultsContent() {
 
   const strengths = (data.photoUpload.aiSummary?.visibleStrengths ?? []).slice(0, 3);
   const issues = (data.photoUpload.aiSummary?.visibleIssues ?? scoring.reasons).slice(0, 3);
+  const selectedPainPoints = data.furnishedLeadQualification?.operationalPainIds ?? [];
 
   const furnishedPhotoDiy = React.useMemo(() => {
     if (data.stateFlag !== 'FURNISHED') return { photoProofItems: [], showCompanions: false };
@@ -297,6 +298,27 @@ export default function FullResultsContent() {
                     )}
                   </CardContent>
                 </Card>
+
+                {selectedPainPoints.length > 0 && (
+                  <Card className="w-full border-primary-200 bg-primary-50/50 shadow-xs">
+                    <CardHeader className="p-4 pb-1.5 pt-3">
+                      <CardTitle className="text-sm font-medium text-secondary-700">
+                        {lo === 'ar' ? 'توصية نمط الإدارة' : 'Management recommendation'}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="px-4 pb-3 pt-0 text-sm text-secondary-800">
+                      <p>
+                        {mgmtMode === 'MANAGED'
+                          ? lo === 'ar'
+                            ? 'سنركّز على هذه النقاط في خطتك ومع المشرف المخصص لك.'
+                            : 'We will prioritize these pain points in your plan and onboarding.'
+                          : lo === 'ar'
+                            ? 'بناءً على ما اخترته، التعاون في الإدارة أو DIY الكامل يعالجان أغلب هذه النقاط.'
+                            : 'From what you selected, co-management or full DIY usually addresses these pain points.'}
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
             </div>
 

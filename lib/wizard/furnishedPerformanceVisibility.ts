@@ -3,7 +3,6 @@ import type { ManagementMode } from '@/models';
 export type FurnishedPerformanceSectionId =
   | 'listingContext'
   | 'gapAudit'
-  | 'postGapHint'
   | 'listingStack'
   | 'cleaningSupport'
   | 'responseTime'
@@ -13,7 +12,6 @@ export type FurnishedPerformanceSectionId =
 const DIY_ASSISTED_SET = new Set<FurnishedPerformanceSectionId>([
   'listingContext',
   'gapAudit',
-  'postGapHint',
   'listingStack',
   'cleaningSupport',
   'responseTime',
@@ -26,7 +24,7 @@ const DIY_FULL_SET = new Set<FurnishedPerformanceSectionId>([
 ]);
 
 /** Gap audit lives on `StepPainPoints`. */
-const MANAGED_SET = new Set<FurnishedPerformanceSectionId>(['listingContext', 'gapAudit', 'postGapHint']);
+const MANAGED_SET = new Set<FurnishedPerformanceSectionId>(['listingContext', 'gapAudit']);
 
 export function getFurnishedPerformanceSections(
   mode: ManagementMode | undefined

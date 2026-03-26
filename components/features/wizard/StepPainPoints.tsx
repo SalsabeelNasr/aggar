@@ -100,8 +100,6 @@ export function StepPainPoints() {
     patchFlq({ operationalPainIds: Array.from(current) });
   };
 
-  const pains = flq?.operationalPainIds ?? [];
-
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full space-y-8">
       <WizardStepErrorBanner fieldKeys={[...PAIN_STEP_ERROR_KEYS]} />
@@ -187,17 +185,6 @@ export function StepPainPoints() {
         </div>
       )}
 
-      {vis('postGapHint') && pains.length > 0 && (
-        <div className="rounded-xl border border-primary-200 bg-primary-50/70 px-4 py-3 text-sm text-secondary-800">
-          {mode === 'MANAGED'
-            ? isAr
-              ? 'سنركّز على هذه النقاط في خطتك ومع المشرف المخصص لك. يمكنك العودة لتغيير نمط الإدارة إن احتجت.'
-              : 'We’ll prioritize these in your plan and onboarding. You can go back anytime to change how you want to manage the property.'
-            : isAr
-              ? 'بناءً على ما اخترت، التعاون في الإدارة أو DIY الكامل يعالجان أغلب هذه النقاط. يمكنك الرجوع لخطوة «كيف تخطط لإدارة العقار؟» إن غيّرت رأيك.'
-              : 'From what you selected, co-management or full DIY usually addresses these. Use Previous to change how you plan to manage the property if needed.'}
-        </div>
-      )}
     </div>
   );
 }

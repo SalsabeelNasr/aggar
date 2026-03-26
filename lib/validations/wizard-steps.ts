@@ -97,7 +97,12 @@ function validateStepLocation(data: WizardData, locale: Locale): WizardStepValid
 
 function validateStepListed(data: WizardData, locale: Locale): WizardStepValidationResult {
   const s = m(locale);
-  if (!data.listingStatus) return fail({ listingStatus: s.selectOption });
+  const errors: Record<string, string> = {};
+  if (!data.listingStatus) errors.listingStatus = s.selectOption;
+  if (!data.furnishedLeadQualification?.buildingSecurity) errors.buildingSecurity = s.selectOption;
+  if (!data.furnishedLeadQualification?.tourismLicenseStatus) errors.tourismLicenseStatus = s.selectOption;
+  if (!data.furnishedLeadQualification?.strInsuranceCoverage) errors.strInsuranceCoverage = s.selectOption;
+  if (Object.keys(errors).length) return fail(errors);
   return { ok: true };
 }
 
@@ -210,12 +215,6 @@ function validateStepFurnishedPerformance(data: WizardData, locale: Locale): Wiz
     }
     if (!flq?.occupancyBand) errors.occupancyBand = s.selectOption;
     if (!flq?.pricingStrategy) errors.pricingStrategy = s.selectOption;
-  }
-
-  if (isFurnishedPerformanceSectionVisible(mode, 'compliance')) {
-    if (!flq?.buildingSecurity) errors.buildingSecurity = s.selectOption;
-    if (!flq?.tourismLicenseStatus) errors.tourismLicenseStatus = s.selectOption;
-    if (!flq?.strInsuranceCoverage) errors.strInsuranceCoverage = s.selectOption;
   }
 
   return Object.keys(errors).length ? fail(errors) : { ok: true };
