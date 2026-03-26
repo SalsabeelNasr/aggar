@@ -22,7 +22,7 @@ const states: { id: PropertyStateFlag; icon: any; ar: string; en: string }[] = [
     en: 'Fully finished and unfurnished.',
   },
   {
-    id: 'FURNISHED_RENO',
+    id: 'FURNISHED',
     icon: Sofa,
     ar: 'مفروشة، جاهزة للسكن أو لتحسينات بسيطة.',
     en: 'Furnished, ready to move in or needs light updates.',
@@ -42,7 +42,7 @@ export function Step3State() {
   React.useEffect(() => {
     if (selectedState == null) return;
     if (!allowedIds.has(selectedState)) {
-      updateData({ stateFlag: 'FURNISHED_RENO' });
+      updateData({ stateFlag: 'FURNISHED' });
     }
   }, [allowedIds, selectedState, updateData]);
 

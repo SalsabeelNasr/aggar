@@ -17,7 +17,7 @@ const PAIN_STEP_ERROR_KEYS = [
   'hasPropertyManagerOrCompany',
   'hasDedicatedCleaningTeam',
   'guestAccessSolution',
-  'furnishedRenoAreas',
+  'furnishedAreas',
   'operationalPainIds',
 ] as const;
 
@@ -123,18 +123,18 @@ export function StepPainPoints() {
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {RENO_AREA_OPTIONS.map((opt) => {
-            type RenoId = NonNullable<typeof data.furnishedRenoAreas>[number];
-            const selected = (data.furnishedRenoAreas ?? []).includes(opt.id as RenoId);
+            type RenoId = NonNullable<typeof data.furnishedAreas>[number];
+            const selected = (data.furnishedAreas ?? []).includes(opt.id as RenoId);
             return (
               <button
                 key={opt.id}
                 type="button"
                 onClick={() => {
-                  const current = new Set(data.furnishedRenoAreas ?? []);
+                  const current = new Set(data.furnishedAreas ?? []);
                   const id = opt.id as RenoId;
                   if (current.has(id)) current.delete(id);
                   else current.add(id);
-                  updateData({ furnishedRenoAreas: Array.from(current) });
+                  updateData({ furnishedAreas: Array.from(current) });
                 }}
                 className={cn(
                   'px-3 py-2 rounded-xl border text-sm font-semibold',

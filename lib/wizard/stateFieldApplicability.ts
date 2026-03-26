@@ -12,7 +12,7 @@ export interface StateFieldApplicability {
  *
  * - SHELL: no operational/infrastructure readiness fields yet.
  * - FINISHED_EMPTY: capture only furnishing needs (no AC/internet or STR ops fields).
- * - FURNISHED_RENO: all readiness fields apply.
+ * - FURNISHED: all readiness fields apply.
  */
 export function getStateFieldApplicability(
   stateFlag: PropertyStateFlag | undefined
@@ -32,7 +32,7 @@ export function getStateFieldApplicability(
         showAccessComplianceDetails: false,
         applyAcInternetToScore: false,
       };
-    case 'FURNISHED_RENO':
+    case 'FURNISHED':
     default:
       return {
         showAcInternetDetails: true,

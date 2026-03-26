@@ -26,7 +26,7 @@ export function StepPhotos() {
 
   const isAr = locale === 'ar';
   const selectedState = data.stateFlag;
-  const showFurnishedChecklist = selectedState === 'FURNISHED_RENO';
+  const showFurnishedChecklist = selectedState === 'FURNISHED';
 
   const handleUpload = () => {
     setIsUploading(true);
