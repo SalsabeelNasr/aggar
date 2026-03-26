@@ -112,6 +112,15 @@ export default function FullResultsContent() {
   const { data, updateData } = useEvaluationStore();
   const mgmtMode: ManagementMode = data.mode ?? 'MANAGED';
 
+  const [diyGuideName, setDiyGuideName] = React.useState('');
+  const [diyGuidePhone, setDiyGuidePhone] = React.useState('');
+  const [diyGuideEmail, setDiyGuideEmail] = React.useState('');
+  const [diyGuideErrors, setDiyGuideErrors] = React.useState<{
+    name?: string;
+    phone?: string;
+    email?: string;
+  }>({});
+
   const scoring = React.useMemo(() => scoreWizardData(data), [data]);
   const packages = React.useMemo(() => assignPackages(data), [data]);
 
@@ -827,6 +836,160 @@ export default function FullResultsContent() {
               </CardContent>
             </Card>
           )}
+
+          <Card className="mb-10 overflow-hidden border-0 bg-gradient-to-r from-primary-900 via-[#2C2D73] to-primary-700 text-white shadow-sm">
+            <CardContent className="p-5 md:p-6">
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-6">
+                <div className="min-w-0">
+                  <p className="font-heading text-lg font-semibold tracking-tight">
+                    {lo === 'ar' ? 'عايز تعملها بنفسك؟' : 'Want to do it yourself?'}
+                  </p>
+                  <p className="mt-1 text-sm leading-relaxed text-white/85">
+                    {lo === 'ar'
+                      ? 'خُد دليلنا “DIY Superhost” — 15+ حيلة للتصوير، نصوص جاهزة للرسائل، وشيكات سريعة للبياضات.'
+                      : 'Get our “DIY Superhost Guide” — 15+ photography hacks, ready-to-send guest scripts, and linen checklists.'}
+                  </p>
+                </div>
+
+                <form
+                  className={cn('flex w-full flex-col gap-2 md:max-w-md md:flex-row md:items-stretch', lo === 'ar' && 'md:flex-row-reverse')}
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const name = diyGuideName.trim();
+                    const email = diyGuideEmail.trim();
+                    const phoneRaw = diyGuidePhone.trim();
+
+                    const nextErrors: { name?: string; phone?: string; email?: string } = {};
+                    if (name.length < 2) nextErrors.name = lo === 'ar' ? 'اكتب الاسم بالكامل.' : 'Enter your full name.';
+
+                    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+                    if (!emailOk) nextErrors.email = lo === 'ar' ? 'اكتب بريد صحيح.' : 'Enter a valid email.';
+
+                    // Egypt default (+20). Accept: 01XXXXXXXXX, 1XXXXXXXXX, +201XXXXXXXXX, 201XXXXXXXXX
+                    const digits = phoneRaw.replace(/[^\d+]/g, '');
+                    const normalizedDigits = digits.startsWith('+') ? digits.slice(1) : digits;
+                    const egLocal = normalizedDigits.startsWith('0') ? normalizedDigits.slice(1) : normalizedDigits;
+                    const egNational = egLocal.startsWith('20') ? egLocal.slice(2) : egLocal;
+                    const egOk = /^1\d{9}$/.test(egNational);
+                    if (!egOk) {
+                      nextErrors.phone =
+                        lo === 'ar'
+                          ? 'اكتب رقم موبايل مصري صحيح (مثال: 010xxxxxxxx).'
+                          : 'Enter a valid Egypt mobile (e.g. 010xxxxxxxx).';
+                    }
+
+                    if (Object.keys(nextErrors).length > 0) {
+                      setDiyGuideErrors(nextErrors);
+                      return;
+                    }
+
+                    setDiyGuideErrors({});
+                    const e164 = `+20${egNational}`;
+                    const msg = encodeURIComponent(
+                      lo === 'ar'
+                        ? `أريد دليل DIY Superhost.\nالاسم: ${name}\nالموبايل: ${e164}\nالبريد: ${email}`
+                        : `I want the DIY Superhost Guide.\nName: ${name}\nPhone: ${e164}\nEmail: ${email}`
+                    );
+                    window.open(`https://wa.me/201140988255?text=${msg}`, '_blank', 'noopener,noreferrer');
+                  }}
+                >
+                  <div className="min-w-0 flex-1 space-y-2">
+                    <div className={cn('grid grid-cols-1 gap-2 sm:grid-cols-2', lo === 'ar' && 'sm:grid-cols-2')}>
+                      <div className="min-w-0">
+                        <label className="sr-only" htmlFor="diy-guide-name">
+                          {lo === 'ar' ? 'الاسم' : 'Name'}
+                        </label>
+                        <input
+                          id="diy-guide-name"
+                          name="name"
+                          autoComplete="name"
+                          value={diyGuideName}
+                          onChange={(e) => {
+                            setDiyGuideName(e.target.value);
+                            if (diyGuideErrors.name) setDiyGuideErrors((prev) => ({ ...prev, name: undefined }));
+                          }}
+                          placeholder={lo === 'ar' ? 'الاسم' : 'Name'}
+                          className={cn(
+                            'h-11 w-full rounded-lg border px-4 text-sm font-medium shadow-xs outline-none transition-colors',
+                            'border-white/15 bg-white/10 text-white placeholder:text-white/60',
+                            'focus:border-white/30 focus:ring-2 focus:ring-white/25',
+                            diyGuideErrors.name && 'border-amber-300/70 focus:border-amber-200'
+                          )}
+                        />
+                        {diyGuideErrors.name && (
+                          <p className="mt-1 text-xs font-medium text-amber-100">{diyGuideErrors.name}</p>
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <label className="sr-only" htmlFor="diy-guide-phone">
+                          {lo === 'ar' ? 'الموبايل' : 'Phone'}
+                        </label>
+                        <div
+                          className={cn(
+                            'flex h-11 w-full overflow-hidden rounded-lg border shadow-xs transition-colors',
+                            'border-white/15 bg-white/10',
+                            'focus-within:border-white/30 focus-within:ring-2 focus-within:ring-white/25',
+                            diyGuideErrors.phone && 'border-amber-300/70 focus-within:border-amber-200'
+                          )}
+                        >
+                          <div className="flex shrink-0 items-center gap-2 border-e border-white/10 px-3 text-sm font-semibold text-white/90">
+                            <span aria-hidden>🇪🇬</span>
+                            <span className="tabular-nums">+20</span>
+                          </div>
+                          <input
+                            id="diy-guide-phone"
+                            name="phone"
+                            inputMode="tel"
+                            autoComplete="tel"
+                            value={diyGuidePhone}
+                            onChange={(e) => {
+                              setDiyGuidePhone(e.target.value);
+                              if (diyGuideErrors.phone) setDiyGuideErrors((prev) => ({ ...prev, phone: undefined }));
+                            }}
+                            placeholder={lo === 'ar' ? '10xxxxxxxx أو 01xxxxxxxxx' : '10xxxxxxxx or 01xxxxxxxxx'}
+                            className="h-full w-full bg-transparent px-3 text-sm font-medium text-white placeholder:text-white/60 outline-none"
+                          />
+                        </div>
+                        {diyGuideErrors.phone && (
+                          <p className="mt-1 text-xs font-medium text-amber-100">{diyGuideErrors.phone}</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="min-w-0">
+                      <label className="sr-only" htmlFor="diy-guide-email">
+                        {lo === 'ar' ? 'البريد الإلكتروني' : 'Email'}
+                      </label>
+                      <input
+                        id="diy-guide-email"
+                        name="email"
+                        inputMode="email"
+                        autoComplete="email"
+                        value={diyGuideEmail}
+                        onChange={(e) => {
+                          setDiyGuideEmail(e.target.value);
+                          if (diyGuideErrors.email) setDiyGuideErrors((prev) => ({ ...prev, email: undefined }));
+                        }}
+                        placeholder={lo === 'ar' ? 'البريد الإلكتروني' : 'Email'}
+                        className={cn(
+                          'h-11 w-full rounded-lg border px-4 text-sm font-medium shadow-xs outline-none transition-colors',
+                          'border-white/15 bg-white/10 text-white placeholder:text-white/60',
+                          'focus:border-white/30 focus:ring-2 focus:ring-white/25',
+                          diyGuideErrors.email && 'border-amber-300/70 focus:border-amber-200'
+                        )}
+                      />
+                      {diyGuideErrors.email && (
+                        <p className="mt-1 text-xs font-medium text-amber-100">{diyGuideErrors.email}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <Button type="submit" className="h-11 shrink-0 bg-white text-primary-800 hover:bg-white/90">
+                    {lo === 'ar' ? 'إرسال الدليل' : 'Send guide'}
+                  </Button>
+                </form>
+              </div>
+            </CardContent>
+          </Card>
 
           <div id="consultants" className="scroll-mt-8 space-y-6">
             <section className="space-y-1" aria-labelledby="consultants-help-heading">
