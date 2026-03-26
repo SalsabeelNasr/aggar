@@ -35,6 +35,9 @@ const dmSans = DM_Sans({
 export const metadata = {
   title: 'Aggar | Property Income Advisor',
   description: 'Evaluate your property earning potential securely.',
+  icons: {
+    icon: '/favicon.svg',
+  },
 };
 
 export default async function LocaleLayout({

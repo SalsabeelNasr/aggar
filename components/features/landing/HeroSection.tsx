@@ -14,18 +14,6 @@ export function HeroSection() {
       <div className="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
         
         <div className="flex flex-col items-start text-start max-w-2xl">
-          <div className="relative h-14 w-44 overflow-hidden mb-4">
-            <Image
-              src="/images/logo.svg"
-              alt="Aggar"
-              fill
-              unoptimized
-              priority
-              sizes="(max-width: 1024px) 12rem, 11rem"
-              className="object-cover"
-            />
-          </div>
-
           <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary-100/50 text-primary-800 rounded-full text-sm font-bold border border-primary-200 mb-6 font-heading">
             {locale === 'ar' ? 'اعرف إمكانيات شقتك… ونوصلك بالناس الصح' : 'Know your apartment\'s potential... and let us connect you with the right people'}
           </div>

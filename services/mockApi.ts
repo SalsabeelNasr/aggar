@@ -1,4 +1,4 @@
-import { Region, RegionId, EvaluationInput, EvaluationResult, PartnerService } from '@/models';
+import type { Region, RegionId } from '@/models';
 
 const MOCK_REGIONS: Record<string, Region> = {
   new_cairo: {
@@ -42,100 +42,145 @@ const MOCK_REGIONS: Record<string, Region> = {
       en: 'Sahel properties can generate a year of revenue in just 3 summer months.', 
       ar: 'عقارات الساحل يمكنها تحقيق إيرادات عام كامل في 3 أشهر صيفية فقط.' 
     }
-  }
+  },
+  el_gouna: {
+    id: 'el_gouna',
+    name: { en: 'El Gouna', ar: 'الجونة' },
+    avgOccupancy: 47,
+    avgNightlyRate: 224,
+    premiumLevel: 'elite',
+    bestFitAudiences: [{ en: 'European Travelers', ar: 'زوار أوروبيون' }, { en: 'GCC Guests', ar: 'زوار خليجيون' }],
+    topPropertyTypes: [{ en: 'Apartments', ar: 'شقق' }, { en: 'Villas', ar: 'فيلات' }],
+    seasonalityNotes: { en: 'Strong year-round demand with winter peak.', ar: 'طلب قوي طوال العام مع ذروة شتوية.' },
+    marketFact: {
+      en: 'El Gouna commands Egypt’s highest nightly rates with premium guest demand.',
+      ar: 'الجونة من أعلى الأسواق في السعر الليلي داخل مصر مع طلب ضيوف مميز.',
+    },
+  },
+  zamalek: {
+    id: 'zamalek',
+    name: { en: 'Zamalek', ar: 'الزمالك' },
+    avgOccupancy: 34.8,
+    avgNightlyRate: 92,
+    premiumLevel: 'high',
+    bestFitAudiences: [{ en: 'Diplomatic & Business Guests', ar: 'ضيوف دبلوماسيون وأعمال' }],
+    topPropertyTypes: [{ en: 'Apartments', ar: 'شقق' }],
+    seasonalityNotes: { en: 'Stable urban demand across the year.', ar: 'طلب حضري ثابت طوال العام.' },
+    marketFact: {
+      en: 'Zamalek is one of Cairo’s premium urban STR markets.',
+      ar: 'الزمالك من أقوى الأسواق الحضرية للإيجار القصير في القاهرة.',
+    },
+  },
+  nasr_city_6th_october: {
+    id: 'nasr_city_6th_october',
+    name: { en: 'Giza / 6th October / Nasr City', ar: 'الجيزة / أكتوبر / مدينة نصر' },
+    avgOccupancy: 45,
+    avgNightlyRate: 55,
+    premiumLevel: 'medium',
+    bestFitAudiences: [{ en: 'Tourists & museum visitors', ar: 'سياح وزوار المتاحف' }, { en: 'Medium-stay guests', ar: 'ضيوف إقامة متوسطة' }],
+    topPropertyTypes: [{ en: 'Apartments', ar: 'شقق' }],
+    seasonalityNotes: {
+      en: 'Strong Oct–May window aligned with GEM and Cairo tourism.',
+      ar: 'فترة قوية من أكتوبر إلى مايو مع المتحف المصري الكبير وسياحة القاهرة.',
+    },
+    marketFact: {
+      en: 'This corridor benefits from GEM-driven tourism and year-round Cairo access.',
+      ar: 'هذا الممر يستفيد من السياحة المرتبطة بالمتحف المصري الكبير ووصول القاهرة طوال العام.',
+    },
+  },
+  maadi: {
+    id: 'maadi',
+    name: { en: 'Maadi', ar: 'المعادي' },
+    avgOccupancy: 40,
+    avgNightlyRate: 70,
+    premiumLevel: 'medium',
+    bestFitAudiences: [{ en: 'Expats', ar: 'مغتربون' }, { en: 'Families', ar: 'عائلات' }],
+    topPropertyTypes: [{ en: 'Apartments', ar: 'شقق' }],
+    seasonalityNotes: { en: 'Reliable demand driven by expat stays.', ar: 'طلب مستقر مدفوع بإقامات المغتربين.' },
+    marketFact: {
+      en: 'Maadi demand is driven by expat and medium-stay guests.',
+      ar: 'طلب المعادي يأتي غالبًا من المغتربين والإقامات المتوسطة.',
+    },
+  },
+  hurghada: {
+    id: 'hurghada',
+    name: { en: 'Hurghada', ar: 'الغردقة' },
+    avgOccupancy: 48,
+    avgNightlyRate: 58,
+    premiumLevel: 'medium',
+    bestFitAudiences: [{ en: 'Leisure travelers', ar: 'مسافرو الترفيه' }],
+    topPropertyTypes: [{ en: 'Apartments', ar: 'شقق' }, { en: 'Studios', ar: 'استوديوهات' }],
+    seasonalityNotes: { en: 'Peak seasons from Oct to Apr.', ar: 'مواسم الذروة من أكتوبر إلى أبريل.' },
+    marketFact: {
+      en: 'Hurghada offers accessible entry with strong Red Sea tourism demand.',
+      ar: 'الغردقة سوق مناسب للدخول مع طلب سياحي قوي على البحر الأحمر.',
+    },
+  },
+  sharm: {
+    id: 'sharm',
+    name: { en: 'Sharm El Sheikh', ar: 'شرم الشيخ' },
+    avgOccupancy: 45,
+    avgNightlyRate: 70,
+    premiumLevel: 'medium',
+    bestFitAudiences: [{ en: 'Tourism guests', ar: 'ضيوف سياحيون' }],
+    topPropertyTypes: [{ en: 'Apartments', ar: 'شقق' }, { en: 'Resort units', ar: 'وحدات منتجعية' }],
+    seasonalityNotes: { en: 'Seasonal peaks around holidays.', ar: 'ذروات موسمية حول الإجازات.' },
+    marketFact: {
+      en: 'Sharm is tourism-heavy with strong but competitive demand.',
+      ar: 'شرم سوق سياحي قوي لكنه تنافسي.',
+    },
+  },
+  dahab: {
+    id: 'dahab',
+    name: { en: 'Dahab', ar: 'دهب' },
+    avgOccupancy: 42,
+    avgNightlyRate: 65,
+    premiumLevel: 'medium',
+    bestFitAudiences: [{ en: 'Lifestyle travelers', ar: 'مسافرو نمط الحياة' }],
+    topPropertyTypes: [{ en: 'Studios', ar: 'استوديوهات' }, { en: 'Apartments', ar: 'شقق' }],
+    seasonalityNotes: { en: 'Demand sensitive to design quality.', ar: 'الطلب حساس لجودة التصميم.' },
+    marketFact: {
+      en: 'Dahab guests care deeply about style and atmosphere.',
+      ar: 'ضيوف دهب يهتمون جدًا بالتصميم والأجواء.',
+    },
+  },
+  luxor_aswan: {
+    id: 'luxor_aswan',
+    name: { en: 'Luxor / Aswan', ar: 'الأقصر / أسوان' },
+    avgOccupancy: 30,
+    avgNightlyRate: 55,
+    premiumLevel: 'medium',
+    bestFitAudiences: [{ en: 'Cultural tourists', ar: 'سياح ثقافيون' }],
+    topPropertyTypes: [{ en: 'Apartments', ar: 'شقق' }],
+    seasonalityNotes: { en: 'Highly seasonal tourism cycles.', ar: 'طلب موسمي مرتفع التقلب.' },
+    marketFact: {
+      en: 'Luxor/Aswan demand is mostly seasonal and culture-driven.',
+      ar: 'طلب الأقصر/أسوان موسمي ويرتبط بالسياحة الثقافية.',
+    },
+  },
+  other: {
+    id: 'other',
+    name: { en: 'Other', ar: 'أخرى' },
+    avgOccupancy: 34.5,
+    avgNightlyRate: 67,
+    premiumLevel: 'medium',
+    bestFitAudiences: [{ en: 'Mixed demand', ar: 'طلب متنوع' }],
+    topPropertyTypes: [{ en: 'Apartments', ar: 'شقق' }],
+    seasonalityNotes: { en: 'Benchmarked against Cairo average.', ar: 'يتم القياس على متوسط القاهرة.' },
+    marketFact: {
+      en: 'We will benchmark your area against the nearest comparable market.',
+      ar: 'سنقارن منطقتك بأقرب سوق مماثل.',
+    },
+  },
 };
+
+export function getRegionById(id: RegionId | undefined): Region {
+  const key = (id ?? 'other') as string;
+  return MOCK_REGIONS[key] ?? MOCK_REGIONS.other;
+}
 
 export async function getRegions(): Promise<Region[]> {
   // Simulate network delay
   await new Promise(r => setTimeout(r, 600));
   return Object.values(MOCK_REGIONS);
-}
-
-export async function evaluateProperty(input: EvaluationInput): Promise<EvaluationResult> {
-  await new Promise(r => setTimeout(r, 1500)); // Simulate "AI Scan" delay
-
-  const region = MOCK_REGIONS[input.regionId] || MOCK_REGIONS['new_cairo'];
-  
-  let stateScore = 0;
-  let readinessMultiplier = 0.35;
-  if (input.state === 'shell_core') {
-    stateScore = 15;
-    readinessMultiplier = 0.35;
-  } else if (input.state === 'finished_empty') {
-    stateScore = 50;
-    readinessMultiplier = 0.60;
-  } else if (input.state === 'fully_furnished') {
-    stateScore = 80;
-    readinessMultiplier = 0.90;
-  }
-
-  // Artificial AI image adjustment
-  const imageBoost = input.mockedImageSignals.length > 0 ? 10 : 0;
-  
-  const baseScore = stateScore + imageBoost + (input.hasBawab ? 5 : 0) + (10 - input.hassleLevel);
-  const score = Math.min(100, Math.max(0, Math.round(baseScore)));
-  
-  let stage: 1 | 2 | 3 = 1;
-  let stageName = { en: 'The Builder', ar: 'المبادر (الإنشاء)' };
-  let recommendedPath: 'quick_start' | 'sweet_spot' | 'asset_flip' = 'asset_flip';
-
-  if (score >= 75) {
-    stage = 3;
-    stageName = { en: 'The Host', ar: 'المُضيف (التشغيل)' };
-    recommendedPath = 'quick_start';
-  } else if (score >= 45) {
-    stage = 2;
-    stageName = { en: 'The Designer', ar: 'المُصمم (الفرش)' };
-    recommendedPath = 'sweet_spot';
-  }
-
-  const aiInsights = [];
-  if (input.mockedImageSignals.includes('natural_light')) {
-    aiInsights.push({ en: 'Nice natural light detected.', ar: 'تم ملاحظة إضاءة طبيعية ممتازة.' });
-  }
-  if (input.mockedImageSignals.includes('view_potential')) {
-    aiInsights.push({ en: 'Balcony potential detected. Upgrading seating could increase rate.', ar: 'إمكانيات بلكونة ممتازة. تحسين الجلسة سيزيد السعر اليومي.' });
-  }
-  if (aiInsights.length === 0) {
-    aiInsights.push({ en: 'Standard layout detected. Focus on durable furnishing.', ar: 'تخطيط قياسي. ركز على اختيار أثاث متين ومريح.' });
-  }
-
-  const reasons = [
-    { en: 'Region demand is very strong this season.', ar: 'الطلب في المنطقة قوي جداً هذا الموسم.' },
-    { en: `Current state (${input.state}) is the primary bottleneck.`, ar: 'الحالة الحالية للعقار هي التحدي الأكبر.' }
-  ];
-
-  const optNightly = region.avgNightlyRate * (1 + (input.bedrooms * 0.15));
-  const optOcc = region.avgOccupancy;
-  const optRevenue = optNightly * (optOcc / 100) * 30;
-
-  const curNightly = optNightly * readinessMultiplier;
-  const curOcc = Math.max(0, optOcc - (100 - score) * 0.4);
-  const curRevenue = curNightly * (curOcc / 100) * 30;
-
-  return {
-    score,
-    stage,
-    stageName,
-    currentMonthlyRevenue: Math.round(curRevenue),
-    optimizedMonthlyRevenue: Math.round(optRevenue),
-    currentOccupancy: Math.round(curOcc),
-    optimizedOccupancy: Math.round(optOcc),
-    currentNightlyRate: Math.round(curNightly),
-    optimizedNightlyRate: Math.round(optNightly),
-    recommendedPath,
-    aiInsights,
-    reasons
-  };
-}
-
-export async function getRecommendedServices(stage: 1 | 2 | 3): Promise<PartnerService[]> {
-  const ALL_SERVICES: PartnerService[] = [
-    { id: 'ren1', type: 'renovation', targetStage: 1, name: { en: 'Smart Finishing Co.', ar: 'شركة التشطيب الذكي' }, description: { en: 'Turnkey shell & core finishing with installment plans.', ar: 'تشطيب متكامل مع تسليم مفتاح وأنظمة تقسيط.' } },
-    { id: 'styl1', type: 'styling', targetStage: 2, name: { en: 'Airbnb-Proof Interiors', ar: 'فرش مخصص للإيجار' }, description: { en: 'Durable, stylish furniture packages optimized for guest sleep count.', ar: 'باقات أثاث متينة وعصرية محسنة لزيادة عدد الضيوف.' } },
-    { id: 'clean1', type: 'cleaning', targetStage: 3, name: { en: 'Hotel-Grade Turnover', ar: 'نظافة فندقية' }, description: { en: 'Deep cleaning, balcony dust handling, and quick turnover.', ar: 'نظافة عميقة وتنظيف البلكونات بين الحجوزات.' } },
-    { id: 'lin1', type: 'linen', targetStage: 3, name: { en: 'Egyptian Cotton Subs', ar: 'اشتراك بياضات قطن مصري' }, description: { en: 'Ongoing laundry swap service for fresh sheets and towels.', ar: 'خدمة استبدال دورية للملايات والفوط النظيفة.' } },
-    { id: 'smart1', type: 'smart_lock', targetStage: 2, name: { en: 'Keyless Access', ar: 'أقفال ذكية' }, description: { en: 'Smart lock installation bypassing traditional bawabs.', ar: 'تركيب أقفال ذكية تتيح الدخول بدون الحاجة للحارس التقليدي.' } },
-  ];
-  return ALL_SERVICES.filter(s => s.targetStage === stage);
 }

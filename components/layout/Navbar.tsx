@@ -23,13 +23,13 @@ export function Navbar() {
         <Link href="/" className="flex items-center gap-2">
           <div className="relative h-8 w-28 overflow-hidden">
             <Image
-              src="/images/logo.svg"
+              src="/images/logo.png"
               alt="Aggar"
               fill
               unoptimized
               priority
               sizes="(max-width: 640px) 7rem, 11rem"
-              className="object-cover"
+              className="object-contain object-left"
             />
           </div>
         </Link>

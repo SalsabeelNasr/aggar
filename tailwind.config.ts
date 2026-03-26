@@ -56,7 +56,16 @@ const config: Config = {
         'md': 'var(--shadow-md)',
         'lg': 'var(--shadow-lg)',
         'xl': 'var(--shadow-xl)',
-      }
+      },
+      keyframes: {
+        'consultants-marquee': {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+      },
+      animation: {
+        'consultants-marquee': 'consultants-marquee 110s linear infinite',
+      },
     },
   },
   plugins: [],
