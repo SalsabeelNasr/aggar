@@ -1,3 +1,5 @@
+import type { BudgetBand } from '@/lib/data/budgetBands';
+
 export type RegionId =
   | 'new_cairo'
   | 'zamalek'
@@ -38,7 +40,7 @@ export type PropertyType = 'chalet' | 'apartment' | 'studio' | 'villa';
 
 export type ListingStatus = 'not_listed' | 'listed_doing_well' | 'listed_underperform' | 'listed_barely_any_bookings';
 
-/** Already-listed answers that skip the "State" step; `FURNISHED_RENO` is implied (see Step0Listed). */
+/** Already-listed answers that skip the "State" step; `FURNISHED` is implied (see Step0Listed). */
 export const LISTING_STATUS_SKIP_STATE_STEP: ListingStatus[] = [
   'listed_doing_well',
   'listed_underperform',
@@ -49,8 +51,8 @@ export function listingStatusSkipsPropertyStateStep(status: ListingStatus | unde
   return status !== undefined && LISTING_STATUS_SKIP_STATE_STEP.includes(status);
 }
 
-/** Wizard property condition — three paths in `Step3State`; listed users imply `FURNISHED_RENO`. */
-export type PropertyStateFlag = 'SHELL' | 'FINISHED_EMPTY' | 'FURNISHED_RENO';
+/** Wizard property condition — three paths in `Step3State`; listed users imply `FURNISHED`. */
+export type PropertyStateFlag = 'SHELL' | 'FINISHED_EMPTY' | 'FURNISHED';
 
 export type ManagementMode = 'MANAGED' | 'DIY_ASSISTED' | 'DIY_FULL';
 
@@ -207,7 +209,7 @@ export interface WizardData {
   stateFlag?: PropertyStateFlag;
 
   // Conditional follow-ups
-  furnishedRenoAreas?: Array<'kitchen' | 'bathrooms' | 'walls_paint' | 'electrical' | 'ac_units' | 'all'>;
+  furnishedAreas?: Array<'kitchen' | 'bathrooms' | 'walls_paint' | 'electrical' | 'ac_units' | 'all'>;
 
   /** Managed mode: already have a property manager or property management company */
   hasPropertyManagerOrCompany?: 'yes' | 'no';
@@ -221,7 +223,7 @@ export interface WizardData {
   unfinishedBudgetPerSqm?: UnfinishedBudgetPerSqm;
   unfinishedFinancingPreference?: UnfinishedFinancingPreference;
 
-  // FINISHED_EMPTY + FURNISHED_RENO (style / pet)
+  // FINISHED_EMPTY + FURNISHED (style / pet)
   furnishingAesthetic?: FurnishingAesthetic;
   petFriendly?: boolean;
 
@@ -253,12 +255,26 @@ export interface WizardData {
 
   regulatory?: WizardRegulatorySignals;
 
-  /** Furnished (`FURNISHED_RENO`) — cleared when state changes away */
+  /** Furnished (`FURNISHED`) — cleared when state changes away */
   furnishedLeadQualification?: FurnishedLeadQualification;
   furnishedUnitLuxe?: FurnishedUnitLuxe;
   furnishedPhotoChecklist?: FurnishedPhotoChecklistId[];
   /** Furnished — which guest segments are allowed (multi-select) */
   guestPolicyAudiences?: GuestPolicyAudienceId[];
+
+  // Budget & size (added for package builder)
+  budgetBand?: BudgetBand;
+  propertySizeSqm?: number;
+}
+
+// Re-export for convenience
+export type { BudgetBand } from '@/lib/data/budgetBands';
+
+export interface DiyGuideLead {
+  fullName: string;
+  email: string;
+  phone: string;
+  requestedAtISO?: string;
 }
 
 export interface WizardState {

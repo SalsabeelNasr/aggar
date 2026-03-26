@@ -1,4 +1,5 @@
 import type { RegionId, WizardData, ManagementMode, PropertyStateFlag } from '@/models';
+import type { Service } from '@/lib/data/services';
 
 export interface RevenueScenario {
   grossMonthlyEgp: number;
@@ -40,7 +41,7 @@ const REGION_BASE: Record<
 const READINESS_MULTIPLIER: Record<PropertyStateFlag, number> = {
   SHELL: 0.0,
   FINISHED_EMPTY: 0.55,
-  FURNISHED_RENO: 0.35,
+  FURNISHED: 0.35,
 };
 
 const PACKAGE_MULTIPLIER: Record<
@@ -91,9 +92,20 @@ function scenarioFor(
   };
 }
 
+/**
+ * Derive a revenue multiplier from the total score contribution of enabled services.
+ * Maps 0 score → 1.0× and max score (~50 pts) → 1.4×.
+ */
+export function serviceBasedMultiplier(services: Service[]): number {
+  const totalScore = services.reduce((acc, s) => acc + s.score_contribution, 0);
+  const MAX_SCORE_CONTRIBUTION = 50;
+  const ratio = Math.min(1, totalScore / MAX_SCORE_CONTRIBUTION);
+  return 1.0 + ratio * 0.4;
+}
+
 export function projectRevenue(
   data: WizardData,
-  opts?: { packageType?: keyof typeof PACKAGE_MULTIPLIER }
+  opts?: { packageType?: keyof typeof PACKAGE_MULTIPLIER; services?: Service[] }
 ): RevenueResult {
   const regionId = data.regionId ?? 'other';
   const region = REGION_BASE[regionId];
@@ -108,8 +120,10 @@ export function projectRevenue(
   const currentNightly = baseNightlyEgp * readiness * aiMult;
   const currentOcc = Math.max(5, baseOcc - (1 - readiness) * 30); // simple conservative curve
 
-  const packageType = opts?.packageType ?? 'sweet_spot';
-  const pkgMult = PACKAGE_MULTIPLIER[packageType];
+  // Use service-based multiplier if services are provided, otherwise fall back to package type
+  const pkgMult = opts?.services
+    ? serviceBasedMultiplier(opts.services)
+    : PACKAGE_MULTIPLIER[opts?.packageType ?? 'sweet_spot'];
 
   const optimizedNightly = baseNightlyEgp * pkgMult * aiMult;
   const optimizedOcc = Math.min(85, baseOcc + 8);

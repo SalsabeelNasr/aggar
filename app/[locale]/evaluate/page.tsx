@@ -20,20 +20,22 @@ import { StepFurnishedPerformance } from '@/components/features/wizard/StepFurni
 import { Step5Hassle } from '@/components/features/wizard/Step5Hassle';
 import { Step7Contact, type Step7ContactHandle } from '@/components/features/wizard/Step7Contact';
 import { StepPhotos } from '@/components/features/wizard/StepPhotos';
+import { StepBudgetSize } from '@/components/features/wizard/StepBudgetSize';
 import { WizardValidationContext } from '@/components/features/wizard/WizardValidationContext';
 import { validateEvaluationStep } from '@/lib/validations/wizard-steps';
 
-/** Non-furnished: State → Details → Photos → Operations → Results */
-const stepsAR_NF = ['العقار', 'الموقع', 'هل عقارك مُعلن؟', 'حالة العقار', 'التفاصيل', 'الصور', 'التشغيل', 'النتيجة'];
-const stepsEN_NF = ['Property', 'Location', 'Listed?', 'State', 'Details', 'Photos', 'Operations', 'Results'];
+/** Non-furnished: Property → Location → Listed? → State → Details → Budget → Photos → Operations → Results */
+const stepsAR_NF = ['العقار', 'الموقع', 'هل عقارك مُعلن؟', 'حالة العقار', 'التفاصيل', 'الميزانية', 'الصور', 'التشغيل', 'النتيجة'];
+const stepsEN_NF = ['Property', 'Location', 'Listed?', 'State', 'Details', 'Budget', 'Photos', 'Operations', 'Results'];
 
-/** Furnished: State → Details → Photos → Operations → Pain points → Performance → Results */
+/** Furnished: + Pain points + Performance before Results */
 const stepsAR_F = [
   'العقار',
   'الموقع',
   'هل عقارك مُعلن؟',
   'حالة العقار',
   'التفاصيل',
+  'الميزانية',
   'الصور',
   'التشغيل',
   'نقاط الألم',
@@ -46,6 +48,7 @@ const stepsEN_F = [
   'Listed?',
   'State',
   'Details',
+  'Budget',
   'Photos',
   'Operations',
   'Pain points',
@@ -62,26 +65,26 @@ export default function EvaluatePage() {
   const [wizardFieldErrors, setWizardFieldErrors] = React.useState<Record<string, string>>({});
   const contactRef = React.useRef<Step7ContactHandle | null>(null);
 
-  const isFurnishedReno = data.stateFlag === 'FURNISHED_RENO';
+  const isFurnished = data.stateFlag === 'FURNISHED';
   const skipPropertyStateStep = listingStatusSkipsPropertyStateStep(data.listingStatus);
-  const contactStep = isFurnishedReno ? 9 : 7;
+  const contactStep = isFurnished ? 10 : 8;
 
   const steps = React.useMemo(() => {
-    const ar = [...(isFurnishedReno ? stepsAR_F : stepsAR_NF)];
-    const en = [...(isFurnishedReno ? stepsEN_F : stepsEN_NF)];
+    const ar = [...(isFurnished ? stepsAR_F : stepsAR_NF)];
+    const en = [...(isFurnished ? stepsEN_F : stepsEN_NF)];
     if (skipPropertyStateStep) {
       ar.splice(3, 1);
       en.splice(3, 1);
     }
     return locale === 'ar' ? ar : en;
-  }, [locale, isFurnishedReno, skipPropertyStateStep]);
+  }, [locale, isFurnished, skipPropertyStateStep]);
 
   const stepperCurrentStep =
     skipPropertyStateStep && currentStep >= 4 ? currentStep - 1 : currentStep;
 
   React.useEffect(() => {
     if (!skipPropertyStateStep || currentStep !== 3) return;
-    updateData({ stateFlag: 'FURNISHED_RENO' });
+    updateData({ stateFlag: 'FURNISHED' });
     setStep(4);
   }, [skipPropertyStateStep, currentStep, setStep, updateData]);
 
@@ -93,11 +96,11 @@ export default function EvaluatePage() {
     return validateEvaluationStep({
       currentStep,
       data,
-      isFurnishedReno,
+      isFurnished,
       contactStep,
       locale: locale === 'ar' ? 'ar' : 'en',
     });
-  }, [contactStep, currentStep, data, isFurnishedReno, locale]);
+  }, [contactStep, currentStep, data, isFurnished, locale]);
 
   const handleNext = async () => {
     if (currentStep === 2 && skipPropertyStateStep) {
@@ -157,11 +160,12 @@ export default function EvaluatePage() {
           {currentStep === 2 && <Step0Listed />}
           {currentStep === 3 && <Step3State />}
           {currentStep === 4 && <Step4StateDetails />}
-          {currentStep === 5 && <StepPhotos />}
-          {currentStep === 6 && <Step5Hassle />}
-          {currentStep === 7 && (isFurnishedReno ? <StepPainPoints /> : <Step7Contact ref={contactRef} />)}
-          {currentStep === 8 && isFurnishedReno && <StepFurnishedPerformance />}
-          {currentStep === 9 && isFurnishedReno && <Step7Contact ref={contactRef} />}
+          {currentStep === 5 && <StepBudgetSize />}
+          {currentStep === 6 && <StepPhotos />}
+          {currentStep === 7 && <Step5Hassle />}
+          {currentStep === 8 && (isFurnished ? <StepPainPoints /> : <Step7Contact ref={contactRef} />)}
+          {currentStep === 9 && isFurnished && <StepFurnishedPerformance />}
+          {currentStep === 10 && isFurnished && <Step7Contact ref={contactRef} />}
         </div>
       </WizardValidationContext.Provider>
 

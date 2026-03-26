@@ -289,7 +289,7 @@ export function Step4StateDetails() {
   const prevStateRef = React.useRef<PropertyStateFlag | undefined>(undefined);
 
   React.useEffect(() => {
-    if (data.stateFlag !== 'FURNISHED_RENO') return;
+    if (data.stateFlag !== 'FURNISHED') return;
     const t = data.furnishedUnitLuxe?.beddingTier as string | undefined;
     if (!t || t === 'hotel_style_white' || t === 'colored') return;
     updateData({
@@ -337,15 +337,15 @@ export function Step4StateDetails() {
       clear.furnishingBudgetBand = undefined;
       clear.furnishingPaymentPreference = undefined;
     }
-    if (cur !== 'FINISHED_EMPTY' && cur !== 'FURNISHED_RENO') {
+    if (cur !== 'FINISHED_EMPTY' && cur !== 'FURNISHED') {
       clear.furnishingAesthetic = undefined;
       clear.petFriendly = undefined;
     }
-    if (cur === 'FURNISHED_RENO') {
+    if (cur === 'FURNISHED') {
       clear.furnishingAesthetic = undefined;
     }
-    if (cur !== 'FURNISHED_RENO') {
-      clear.furnishedRenoAreas = undefined;
+    if (cur !== 'FURNISHED') {
+      clear.furnishedAreas = undefined;
       clear.furnishedLeadQualification = undefined;
       clear.furnishedUnitLuxe = undefined;
       clear.furnishedPhotoChecklist = undefined;
@@ -536,7 +536,7 @@ export function Step4StateDetails() {
         </div>
       )}
 
-      {selectedState === 'FURNISHED_RENO' && (
+      {selectedState === 'FURNISHED' && (
         <div className="space-y-6 mb-10">
           <WizardDetailCard>
             <WizardDetailHeading className="mb-1">{isAr ? 'المياه والتسخين' : 'Water & heating'}</WizardDetailHeading>
@@ -660,7 +660,7 @@ export function Step4StateDetails() {
         </div>
       )}
 
-      {selectedState !== 'FURNISHED_RENO' && applicability.showAcInternetDetails && (
+      {selectedState !== 'FURNISHED' && applicability.showAcInternetDetails && (
         <WizardDetailCard className="mb-10">
           <AcInternetFields
             isAr={isAr}
@@ -679,7 +679,7 @@ export function Step4StateDetails() {
         </WizardDetailCard>
       )}
 
-      {selectedState !== 'FURNISHED_RENO' && applicability.showAccessComplianceDetails && <AccessComplianceCard />}
+      {selectedState !== 'FURNISHED' && applicability.showAccessComplianceDetails && <AccessComplianceCard />}
     </div>
   );
 }

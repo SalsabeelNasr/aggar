@@ -55,7 +55,7 @@ function baseCScore(stateFlag: PropertyStateFlag | undefined): number {
       return mid(1, 2);
     case 'FINISHED_EMPTY':
       return mid(5, 6);
-    case 'FURNISHED_RENO':
+    case 'FURNISHED':
       return mid(2, 4);
     default:
       return mid(5, 6);

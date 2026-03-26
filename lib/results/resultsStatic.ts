@@ -185,7 +185,7 @@ export const CONSULTANT_MOCK: ConsultantCard[] = [
 function firstSpecialtyForState(state: PropertyStateFlag | undefined): ConsultantCard['specialties'][number] {
   switch (state) {
     case 'SHELL':
-    case 'FURNISHED_RENO':
+    case 'FURNISHED':
       return 'reno';
     case 'FINISHED_EMPTY':
       return 'styling';
@@ -207,7 +207,7 @@ export function rankConsultantsForProperty(
       let s = 0;
       if (c.regionIds.includes(region)) s += 10;
       if (c.specialties.includes(want)) s += 20;
-      if (c.specialties.includes('ops') && stateFlag === 'FURNISHED_RENO') s += 5;
+      if (c.specialties.includes('ops') && stateFlag === 'FURNISHED') s += 5;
       return s;
     };
     return score(b) - score(a);

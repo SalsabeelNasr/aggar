@@ -34,11 +34,11 @@ function fail(errors: Record<string, string>): WizardStepValidationResult {
 export function validateEvaluationStep(params: {
   currentStep: number;
   data: WizardData;
-  isFurnishedReno: boolean;
+  isFurnished: boolean;
   contactStep: number;
   locale: Locale;
 }): WizardStepValidationResult {
-  const { currentStep, data, isFurnishedReno, contactStep, locale } = params;
+  const { currentStep, data, isFurnished, contactStep, locale } = params;
   /** Contact step handled by Step7Contact RHF — do not validate lead here. */
   if (currentStep === contactStep) return { ok: true };
 
@@ -55,14 +55,16 @@ export function validateEvaluationStep(params: {
     case 4:
       return validateStepStateDetails(data, locale);
     case 5:
-      return validateStepPhotos(data, locale);
+      return validateStepBudgetSize(data, locale);
     case 6:
-      return validateStepHassle(data, locale);
+      return validateStepPhotos(data, locale);
     case 7:
-      if (isFurnishedReno) return validateStepPainPoints(data, locale);
-      return { ok: true };
+      return validateStepHassle(data, locale);
     case 8:
-      if (isFurnishedReno) return validateStepFurnishedPerformance(data, locale);
+      if (isFurnished) return validateStepPainPoints(data, locale);
+      return { ok: true };
+    case 9:
+      if (isFurnished) return validateStepFurnishedPerformance(data, locale);
       return { ok: true };
     default:
       return { ok: true };
@@ -123,7 +125,7 @@ function validateStepStateDetails(data: WizardData, locale: Locale): WizardStepV
     if (!data.furnishingInstallDeadline) errors.furnishingInstallDeadline = s.selectOption;
     if (!data.furnishingBudgetBand) errors.furnishingBudgetBand = s.selectOption;
     if (!data.furnishingPaymentPreference) errors.furnishingPaymentPreference = s.selectOption;
-  } else if (sf === 'FURNISHED_RENO') {
+  } else if (sf === 'FURNISHED') {
     if (!data.furnishedUnitLuxe?.waterHeating) errors.waterHeating = s.selectOption;
     if (!data.acCoverage) errors.acCoverage = s.selectOption;
     if (!data.internetSpeed) errors.internetSpeed = s.selectOption;
@@ -136,13 +138,22 @@ function validateStepStateDetails(data: WizardData, locale: Locale): WizardStepV
   return Object.keys(errors).length ? fail(errors) : { ok: true };
 }
 
+function validateStepBudgetSize(data: WizardData, locale: Locale): WizardStepValidationResult {
+  const s = m(locale);
+  const errors: Record<string, string> = {};
+  if (!data.budgetBand) errors.budgetBand = s.selectOption;
+  const sqm = data.propertySizeSqm;
+  if (sqm == null || Number.isNaN(sqm) || sqm < 10 || sqm > 2000) errors.propertySizeSqm = s.fillField;
+  return Object.keys(errors).length ? fail(errors) : { ok: true };
+}
+
 function validateStepPhotos(data: WizardData, locale: Locale): WizardStepValidationResult {
   const s = m(locale);
   const files = data.photoUpload?.files?.length ?? 0;
   const signals = data.photoUpload?.aiSignals?.length ?? 0;
   if (files < 1 && signals < 1) return fail({ photoUpload: s.zipPhotos });
 
-  if (data.stateFlag === 'FURNISHED_RENO') {
+  if (data.stateFlag === 'FURNISHED') {
     const checklist = data.furnishedPhotoChecklist ?? [];
     if (checklist.length < 1) return fail({ furnishedPhotoChecklist: s.furnishedChecklist });
   }
@@ -167,7 +178,7 @@ function validateStepPainPoints(data: WizardData, locale: Locale): WizardStepVal
   }
   if (!data.regulatory?.guestAccessSolution) errors.guestAccessSolution = s.selectOption;
 
-  if (!(data.furnishedRenoAreas?.length ?? 0)) errors.furnishedRenoAreas = s.selectAtLeastOne;
+  if (!(data.furnishedAreas?.length ?? 0)) errors.furnishedAreas = s.selectAtLeastOne;
 
   if (isFurnishedPerformanceSectionVisible(mode, 'gapAudit')) {
     const pains = data.furnishedLeadQualification?.operationalPainIds ?? [];

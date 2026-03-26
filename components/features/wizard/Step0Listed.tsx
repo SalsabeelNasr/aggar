@@ -32,7 +32,7 @@ const options: Array<{
     ar: 'نعم، الأداء ممتاز',
     hintEn: 'We’ll focus on optimization and management.',
     hintAr: 'سنركز على التحسين والتشغيل.',
-    impliedStateFlag: 'FURNISHED_RENO',
+    impliedStateFlag: 'FURNISHED',
   },
   {
     id: 'listed_underperform',
@@ -41,7 +41,7 @@ const options: Array<{
     ar: 'نعم، لكن الحجوزات ضعيفة',
     hintEn: 'We’ll diagnose performance and suggest fixes.',
     hintAr: 'سنشخص سبب الضعف ونقترح حلولًا.',
-    impliedStateFlag: 'FURNISHED_RENO',
+    impliedStateFlag: 'FURNISHED',
   },
   {
     id: 'listed_barely_any_bookings',
@@ -50,7 +50,7 @@ const options: Array<{
     ar: 'نعم، بالكاد توجد حجوزات',
     hintEn: 'We’ll run a deeper performance audit.',
     hintAr: 'سنقوم بتدقيق أعمق للأداء.',
-    impliedStateFlag: 'FURNISHED_RENO',
+    impliedStateFlag: 'FURNISHED',
   },
 ];
 
