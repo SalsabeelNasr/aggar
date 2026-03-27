@@ -161,6 +161,7 @@ function stageFromScore(score: number): StageLabel {
 export function scoreWizardData(data: WizardData): ScoreResult {
   const reasons: string[] = [];
   const seasonalityFlag = data.regionId === 'north_coast';
+  const stateFlag = data.stateFlag;
 
   const L = calculateL(data);
   const R = calculateR(data);
@@ -168,7 +169,14 @@ export function scoreWizardData(data: WizardData): ScoreResult {
   const O = calculateO(data);
 
   const weighted = L * 0.4 + R * 0.2 + C * 0.2 + O * 0.2;
-  const finalScore = clamp(Math.round(weighted * 10), 0, 100);
+  let finalScore = clamp(Math.round(weighted * 10), 0, 100);
+
+  // Mock-data-friendly guardrail: a SHELL property is not market-ready yet,
+  // even if the region is strong. Keep it in an early-stage band.
+  if (stateFlag === 'SHELL') {
+    finalScore = Math.min(finalScore, 40);
+    reasons.push('Shell stage: market readiness is capped until core build is complete.');
+  }
 
   // LTR hard triggers (subset we can detect with current inputs)
   let ltrFlag = false;

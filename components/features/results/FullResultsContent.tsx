@@ -205,9 +205,6 @@ export default function FullResultsContent() {
                           </div>
                         </div>
                       </div>
-                      <p className="mt-2 text-center text-xs text-secondary-600 max-w-[220px]">
-                        {report.cardInsights?.readinessNarrative?.[lo] ?? ''}
-                      </p>
                     </div>
                   </CardContent>
                 </Card>
