@@ -12,9 +12,7 @@ export default function ResultsPage() {
   const router = useRouter();
   const resultsAccess = useEvaluationStore((s) => s.resultsAccess);
 
-  const [storeHydrated, setStoreHydrated] = React.useState(() =>
-    typeof window === 'undefined' ? false : useEvaluationStore.persist.hasHydrated()
-  );
+  const [storeHydrated, setStoreHydrated] = React.useState(false);
 
   React.useEffect(() => {
     if (useEvaluationStore.persist.hasHydrated()) {

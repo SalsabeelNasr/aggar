@@ -5,7 +5,7 @@ import { useLocale } from 'next-intl';
 import { useEvaluationStore } from '@/lib/store';
 import type { FurnishedPhotoChecklistId } from '@/models';
 import { cn } from '@/lib/utils';
-import { UploadCloud, Loader2, Sparkles } from 'lucide-react';
+import { UploadCloud, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { WizardStepErrorBanner, useWizardFieldError } from '@/components/features/wizard/WizardValidationContext';
 
@@ -22,7 +22,6 @@ export function StepPhotos() {
   const photoErr = useWizardFieldError('photoUpload');
   const checklistErr = useWizardFieldError('furnishedPhotoChecklist');
   const [isUploading, setIsUploading] = React.useState(false);
-  const [isAnalyzed, setIsAnalyzed] = React.useState((data.photoUpload?.aiSignals?.length ?? 0) > 0);
 
   const isAr = locale === 'ar';
   const selectedState = data.stateFlag;
@@ -32,7 +31,6 @@ export function StepPhotos() {
     setIsUploading(true);
     setTimeout(() => {
       setIsUploading(false);
-      setIsAnalyzed(true);
       updateData({
         photoUpload: {
           ...data.photoUpload,
@@ -147,7 +145,7 @@ export function StepPhotos() {
         )}
       >
         <AnimatePresence mode="wait">
-          {!isUploading && !isAnalyzed && (
+          {!isUploading && (
             <motion.div
               key="ready"
               initial={{ opacity: 0 }}
@@ -192,25 +190,6 @@ export function StepPhotos() {
                   transition={{ duration: 2.5, ease: 'easeInOut' }}
                 />
               </div>
-            </motion.div>
-          )}
-
-          {isAnalyzed && !isUploading && (
-            <motion.div
-              key="done"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="flex flex-col items-center"
-            >
-              <div className="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center mb-4">
-                <Sparkles className="w-6 h-6" />
-              </div>
-              <p className="font-heading font-bold text-green-900 text-lg">
-                {isAr ? 'تم الرفع والتحليل!' : 'Photos analyzed successfully!'}
-              </p>
-              <p className="text-secondary-600 text-sm mt-2">
-                {isAr ? 'تم استخراج إشارات تساعد في تحسين التوصيات.' : 'We extracted signals to improve recommendations.'}
-              </p>
             </motion.div>
           )}
         </AnimatePresence>

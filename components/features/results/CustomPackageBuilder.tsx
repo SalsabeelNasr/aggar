@@ -6,6 +6,7 @@ import type { Service } from '@/lib/data/services';
 import { serviceNameLocalized, serviceDescriptionLocalized } from '@/lib/data/services';
 import { computeCustomTotals } from '@/lib/engines/packageBuilder';
 import { formatMoney } from './utils';
+import { PackageTopMetrics } from './PackageTopMetrics';
 
 interface CustomPackageBuilderProps {
   allServices: Service[];
@@ -14,6 +15,11 @@ interface CustomPackageBuilderProps {
   onToggle: (id: string) => void;
   locale: string;
   lo: 'en' | 'ar';
+  sectionSubtitle: string;
+  currentNetMonthlyEgp: number;
+  netMonthlyEgp: number;
+  breakEvenMonths: { min: number; max: number } | null;
+  year1ProjectedNetEgp: { min: number; max: number } | null;
 }
 
 export function CustomPackageBuilder({
@@ -23,6 +29,11 @@ export function CustomPackageBuilder({
   onToggle,
   locale,
   lo,
+  sectionSubtitle,
+  currentNetMonthlyEgp,
+  netMonthlyEgp,
+  breakEvenMonths,
+  year1ProjectedNetEgp,
 }: CustomPackageBuilderProps) {
   const totals = React.useMemo(
     () => computeCustomTotals(allServices, enabledServiceIds),
@@ -53,27 +64,17 @@ export function CustomPackageBuilder({
 
   return (
     <div className="space-y-4">
-      {/* Live totals bar */}
-      <div className="sticky top-0 z-10 flex flex-wrap items-baseline gap-x-6 gap-y-2 rounded-xl border border-primary-200 bg-primary-50/90 px-4 py-3 backdrop-blur-sm">
-        <div>
-          <span className="text-xs font-medium uppercase tracking-wider text-secondary-500">
-            {lo === 'ar' ? 'إجمالي مختار' : 'Selected total'}
-          </span>
-          <p className="text-lg font-semibold tabular-nums text-secondary-900">
-            {formatMoney(totals.total_cost_min, locale)} – {formatMoney(totals.total_cost_max, locale)}{' '}
-            <span className="text-sm font-normal text-secondary-500">{lo === 'ar' ? 'ج.م' : 'EGP'}</span>
-          </p>
-        </div>
-        <div>
-          <span className="text-xs font-medium uppercase tracking-wider text-secondary-500">
-            {lo === 'ar' ? 'تحسين النقاط' : 'Score gain'}
-          </span>
-          <p className="text-lg font-semibold text-primary-700">+{totals.total_score_gain} {lo === 'ar' ? 'نقطة' : 'pts'}</p>
-        </div>
-        <div className="text-xs text-secondary-500">
-          {enabledServiceIds.length} {lo === 'ar' ? 'خدمة مفعلة' : 'enabled'}
-        </div>
-      </div>
+      <PackageTopMetrics
+        sectionSubtitle={sectionSubtitle}
+        currentNetMonthlyEgp={currentNetMonthlyEgp}
+        servicesCostMin={totals.total_cost_min}
+        servicesCostMax={totals.total_cost_max}
+        netMonthlyEgp={netMonthlyEgp}
+        breakEvenMonths={breakEvenMonths}
+        year1ProjectedNetEgp={year1ProjectedNetEgp}
+        locale={locale}
+        lo={lo}
+      />
 
       {/* Service groups */}
       {Array.from(grouped.entries()).map(([category, services]) => {

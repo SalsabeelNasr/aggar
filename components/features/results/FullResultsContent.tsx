@@ -1,37 +1,35 @@
 'use client';
 
 import * as React from 'react';
-import { useLocale, useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 import { useEvaluationStore } from '@/lib/store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { ChevronLeft, ImageOff, MapPin } from 'lucide-react';
+import { ChevronLeft, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { projectRevenue, regionalMarketBaselines } from '@/lib/engines/revenueEngine';
 import { evaluateRules } from '@/lib/engines/ruleEngine';
-import { buildPackages, computeCustomTotals, type PackageType } from '@/lib/engines/packageBuilder';
+import { buildPackages, computeCustomTotals, computePlanFinancials, type PackageType } from '@/lib/engines/packageBuilder';
 import type { ManagementMode, WizardData } from '@/models';
 import { getRegionById } from '@/services/mockApi';
 import {
   CONSULTANT_MOCK,
-  PARTNER_CATEGORY_KEYS,
   filterConsultantsByPartnerCategory,
   rankConsultantsForProperty,
   type ConsultantCard,
   type PartnerCategoryId,
 } from '@/lib/results/resultsStatic';
-import { getRegionStrategy2026 } from '@/lib/results/regionStrategy2026';
 import { PackageComparisonCards } from './PackageComparisonCards';
 import { PackageDetailPanel } from './PackageDetailPanel';
 import { CustomPackageBuilder } from './CustomPackageBuilder';
-import { DiyGuideCta } from './DiyGuideCta';
 import { DiyUpgradesSection } from './DiyUpgradesSection';
+import { QuoteOrDiyLeadSection } from './QuoteOrDiyLeadSection';
 import {
   diyChecklistItemsForMissingFurnishedPhotos,
   FURNISHED_LISTING_PHOTO_COMPANION_DIY,
 } from '@/lib/results/furnishedPhotoProofDiy';
 import { formatMoney } from './utils';
-import { ConsultantsCarousel } from './ConsultantsCarousel';
+import { SpecialistHelpSection } from './SpecialistHelpSection';
 
 /** Radial readiness chart. */
 function ScoreRadial({ score, className }: { score: number; className?: string }) {
@@ -83,10 +81,9 @@ function decree209Label(
 export default function FullResultsContent() {
   const locale = useLocale();
   const lo: 'en' | 'ar' = locale === 'ar' ? 'ar' : 'en';
-  const tPlan = useTranslations('ResultsPlan');
 
   const { data } = useEvaluationStore();
-  const mgmtMode: ManagementMode = data.mode ?? 'MANAGED';
+  const mgmtMode: ManagementMode = 'MANAGED';
 
   // ── Engines ──────────────────────────────────────────────────────────
   const ruleResult = React.useMemo(() => evaluateRules(data), [data]);
@@ -127,7 +124,6 @@ export default function FullResultsContent() {
   const regionMeta = React.useMemo(() => getRegionById(data.regionId), [data.regionId]);
   const regionName = regionMeta.name[lo];
   const areaMarketBaselines = React.useMemo(() => regionalMarketBaselines(data.regionId), [data.regionId]);
-  const strategy2026 = React.useMemo(() => getRegionStrategy2026(data.regionId), [data.regionId]);
   const isNewCairo = data.regionId === 'new_cairo';
 
   const licensingFirst = scoring.ltrFlag || (data.regulatory?.hasLift === false && (data.regulatory?.floorNumber ?? 0) >= 5);
@@ -164,17 +160,32 @@ export default function FullResultsContent() {
     ? customTotals
     : { total_cost_min: packageSet[selectedPackage].total_cost_min, total_cost_max: packageSet[selectedPackage].total_cost_max, total_score_gain: packageSet[selectedPackage].total_score_gain };
 
+  const planFinancials = React.useMemo(
+    () =>
+      computePlanFinancials(
+        { total_cost_min: currentPkgTotals.total_cost_min, total_cost_max: currentPkgTotals.total_cost_max },
+        revenue.current.netMonthlyEgp,
+        revenue.optimized.netMonthlyEgp
+      ),
+    [
+      currentPkgTotals.total_cost_min,
+      currentPkgTotals.total_cost_max,
+      revenue.current.netMonthlyEgp,
+      revenue.optimized.netMonthlyEgp,
+    ]
+  );
+
   return (
     <div className="min-h-screen bg-secondary-50">
       <div className="border-b border-secondary-200 bg-white shadow-xs">
         <div className="container mx-auto max-w-5xl px-4 py-10 md:py-12">
-          {mgmtMode === 'DIY_FULL' && (
+          {/* {mgmtMode === 'DIY_FULL' && (
             <div className="mb-8 rounded-xl border border-primary-200 bg-primary-50/80 p-4 text-sm text-secondary-800 shadow-xs">
               {lo === 'ar'
                 ? 'وضع DIY كامل — ركّز على الدليل المجاني واحجز مستشاراً عند الحاجة.'
                 : 'Full DIY mode — focus on the free guide below and book a consultant when you need help.'}
             </div>
-          )}
+          )} */}
 
           <header className="mb-10 space-y-2">
             <h1 className="font-heading text-3xl font-semibold tracking-tight text-secondary-900 md:text-4xl">
@@ -217,10 +228,8 @@ export default function FullResultsContent() {
                     </div>
                   </CardContent>
                 </Card>
-              </div>
 
-              <div className="flex min-w-0 flex-col gap-4 md:col-span-4 lg:gap-5">
-                {/* Area stats card */}
+                {/* Property location card */}
                 <Card className="flex w-full flex-col border border-primary-200/60 bg-gradient-to-br from-white to-primary-50/40 shadow-xs">
                   <CardContent className="p-3 sm:p-3.5 md:py-2.5 md:pe-4 md:ps-4">
                     <div className="flex flex-col gap-2.5">
@@ -228,146 +237,98 @@ export default function FullResultsContent() {
                         <MapPin className="h-4 w-4 shrink-0 text-primary-600" aria-hidden />
                         <span className="min-w-0 text-sm font-semibold text-secondary-900">{regionName}</span>
                       </div>
-                      <div className="flex flex-col gap-1.5 border-t border-secondary-200/80 pt-2.5 text-sm md:flex-row md:items-baseline md:gap-x-6">
-                        <div className="flex min-w-0 items-baseline justify-between gap-3 md:justify-start md:gap-4">
-                          <span className="shrink-0 text-secondary-600">{lo === 'ar' ? 'متوسط السعر الليلي' : 'Average daily rate'}</span>
-                          <span className="shrink-0 text-end font-semibold tabular-nums text-secondary-900 whitespace-nowrap">
+                      <div className="grid grid-cols-1 gap-2 border-t border-secondary-200/80 pt-2.5 text-sm">
+                        <div className="flex min-w-0 flex-col gap-0.5">
+                          <span className="text-secondary-600">{lo === 'ar' ? 'متوسط السعر الليلي' : 'Average daily rate'}</span>
+                          <span className="font-semibold tabular-nums text-secondary-900">
                             {formatMoney(areaMarketBaselines.nightlyRateEgp, locale)}
                             <span className="ms-1 text-xs font-normal text-secondary-500">{lo === 'ar' ? 'ج.م/ليلة' : 'EGP/night'}</span>
                           </span>
                         </div>
-                        <div className="flex min-w-0 items-baseline justify-between gap-3 sm:justify-start sm:gap-4">
-                          <span className="shrink-0 text-secondary-600">{lo === 'ar' ? 'متوسط الإشغال' : 'Avg occupancy'}</span>
-                          <span className="shrink-0 font-semibold tabular-nums text-secondary-900 whitespace-nowrap">{areaMarketBaselines.occupancyPct}%</span>
+                        <div className="flex min-w-0 flex-col gap-0.5">
+                          <span className="text-secondary-600">{lo === 'ar' ? 'متوسط الإشغال' : 'Avg occupancy'}</span>
+                          <span className="font-semibold tabular-nums text-secondary-900">{areaMarketBaselines.occupancyPct}%</span>
                         </div>
                       </div>
                     </div>
-                    {strategy2026 && (
-                      <div className="mt-3 border-t border-secondary-200/80 pt-3">
-                        <p className="text-xs font-medium uppercase tracking-wide text-primary-800">{lo === 'ar' ? 'استراتيجية ٢٠٢٦' : '2026 strategy'}</p>
-                        <dl className="mt-2 space-y-1.5 text-sm">
-                          <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5">
-                            <dt className="text-secondary-600">{lo === 'ar' ? 'الاستراتيجية' : 'Strategy'}</dt>
-                            <dd className="max-w-[min(100%,18rem)] text-end font-medium text-secondary-900">{strategy2026.strategy[lo]}</dd>
-                          </div>
-                          <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5">
-                            <dt className="text-secondary-600">{lo === 'ar' ? 'هدف الإشغال' : 'Occupancy target'}</dt>
-                            <dd className="text-end font-semibold tabular-nums text-secondary-900">{strategy2026.occupancyTarget[lo]}</dd>
-                          </div>
-                          <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5">
-                            <dt className="text-secondary-600">{lo === 'ar' ? 'ذروة الإيراد' : 'Revenue peak'}</dt>
-                            <dd className="max-w-[min(100%,20rem)] text-end font-medium text-secondary-900">{strategy2026.revenuePeak[lo]}</dd>
-                          </div>
-                        </dl>
-                      </div>
-                    )}
                   </CardContent>
                 </Card>
+              </div>
 
-                {/* Image analysis card */}
-                <Card className="w-full border-secondary-200 shadow-xs">
-                  <CardHeader className="p-4 pb-1.5 pt-3">
-                    <CardTitle className="text-sm font-medium text-secondary-600">{lo === 'ar' ? 'تحليل الصور' : 'Image analysis'}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2 px-4 pb-3 pt-0 text-sm">
-                    {!hasUploadedPhotos ? (
-                      <div className="flex items-start gap-2.5 rounded-lg border border-dashed border-secondary-200 bg-secondary-50/50 px-3 py-2">
-                        <ImageOff className="mt-0.5 h-4 w-4 shrink-0 text-secondary-400" aria-hidden />
-                        <p className="text-start text-sm leading-snug text-secondary-600">
-                          {lo === 'ar'
-                            ? 'لم ترفع أي صور — ارفع صور الغرف لنقيّم الإضاءة والفرش والانطباع الظاهر.'
-                            : "You didn't upload photos — add room photos so we can assess lighting, staging, and visual appeal."}
-                        </p>
-                      </div>
-                    ) : (
-                      <>
-                        {strengths.length > 0 && (
-                          <ul className="space-y-2 text-secondary-800">
-                            {strengths.map((t, i) => (<li key={`s-${i}`} className="leading-snug"><span className="text-primary-600">· </span>{t}</li>))}
-                          </ul>
-                        )}
-                        {issues.length > 0 && (
-                          <ul className="space-y-2 text-secondary-800">
-                            {issues.map((t, i) => (<li key={`i-${i}`} className="leading-snug"><span className="text-amber-600">· </span>{t}</li>))}
-                          </ul>
-                        )}
-                        {strengths.length === 0 && issues.length === 0 && (
-                          <p className="text-secondary-600">{lo === 'ar' ? 'جارٍ تحليل الصور أو لم تُستخرج نقاط بعد.' : 'Photo insights are not available yet.'}</p>
-                        )}
-                      </>
-                    )}
-                  </CardContent>
-                </Card>
-
-                {selectedPainPoints.length > 0 && (
-                  <Card className="w-full border-primary-200 bg-primary-50/50 shadow-xs">
+              <div className="flex min-w-0 flex-col gap-4 md:col-span-4 lg:gap-5">
+                <Card className="w-full border-primary-200 bg-primary-50/50 shadow-xs">
                     <CardHeader className="p-4 pb-1.5 pt-3">
-                      <CardTitle className="text-sm font-medium text-secondary-700">
-                        {lo === 'ar' ? 'توصية نمط الإدارة' : 'Management recommendation'}
+                      <CardTitle className="font-heading text-base font-semibold text-secondary-900">
+                        {lo === 'ar' ? 'توصية نمط الإدارة' : 'Property analysis'}
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="px-4 pb-3 pt-0 text-sm text-secondary-800">
-                      <p>
-                        {mgmtMode === 'MANAGED'
-                          ? lo === 'ar'
-                            ? 'سنركّز على هذه النقاط في خطتك ومع المشرف المخصص لك.'
-                            : 'We will prioritize these pain points in your plan and onboarding.'
-                          : lo === 'ar'
-                            ? 'بناءً على ما اخترته، التعاون في الإدارة أو DIY الكامل يعالجان أغلب هذه النقاط.'
-                            : 'From what you selected, co-management or full DIY usually addresses these pain points.'}
-                      </p>
+                      <ul className="mt-2 list-disc space-y-1 ps-5">
+                        <li>
+                          {selectedPainPoints.length > 0
+                            ? mgmtMode === 'MANAGED'
+                              ? lo === 'ar'
+                                ? 'سنركّز على هذه النقاط في خطتك ومع المشرف المخصص لك.'
+                                : 'We will prioritize these pain points in your plan and onboarding.'
+                              : lo === 'ar'
+                                ? 'بناءً على ما اخترته، التعاون في الإدارة أو DIY الكامل يعالجان أغلب هذه النقاط.'
+                                : 'From what you selected, co-management or full DIY usually addresses these pain points.'
+                            : lo === 'ar'
+                              ? 'لا توجد نقاط تشغيلية حرجة مختارة حالياً؛ سنحافظ على خطة إدارة بسيطة وواضحة.'
+                              : 'No critical operational pain points selected yet, so we will keep your management plan simple and focused.'}
+                        </li>
+                        <li>
+                          {!hasUploadedPhotos
+                            ? lo === 'ar'
+                              ? 'تحليل الصور: لا توجد صور مرفوعة بعد؛ أضف صور الغرف لتحسين دقة التوصيات.'
+                              : 'Image analysis: no photos uploaded yet; add room photos to improve recommendation accuracy.'
+                            : strengths.length === 0 && issues.length === 0
+                              ? lo === 'ar'
+                                ? 'تحليل الصور: جارٍ التحليل أو لا توجد ملاحظات مرئية كافية حالياً.'
+                                : 'Image analysis: insights are pending or there are no notable visual findings yet.'
+                              : lo === 'ar'
+                                ? `تحليل الصور: ${strengths.length} نقاط قوة و${issues.length} نقاط تحسين مرصودة.`
+                                : `Image analysis: ${strengths.length} strengths and ${issues.length} improvement areas detected.`}
+                        </li>
+                      </ul>
                     </CardContent>
                   </Card>
-                )}
-              </div>
-            </div>
 
-            {/* ── What your property needs ─────────────────────────────── */}
-            <div className="rounded-xl border border-secondary-200 bg-white p-4 md:p-5">
-              <h2 className="font-heading text-base font-semibold text-secondary-900 mb-2">
-                {lo === 'ar' ? 'ما يحتاجه عقارك' : 'What your property needs'}
-              </h2>
-              <p className="text-sm text-secondary-600">
-                {lo === 'ar'
-                  ? `حددنا ${ruleResult.missingServices.length} خدمة يمكنها تحسين نقاطك من ${scoring.finalScore} إلى ${ruleResult.maxPossibleScore} نقطة.`
-                  : `We identified ${ruleResult.missingServices.length} services that can improve your score from ${scoring.finalScore} to ${ruleResult.maxPossibleScore} points.`}
-              </p>
+                <Card className="w-full border-secondary-200 bg-white shadow-xs">
+                  <CardHeader className="p-4 pb-1.5 pt-3">
+                    <CardTitle className="font-heading text-base font-semibold text-secondary-900">
+                      {lo === 'ar' ? 'ما يحتاجه عقارك' : 'What your property needs'}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="px-4 pb-4 pt-0 text-sm text-secondary-800">
+                    <p className="text-secondary-600">
+                      {lo === 'ar'
+                        ? `حددنا ${ruleResult.missingServices.length} خدمة يمكنها تحسين نقاطك من ${scoring.finalScore} إلى ${ruleResult.maxPossibleScore} نقطة.`
+                        : `We identified ${ruleResult.missingServices.length} services that can improve your score from ${scoring.finalScore} to ${ruleResult.maxPossibleScore} points.`}
+                    </p>
+
+                    {revenue.seasonalityFlag && (
+                      <p className="mt-4 max-w-md rounded-lg border border-amber-100 bg-amber-50/80 p-2 text-xs text-amber-900">
+                        {lo === 'ar' ? 'سوق موسمي — لا تعامل الدخل كشهري ثابت.' : 'Seasonal market — avoid assuming flat monthly income year-round.'}
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
             </div>
 
             {/* ── Income bar ───────────────────────────────────────────── */}
             <div className="w-full min-w-0 overflow-hidden rounded-xl border border-secondary-200 bg-white">
-              <div className="border-b border-secondary-100 px-4 py-4 md:px-6">
-                <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-8">
-                  <div>
-                    <p className="text-xs font-medium uppercase tracking-wide text-secondary-500">{lo === 'ar' ? 'الدخل الشهري (صافي) · اليوم' : 'Monthly net income · Today'}</p>
-                    <p className="mt-1 text-2xl font-semibold tabular-nums tracking-tight text-secondary-900 md:text-3xl">
-                      {formatMoney(revenue.current.netMonthlyEgp, locale)}
-                      <span className="ms-1 text-base font-normal text-secondary-500">{lo === 'ar' ? 'ج.م' : 'EGP'}</span>
-                    </p>
-                  </div>
-                  <div className={cn(lo === 'ar' ? 'text-start md:text-end' : 'md:text-end')}>
-                    <p className="text-xs font-medium uppercase tracking-wide text-primary-700">{tPlan('potentiallyWillBe')}</p>
-                    <p className="mt-1 text-2xl font-semibold tabular-nums tracking-tight text-primary-800 md:text-3xl">
-                      {formatMoney(revenue.optimized.netMonthlyEgp, locale)}
-                      <span className="ms-1 text-base font-normal text-secondary-500">{lo === 'ar' ? 'ج.م/شهر' : 'EGP/mo'}</span>
-                    </p>
-                  </div>
-                </div>
-                {revenue.seasonalityFlag && (
-                  <p className="mt-4 max-w-md rounded-lg border border-amber-100 bg-amber-50/80 p-2 text-xs text-amber-900">
-                    {lo === 'ar' ? 'سوق موسمي — لا تعامل الدخل كشهري ثابت.' : 'Seasonal market — avoid assuming flat monthly income year-round.'}
-                  </p>
-                )}
-              </div>
-
               {/* ── Package tabs + detail ──────────────────────────────── */}
-              {mgmtMode !== 'DIY_FULL' && (
-                <div className="space-y-6 px-4 py-5 md:px-6 md:py-6">
+              <div className="space-y-6 px-4 py-5 md:px-6 md:py-6">
+                  <h2 className="font-heading text-lg font-semibold text-secondary-900">
+                    {lo === 'ar' ? 'كيف تحسّن؟' : 'How do you improve?'}
+                  </h2>
+
                   <PackageComparisonCards
                     packages={packageSet}
                     selectedPackage={selectedPackage}
                     onSelect={setSelectedPackage}
-                    locale={locale}
                     lo={lo}
                   />
 
@@ -377,15 +338,24 @@ export default function FullResultsContent() {
                       enabledServiceIds={customEnabledIds}
                       isNeeded={packageSet.custom.is_needed}
                       onToggle={handleToggleCustomService}
+                      sectionSubtitle={lo === 'ar' ? packageSet.custom.tagline_ar : packageSet.custom.tagline_en}
+                      currentNetMonthlyEgp={revenue.current.netMonthlyEgp}
+                      netMonthlyEgp={revenue.optimized.netMonthlyEgp}
+                      breakEvenMonths={planFinancials.breakEvenMonths}
+                      year1ProjectedNetEgp={planFinancials.year1ProjectedNet}
                       locale={locale}
                       lo={lo}
                     />
                   ) : (
                     <PackageDetailPanel
                       services={packageSet[selectedPackage].services}
-                      totalCostMin={currentPkgTotals.total_cost_min}
-                      totalCostMax={currentPkgTotals.total_cost_max}
-                      totalScoreGain={currentPkgTotals.total_score_gain}
+                      sectionSubtitle={lo === 'ar' ? packageSet[selectedPackage].tagline_ar : packageSet[selectedPackage].tagline_en}
+                      currentNetMonthlyEgp={revenue.current.netMonthlyEgp}
+                      netMonthlyEgp={revenue.optimized.netMonthlyEgp}
+                      totalCostMin={packageSet[selectedPackage].total_cost_min}
+                      totalCostMax={packageSet[selectedPackage].total_cost_max}
+                      breakEvenMonths={planFinancials.breakEvenMonths}
+                      year1ProjectedNetEgp={planFinancials.year1ProjectedNet}
                       locale={locale}
                       lo={lo}
                     />
@@ -393,24 +363,49 @@ export default function FullResultsContent() {
 
                   <DiyUpgradesSection
                     lo={lo}
+                    selectedPackage={selectedPackage}
                     photoProofItems={furnishedPhotoDiy.photoProofItems}
                     photoCompanionItems={furnishedPhotoDiy.showCompanions ? FURNISHED_LISTING_PHOTO_COMPANION_DIY : []}
                   />
 
-                  <p className="pt-6 font-heading text-lg font-semibold text-secondary-900">
-                    {lo === 'ar' ? 'مهتم تبني هذا؟ تواصل معنا' : 'Interested in building this? Contact us'}
-                  </p>
-                  <div className={cn('flex pt-4', lo === 'ar' ? 'justify-start' : 'justify-end')}>
-                    <Button type="button" disabled className="shadow-xs">
-                      {lo === 'ar' ? 'طلب عرض سعر' : 'Request a quote'}
-                    </Button>
+                  <div className="pt-2">
+                    <div className="border-t border-secondary-200" />
+                    <div className="mt-2 flex items-center justify-end gap-2">
+                      <p className="text-base font-extrabold text-secondary-900">{lo === 'ar' ? 'الإجمالي' : 'Total'}</p>
+                      <p className="text-lg font-black tabular-nums text-secondary-900">
+                        {formatMoney(currentPkgTotals.total_cost_min, locale)}–{formatMoney(currentPkgTotals.total_cost_max, locale)}{' '}
+                        {lo === 'ar' ? 'ج.م' : 'EGP'}
+                      </p>
+                    </div>
                   </div>
+
+                  <h2 className="font-heading text-lg font-semibold text-secondary-900">
+                    {lo === 'ar' ? 'مهتم تبني هذا؟' : 'Interested in building this?'}
+                  </h2>
+
+                  <QuoteOrDiyLeadSection
+                    lo={lo}
+                    onRequestQuote={() => {
+                      document.getElementById('consultants')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }}
+                    payAmountText={`${formatMoney(currentPkgTotals.total_cost_min, locale)} - ${formatMoney(
+                      currentPkgTotals.total_cost_max,
+                      locale
+                    )}`}
+                    optimizedMonthlyText={formatMoney(revenue.optimized.netMonthlyEgp, locale)}
+                    currentMonthlyText={formatMoney(revenue.current.netMonthlyEgp, locale)}
+                  />
+
+                  <SpecialistHelpSection
+                    lo={lo}
+                    specialistFilter={specialistFilter}
+                    onSpecialistFilterChange={setSpecialistFilter}
+                    filteredConsultants={filteredConsultants}
+                    onBook={setBookConsultant}
+                  />
                 </div>
-              )}
             </div>
 
-            {/* ── DIY Guide CTA ────────────────────────────────────────── */}
-            <DiyGuideCta lo={lo} />
           </section>
 
           {showLtrSection && (
@@ -422,31 +417,6 @@ export default function FullResultsContent() {
             </Card>
           )}
 
-          {/* ── Consultants ────────────────────────────────────────────── */}
-          <div id="consultants" className="scroll-mt-8 space-y-6">
-            <section className="space-y-1" aria-labelledby="consultants-help-heading">
-              <h2 id="consultants-help-heading" className="font-heading text-lg font-semibold text-secondary-900">
-                {lo === 'ar' ? 'تحتاج مساعدة؟ تحدث مع مختص' : 'Need help? Talk to a specialist'}
-              </h2>
-            </section>
-
-            <section id="consultants-carousel" className="space-y-3 scroll-mt-8" aria-labelledby="consultants-help-heading">
-              <div className="flex flex-wrap gap-2" role="group" aria-label={lo === 'ar' ? 'تصفية حسب التخصص' : 'Filter by specialty'}>
-                <Button type="button" size="sm" variant={specialistFilter === null ? 'primary' : 'outline'} className="rounded-full shadow-xs" onClick={() => setSpecialistFilter(null)}>
-                  {lo === 'ar' ? 'الكل' : 'All'}
-                </Button>
-                {PARTNER_CATEGORY_KEYS.map((c) => (
-                  <Button key={c.id} type="button" size="sm" variant={specialistFilter === c.id ? 'primary' : 'outline'} className="rounded-full shadow-xs" onClick={() => setSpecialistFilter((prev) => (prev === c.id ? null : c.id))}>
-                    {c.name[lo]}
-                  </Button>
-                ))}
-              </div>
-              {specialistFilter !== null && filteredConsultants.length === 0 && (
-                <p className="text-sm text-secondary-600">{lo === 'ar' ? 'لا يوجد مختصون في هذا التصنيف حالياً.' : 'No specialists in this category yet.'}</p>
-              )}
-              <ConsultantsCarousel consultants={filteredConsultants} lo={lo} onBook={setBookConsultant} />
-            </section>
-          </div>
         </div>
       </div>
 

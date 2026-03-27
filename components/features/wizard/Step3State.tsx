@@ -57,8 +57,8 @@ export function Step3State() {
 
       <div
         className={cn(
-          'flex flex-col gap-4 mb-10 rounded-xl p-1 -m-1',
-          stateErr.invalid && 'ring-2 ring-red-500 ring-offset-2'
+          'flex flex-col gap-2 mb-10',
+          stateErr.invalid && 'ring-2 ring-red-500 ring-offset-2 rounded-2xl p-1 -m-1'
         )}
       >
         {availableStates.map((state) => {
@@ -68,17 +68,22 @@ export function Step3State() {
               key={state.id}
               onClick={() => updateData({ stateFlag: state.id })}
               className={cn(
-                'flex items-center p-4 rounded-xl border-2 transition-all duration-200 focus:outline-none text-start',
+                'flex items-start gap-3 p-3 rounded-xl border-2 transition-colors focus:outline-none text-start cursor-pointer w-full',
                 isSelected 
-                  ? 'border-primary-600 bg-primary-50 shadow-sm' 
-                  : 'border-secondary-200 bg-white hover:border-primary-300 hover:bg-secondary-50'
+                  ? 'border-primary-600 bg-primary-50' 
+                  : 'border-secondary-200 bg-white hover:border-primary-300'
               )}
             >
-              <div className={cn("p-3 rounded-lg mr-4 ml-4", isSelected ? "bg-primary-600 text-white" : "bg-secondary-100 text-secondary-600")}>
+              <div
+                className={cn(
+                  'w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0',
+                  isSelected ? 'bg-primary-600 text-white' : 'bg-secondary-100 text-secondary-600'
+                )}
+              >
                 <state.icon className="w-6 h-6" />
               </div>
               <div>
-                <h3 className={cn("font-heading font-bold text-lg", isSelected ? "text-primary-900" : "text-secondary-900")}>
+                <h3 className="font-heading font-medium text-base text-secondary-900">
                   {locale === 'ar' ? state.ar : state.en}
                 </h3>
               </div>

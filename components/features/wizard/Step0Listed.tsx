@@ -82,7 +82,7 @@ export function Step0Listed() {
         <h2 className="text-3xl font-heading font-bold text-secondary-900">
           {locale === 'ar'
             ? 'هل عقارك مُعلن بالفعل على Airbnb أو Booking.com؟'
-            : 'Is your property already listed on Airbnb or Booking.com?'}
+            : 'Is your property already listed on any platform?'}
         </h2>
       </div>
 

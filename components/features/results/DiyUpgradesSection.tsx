@@ -2,96 +2,144 @@
 
 import * as React from 'react';
 import { cn } from '@/lib/utils';
+import type { PackageType } from '@/lib/engines/packageBuilder';
 import { DIY_CHECKLIST_ITEMS, type DiyChecklistItem } from '@/lib/results/resultsStatic';
 
 type Lo = 'en' | 'ar';
 
-function DiyChecklistBlocks({ lo, items }: { lo: Lo; items: DiyChecklistItem[] }) {
+function isFreeCost(item: DiyChecklistItem): boolean {
+  // DIY photo “reshoot” tasks are represented as free in the static dataset.
+  const en = item.cost.en.trim().toLowerCase();
+  const ar = item.cost.ar.trim();
+  return en.includes('free') || ar.includes('مجاني');
+}
+
+function DiyServiceRow({ lo, item }: { lo: Lo; item: DiyChecklistItem }) {
   return (
-    <ul className="mt-3 list-none space-y-3 p-0">
-      {items.map((item) => (
-        <li key={item.id}>
-          <label className="flex cursor-pointer gap-3 rounded-xl border border-secondary-100 bg-secondary-50/30 p-4 hover:bg-secondary-50/60">
-            <input type="checkbox" className="mt-1 accent-primary-600" />
-            <div className="min-w-0 flex-1">
-              <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
-                <span className="text-sm font-semibold text-secondary-900">{item.name[lo]}</span>
-                <span className="shrink-0 text-xs font-medium text-primary-800">{item.cost[lo]}</span>
-              </div>
-              <p className="mt-2 text-sm leading-relaxed text-secondary-700">{item.whyItHelps[lo]}</p>
-              <p className="mt-2 text-sm text-secondary-600">
-                <span className="font-medium text-secondary-800">{lo === 'ar' ? 'تلميح: ' : 'Tip: '}</span>
-                {item.tip[lo]}
-              </p>
-            </div>
-          </label>
-        </li>
-      ))}
-    </ul>
+    <div
+      className="rounded-xl border border-secondary-200 bg-white p-4 sm:grid sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-4"
+    >
+      <div className="min-w-0">
+        <p className="text-sm font-semibold text-secondary-900">{item.name[lo]}</p>
+        <p className="mt-1 text-sm text-secondary-600 line-clamp-2">{item.whyItHelps[lo]}</p>
+        <p className="mt-2 text-xs text-secondary-500">
+          <span className="font-medium text-secondary-800">{lo === 'ar' ? 'تلميح: ' : 'Tip: '}</span>
+          {item.tip[lo]}
+        </p>
+      </div>
+      <p className="mt-2 text-sm font-semibold tabular-nums text-secondary-900 sm:mt-0 sm:text-end">{item.cost[lo]}</p>
+    </div>
+  );
+}
+
+type ComfortTopicId = 'streaming' | 'wifi' | 'welcome' | 'safety';
+
+function comfortTopicForId(id: string): ComfortTopicId {
+  switch (id) {
+    case 'netflix':
+    case 'shahid':
+      return 'streaming';
+    case 'mesh':
+      return 'wifi';
+    case 'welcome':
+      return 'welcome';
+    case 'first_aid':
+      return 'safety';
+    default:
+      return 'welcome';
+  }
+}
+
+function DiyServiceRowCompact({ lo, item }: { lo: Lo; item: DiyChecklistItem }) {
+  // Compact rendering for the “rest” list (no topic grouping, shorter text).
+  return (
+    <div
+      className="rounded-xl border border-secondary-200 bg-white p-4 sm:grid sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-4"
+    >
+      <div className="min-w-0">
+        <p className="text-sm font-semibold text-secondary-900">{item.name[lo]}</p>
+        <p className="mt-1 text-sm text-secondary-600 line-clamp-1">{item.whyItHelps[lo]}</p>
+      </div>
+      <p className="mt-2 text-sm font-semibold tabular-nums text-secondary-900 sm:mt-0 sm:text-end">{item.cost[lo]}</p>
+    </div>
   );
 }
 
 export function DiyUpgradesSection({
   lo,
+  selectedPackage,
   photoProofItems = [],
   photoCompanionItems = [],
 }: {
   lo: Lo;
+  /** Used to enforce: not shown in `quick_start`, shown in `sweet_spot` + `custom`. */
+  selectedPackage: PackageType;
   /** Missing shots from the furnished photo checklist (stepper). */
   photoProofItems?: DiyChecklistItem[];
   /** Extra high-scoring listing-photo habits for furnished hosts. */
   photoCompanionItems?: DiyChecklistItem[];
 }) {
-  const showPhotoSection = photoProofItems.length > 0 || photoCompanionItems.length > 0;
+  // As per UX rule: only visible in the 2nd package and custom.
+  if (selectedPackage !== 'sweet_spot' && selectedPackage !== 'custom') return null;
+
+  const paidPhotoProofItems = React.useMemo(() => photoProofItems.filter((i) => !isFreeCost(i)), [photoProofItems]);
+  const paidPhotoCompanionItems = React.useMemo(
+    () => photoCompanionItems.filter((i) => !isFreeCost(i)),
+    [photoCompanionItems]
+  );
+
+  const showPhotoSection = paidPhotoProofItems.length > 0 || paidPhotoCompanionItems.length > 0;
+
+  const comfortItems = React.useMemo(() => DIY_CHECKLIST_ITEMS.filter((i) => !isFreeCost(i)), []);
+
+  const comfortItemsOrdered = React.useMemo(() => {
+    const map = new Map<ComfortTopicId, DiyChecklistItem[]>();
+    for (const item of comfortItems) {
+      const topic = comfortTopicForId(item.id);
+      const list = map.get(topic) ?? [];
+      list.push(item);
+      map.set(topic, list);
+    }
+
+    // Stable display order.
+    const topicOrder: ComfortTopicId[] = ['streaming', 'wifi', 'welcome', 'safety'];
+    const orderedItems: DiyChecklistItem[] = [];
+    for (const t of topicOrder) orderedItems.push(...(map.get(t) ?? []));
+    return orderedItems;
+  }, [comfortItems]);
+
+  if (!showPhotoSection && comfortItemsOrdered.length === 0) return null;
 
   return (
-    <div className="rounded-xl border border-secondary-200 bg-white p-4 shadow-xs md:p-5">
-      <h3 className="text-sm font-semibold text-secondary-900">
-        {lo === 'ar' ? 'تحسينات تفعلها بنفسك' : 'DIY upgrades we still recommend'}
-      </h3>
-      <p className="mt-2 text-sm leading-relaxed text-secondary-600">
-        {lo === 'ar'
-          ? 'لا تدخل تلقائياً في عرض السعر — لكنها ترفع راحة الضيف وتظهر في التقييمات.'
-          : 'Not auto-included in your quote — but they lift comfort and show up in reviews.'}
-      </p>
-
+    <div className="space-y-4">
       {showPhotoSection && (
-        <div className="mt-6 border-t border-secondary-100 pt-5">
-          <h4 className="text-xs font-semibold uppercase tracking-wide text-primary-800">
-            {lo === 'ar' ? 'التصوير وإثبات الجودة' : 'Photography & proof shots'}
-          </h4>
-          <p className="mt-1.5 text-sm text-secondary-600">
-            {lo === 'ar'
-              ? 'من إجاباتك في خطوة الصور — أضف هذه اللقطات إلى جلسة التصوير أو أعد التصوير لتقوية الإعلان والنقاط.'
-              : 'From your photo step — add these frames to your shoot or re-shoot to strengthen the listing and score levers.'}
-          </p>
-          {photoProofItems.length > 0 && (
-            <>
-              <p className="mt-3 text-xs font-medium text-secondary-500">
-                {lo === 'ar' ? 'لم تُحدَّد بعد أنك صوّرت هذه اللقطات' : 'Not marked as shots you have yet'}
-              </p>
-              <DiyChecklistBlocks lo={lo} items={photoProofItems} />
-            </>
+        <div className="space-y-4">
+          {paidPhotoProofItems.length > 0 && (
+            <div className="space-y-2">
+              {paidPhotoProofItems.map((item) => (
+                <DiyServiceRow key={item.id} lo={lo} item={item} />
+              ))}
+            </div>
           )}
-          {photoCompanionItems.length > 0 && (
-            <>
-              <p className="mt-4 text-xs font-medium text-secondary-500">
-                {lo === 'ar'
-                  ? 'لقطات إضافية عالية الأثر (مفروشات، قفل، مطبخ)'
-                  : 'High-impact adds (linen, lock, kitchen depth)'}
-              </p>
-              <DiyChecklistBlocks lo={lo} items={photoCompanionItems} />
-            </>
+          {paidPhotoCompanionItems.length > 0 && (
+            <div className="space-y-2">
+              {paidPhotoCompanionItems.map((item) => (
+                <DiyServiceRow key={item.id} lo={lo} item={item} />
+              ))}
+            </div>
           )}
         </div>
       )}
 
-      <div className={cn(showPhotoSection ? 'mt-8 border-t border-secondary-100 pt-5' : 'mt-4')}>
-        <h4 className="text-xs font-semibold uppercase tracking-wide text-secondary-500">
-          {lo === 'ar' ? 'راحة الضيف والترفيه والسلامة' : 'Comfort, streaming & safety'}
-        </h4>
-        <DiyChecklistBlocks lo={lo} items={DIY_CHECKLIST_ITEMS} />
-      </div>
+      {comfortItemsOrdered.length > 0 && (
+        <div className={cn(showPhotoSection ? 'pt-1' : '')}>
+          <div className="space-y-2">
+            {comfortItemsOrdered.map((item) => (
+              <DiyServiceRowCompact key={item.id} lo={lo} item={item} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
