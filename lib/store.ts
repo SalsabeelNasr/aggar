@@ -1,16 +1,19 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import type { WizardData, WizardLead, WizardState, DiyGuideLead } from '@/models';
+import type { EvaluationReport } from '@/lib/evaluation/types';
 
 interface EvaluationStore {
   data: WizardData;
   currentStep: number;
   lead: WizardLead;
   diyGuideLead: DiyGuideLead | null;
+  report: EvaluationReport | null;
   resultsAccess: WizardState['resultsAccess'];
   updateData: (updates: Partial<WizardData>) => void;
   updateLead: (updates: Partial<WizardLead>) => void;
   updateDiyGuideLead: (lead: DiyGuideLead) => void;
+  setReport: (report: EvaluationReport | null) => void;
   setResultsAccess: (access: WizardState['resultsAccess']) => void;
   nextStep: () => void;
   prevStep: () => void;
@@ -57,10 +60,12 @@ export const useEvaluationStore = create<EvaluationStore>()(
       currentStep: 0,
       lead: { ...initialLead },
       diyGuideLead: null,
+      report: null,
       resultsAccess: 'teaser',
       updateData: (updates) => set((state) => ({ data: { ...state.data, ...updates } })),
       updateLead: (updates) => set((state) => ({ lead: { ...state.lead, ...updates } })),
       updateDiyGuideLead: (lead) => set({ diyGuideLead: lead }),
+      setReport: (report) => set({ report }),
       setResultsAccess: (access) => set({ resultsAccess: access }),
       nextStep: () => set((state) => ({ currentStep: state.currentStep + 1 })),
       prevStep: () => set((state) => ({ currentStep: Math.max(0, state.currentStep - 1) })),
@@ -71,6 +76,7 @@ export const useEvaluationStore = create<EvaluationStore>()(
           data: { ...initialData },
           lead: { ...initialLead },
           diyGuideLead: null,
+          report: null,
           resultsAccess: 'teaser',
         }),
     }),
@@ -82,6 +88,7 @@ export const useEvaluationStore = create<EvaluationStore>()(
         currentStep: state.currentStep,
         lead: state.lead,
         diyGuideLead: state.diyGuideLead,
+        report: state.report,
         resultsAccess: state.resultsAccess,
       }),
     }

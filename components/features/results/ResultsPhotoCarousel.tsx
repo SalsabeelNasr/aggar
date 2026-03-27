@@ -2,8 +2,9 @@
 
 import * as React from 'react';
 import { useLocale } from 'next-intl';
-import { ChevronLeft, ChevronRight, Images, Maximize2 } from 'lucide-react';
+import { Images, Maximize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 
 type UploadedPhoto = {
   id: string;
@@ -66,50 +67,98 @@ export function ResultsPhotoCarousel({ photos, className }: { photos: UploadedPh
   const locale = useLocale();
   const isAr = locale === 'ar';
   const scrollRef = React.useRef<HTMLDivElement>(null);
+  const itemRefs = React.useRef<Array<HTMLDivElement | null>>([]);
+  const [activeIndex, setActiveIndex] = React.useState(0);
 
   const realPhotos = React.useMemo(() => photos.filter((p) => Boolean(p.url)).slice(0, 12), [photos]);
   const items = realPhotos.length > 0 ? realPhotos : MOCK_PHOTOS;
 
-  const scroll = (dir: -1 | 1) => {
-    const el = scrollRef.current;
+  React.useEffect(() => {
+    const root = scrollRef.current;
+    if (!root) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Pick the most visible item (highest intersectionRatio).
+        const best = entries.reduce<{ idx: number; ratio: number } | null>((acc, e) => {
+          const idx = Number((e.target as HTMLElement).dataset.index ?? -1);
+          if (idx < 0) return acc;
+          const ratio = e.intersectionRatio ?? 0;
+          if (!acc || ratio > acc.ratio) return { idx, ratio };
+          return acc;
+        }, null);
+        if (best && best.ratio > 0) setActiveIndex(best.idx);
+      },
+      { root, threshold: [0.35, 0.6, 0.85] }
+    );
+
+    itemRefs.current.forEach((el) => {
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [items.length]);
+
+  const scrollToIndex = (idx: number) => {
+    const el = itemRefs.current[idx];
     if (!el) return;
-    el.scrollBy({ left: dir * 160, behavior: 'smooth' });
+    el.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
   };
 
   return (
-    <div className={cn('mt-6 select-none', className)}>
-      <div className="mb-4 flex items-center justify-between px-1">
-        <h3 className="text-sm font-bold text-secondary-900">
+    <Card className={cn('mt-6 w-full min-w-0 select-none border-secondary-200 shadow-xs', className)}>
+      <CardHeader className="p-4 pb-2 pt-3">
+        <CardTitle className="font-heading text-sm font-semibold text-secondary-900">
           {isAr ? 'معرض الصور' : 'Property photos'}
-        </h3>
-        <div className="flex items-center gap-1">
-          <button
-            type="button"
-            onClick={() => scroll(-1)}
-            className="group flex h-8 w-8 items-center justify-center rounded-lg bg-secondary-100 text-secondary-500 transition-all hover:bg-primary-600 hover:text-white"
-          >
-            <ChevronLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
-          </button>
-          <button
-            type="button"
-            onClick={() => scroll(1)}
-            className="group flex h-8 w-8 items-center justify-center rounded-lg bg-secondary-100 text-secondary-500 transition-all hover:bg-primary-600 hover:text-white"
-          >
-            <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-          </button>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="px-4 pb-4 pt-0">
+        <div
+          ref={scrollRef}
+          className={cn(
+            'flex overflow-x-auto snap-x snap-mandatory pb-4',
+            'scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
+          )}
+          style={{ gap: '12px' }}
+        >
+          {items.map((p, idx) => (
+            <div
+              key={p.id}
+              ref={(el) => {
+                itemRefs.current[idx] = el;
+              }}
+              data-index={idx}
+              className="shrink-0 snap-start"
+            >
+              <PhotoItem photo={p} />
+            </div>
+          ))}
         </div>
-      </div>
 
-      <div
-        ref={scrollRef}
-        className={cn(
-          'flex overflow-x-auto snap-x snap-mandatory px-1 pb-4',
-          'scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
+        {items.length > 1 && (
+          <div className="flex items-center justify-center gap-2">
+            {items.map((p, idx) => {
+              const active = idx === activeIndex;
+              return (
+                <button
+                  key={`dot-${p.id}`}
+                  type="button"
+                  onClick={() => scrollToIndex(idx)}
+                  aria-label={
+                    isAr ? `انتقل إلى الصورة ${idx + 1} من ${items.length}` : `Go to photo ${idx + 1} of ${items.length}`
+                  }
+                  aria-current={active ? 'true' : undefined}
+                  className={cn(
+                    'h-2 w-2 rounded-full transition-all',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white',
+                    active ? 'bg-primary-600 w-6' : 'bg-secondary-300 hover:bg-secondary-400'
+                  )}
+                />
+              );
+            })}
+          </div>
         )}
-        style={{ gap: '12px' }}
-      >
-        {items.map((p) => <PhotoItem key={p.id} photo={p} />)}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

@@ -11,6 +11,7 @@ export default function ResultsPage() {
   const locale = useLocale();
   const router = useRouter();
   const resultsAccess = useEvaluationStore((s) => s.resultsAccess);
+  const report = useEvaluationStore((s) => s.report);
 
   const [storeHydrated, setStoreHydrated] = React.useState(false);
 
@@ -23,7 +24,7 @@ export default function ResultsPage() {
     return unsub;
   }, []);
 
-  if (!storeHydrated || resultsAccess !== 'full') {
+  if (!storeHydrated || resultsAccess !== 'full' || !report) {
     return (
       <div
         className="min-h-[calc(100vh-200px)] flex flex-col items-center justify-center gap-6 px-4 py-16"
@@ -40,7 +41,7 @@ export default function ResultsPage() {
             {locale === 'ar' ? 'يرجى الانتظار لحظة.' : 'This will only take a moment.'}
           </p>
         </div>
-        {storeHydrated && resultsAccess !== 'full' && (
+        {storeHydrated && (resultsAccess !== 'full' || !report) && (
           <button
             type="button"
             onClick={() => router.push('/evaluate')}

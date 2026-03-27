@@ -5,6 +5,7 @@ import { useLocale } from 'next-intl';
 import { useRouter } from '@/lib/navigation';
 import { listingStatusSkipsPropertyStateStep } from '@/models';
 import { useEvaluationStore } from '@/lib/store';
+import type { EvaluationReport } from '@/lib/evaluation/types';
 import { Stepper } from '@/components/ui/Stepper';
 import { CookieConsent } from '@/components/layout/CookieConsent';
 import { Button } from '@/components/ui/Button';
@@ -56,10 +57,22 @@ const stepsEN_F = [
 export default function EvaluatePage() {
   const locale = useLocale();
   const router = useRouter();
-  const { currentStep, nextStep, prevStep, setStep, setResultsAccess, updateLead, updateData, updateDiyGuideLead, data } =
-    useEvaluationStore();
+  const {
+    currentStep,
+    nextStep,
+    prevStep,
+    setStep,
+    setResultsAccess,
+    setReport,
+    updateLead,
+    updateData,
+    updateDiyGuideLead,
+    data,
+  } = useEvaluationStore();
 
   const [wizardFieldErrors, setWizardFieldErrors] = React.useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = React.useState<string | null>(null);
+  const [submitting, setSubmitting] = React.useState(false);
   const contactRef = React.useRef<Step7ContactHandle | null>(null);
 
   const isFurnished = data.stateFlag === 'FURNISHED';
@@ -115,8 +128,30 @@ export default function EvaluatePage() {
       const ok = await contactRef.current?.validateAndSync();
       if (ok !== true) return;
       setWizardFieldErrors({});
-      setResultsAccess('full');
-      updateLead({ submittedAtISO: new Date().toISOString() });
+      setSubmitError(null);
+      setSubmitting(true);
+
+      try {
+        const snapshot = useEvaluationStore.getState().data;
+        const res = await fetch('/api/evaluate', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(snapshot),
+        });
+
+        if (!res.ok) throw new Error('Evaluate failed');
+        const json = (await res.json()) as { report?: EvaluationReport };
+        if (!json.report || json.report.version !== 1) throw new Error('No report');
+
+        setReport(json.report);
+        setResultsAccess('full');
+        updateLead({ submittedAtISO: new Date().toISOString() });
+      } catch {
+        setSubmitError(locale === 'ar' ? 'تعذر إنشاء التقرير. حاول مرة أخرى.' : 'Could not generate the report. Please try again.');
+        setSubmitting(false);
+        return;
+      }
+
       const { lead } = useEvaluationStore.getState();
       updateDiyGuideLead({
         fullName: (lead.fullName ?? '').trim(),
@@ -172,18 +207,28 @@ export default function EvaluatePage() {
         </div>
       </WizardValidationContext.Provider>
 
+      {submitError && (
+        <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+          {submitError}
+        </div>
+      )}
+
       <div className="mt-12 flex justify-between items-center bg-white p-4 rounded-xl border border-secondary-200 shadow-sm z-10 sticky bottom-4">
         <Button variant="ghost" onClick={handlePrev} className="gap-2 shrink-0">
           {locale === 'ar' ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
           <span className="hidden sm:inline">{locale === 'ar' ? (currentStep === 0 ? 'رجوع' : 'السابق') : (currentStep === 0 ? 'Back' : 'Previous')}</span>
         </Button>
-        <Button onClick={() => void handleNext()} className="gap-2 px-6 shadow-sm shadow-primary-500/20 shrink-0">
+        <Button onClick={() => void handleNext()} className="gap-2 px-6 shadow-sm shadow-primary-500/20 shrink-0" disabled={submitting}>
           {locale === 'ar'
             ? currentStep === finalStep
-              ? 'إنشاء تقريري'
+              ? submitting
+                ? '...جاري الإنشاء'
+                : 'إنشاء تقريري'
               : 'التالي'
             : currentStep === finalStep
-              ? 'Generate my report'
+              ? submitting
+                ? 'Generating...'
+                : 'Generate my report'
               : 'Next'}
           {locale === 'ar' ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
         </Button>

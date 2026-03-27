@@ -7,11 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { ChevronLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { projectRevenue, regionalMarketBaselines } from '@/lib/engines/revenueEngine';
-import { evaluateRules } from '@/lib/engines/ruleEngine';
-import { buildPackages, computeCustomTotals, computePlanFinancials, type PackageType } from '@/lib/engines/packageBuilder';
 import type { ManagementMode, WizardData } from '@/models';
-import { getRegionById } from '@/services/mockApi';
+import type { PackageType } from '@/lib/engines/packageBuilder';
 import {
   CONSULTANT_MOCK,
   filterConsultantsByPartnerCategory,
@@ -85,51 +82,32 @@ export default function FullResultsContent() {
   const locale = useLocale();
   const lo: 'en' | 'ar' = locale === 'ar' ? 'ar' : 'en';
 
-  const { data } = useEvaluationStore();
+  const report = useEvaluationStore((s) => s.report);
+  const data = report?.wizardData;
   const mgmtMode: ManagementMode = 'MANAGED';
 
-  // ── Engines ──────────────────────────────────────────────────────────
-  const ruleResult = React.useMemo(() => evaluateRules(data), [data]);
-  const scoring = ruleResult.scoreResult;
-  const packageSet = React.useMemo(() => buildPackages(ruleResult, data.budgetBand), [ruleResult, data.budgetBand]);
+  if (!report || !data) return null;
 
   const [selectedPackage, setSelectedPackage] = React.useState<PackageType>('sweet_spot');
-  const [customEnabledIds, setCustomEnabledIds] = React.useState<string[]>(() => packageSet.custom.enabled_service_ids);
+  const [customEnabledIds, setCustomEnabledIds] = React.useState<string[]>(() => report.packageSet.custom.enabled_service_ids);
 
   // Sync custom defaults when packageSet changes
   React.useEffect(() => {
-    setCustomEnabledIds(packageSet.custom.enabled_service_ids);
-  }, [packageSet.custom.enabled_service_ids]);
-
-  // Revenue based on selected package's services
-  const selectedServices = React.useMemo(() => {
-    if (selectedPackage === 'custom') {
-      return packageSet.custom.all_services.filter((s) => customEnabledIds.includes(s.id));
-    }
-    return packageSet[selectedPackage].services;
-  }, [selectedPackage, packageSet, customEnabledIds]);
-
-  const revenue = React.useMemo(
-    () => projectRevenue(data, { services: selectedServices }),
-    [data, selectedServices]
-  );
-
-  const customTotals = React.useMemo(
-    () => computeCustomTotals(packageSet.custom.all_services, customEnabledIds),
-    [packageSet.custom.all_services, customEnabledIds]
-  );
+    setCustomEnabledIds(report.packageSet.custom.enabled_service_ids);
+  }, [report.packageSet.custom.enabled_service_ids]);
 
   const handleToggleCustomService = React.useCallback((id: string) => {
     setCustomEnabledIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   }, []);
 
   // ── Region & UI data ─────────────────────────────────────────────────
-  const regionMeta = React.useMemo(() => getRegionById(data.regionId), [data.regionId]);
-  const regionName = regionMeta.name[lo];
-  const areaMarketBaselines = React.useMemo(() => regionalMarketBaselines(data.regionId), [data.regionId]);
+  const regionName = report.region.name[lo];
+  const areaMarketBaselines = report.areaMarketBaselines;
   const isNewCairo = data.regionId === 'new_cairo';
 
-  const licensingFirst = scoring.ltrFlag || (data.regulatory?.hasLift === false && (data.regulatory?.floorNumber ?? 0) >= 5);
+  const scoring = report.ruleResult.scoreResult;
+  const licensingFirst =
+    scoring.ltrFlag || (data.regulatory?.hasLift === false && (data.regulatory?.floorNumber ?? 0) >= 5);
   const [bookConsultant, setBookConsultant] = React.useState<ConsultantCard | null>(null);
   const [specialistFilter, setSpecialistFilter] = React.useState<PartnerCategoryId | null>(null);
 
@@ -158,25 +136,35 @@ export default function FullResultsContent() {
     };
   }, [data.stateFlag, data.furnishedPhotoChecklist]);
 
+  const packageSet = report.packageSet;
+  const revenueForSelected =
+    selectedPackage === 'custom' ? report.revenueByPackage.custom : report.revenueByPackage[selectedPackage];
+  const planForSelected =
+    selectedPackage === 'custom' ? report.planFinancialsByPackage.custom : report.planFinancialsByPackage[selectedPackage];
+
+  const customTotals = React.useMemo(() => {
+    const enabled = packageSet.custom.all_services.filter((s) => customEnabledIds.includes(s.id));
+    let total_cost_min = 0;
+    let total_cost_max = 0;
+    let total_score_gain = 0;
+    for (const s of enabled) {
+      total_score_gain += s.score_contribution;
+      if (s.cost_unit === 'fixed') {
+        total_cost_min += s.cost_min_egp;
+        total_cost_max += s.cost_max_egp;
+      }
+    }
+    return { total_cost_min, total_cost_max, total_score_gain };
+  }, [packageSet.custom.all_services, customEnabledIds]);
+
   // Current selected package totals for display
   const currentPkgTotals = selectedPackage === 'custom'
     ? customTotals
-    : { total_cost_min: packageSet[selectedPackage].total_cost_min, total_cost_max: packageSet[selectedPackage].total_cost_max, total_score_gain: packageSet[selectedPackage].total_score_gain };
-
-  const planFinancials = React.useMemo(
-    () =>
-      computePlanFinancials(
-        { total_cost_min: currentPkgTotals.total_cost_min, total_cost_max: currentPkgTotals.total_cost_max },
-        revenue.current.netMonthlyEgp,
-        revenue.optimized.netMonthlyEgp
-      ),
-    [
-      currentPkgTotals.total_cost_min,
-      currentPkgTotals.total_cost_max,
-      revenue.current.netMonthlyEgp,
-      revenue.optimized.netMonthlyEgp,
-    ]
-  );
+    : {
+        total_cost_min: packageSet[selectedPackage].total_cost_min,
+        total_cost_max: packageSet[selectedPackage].total_cost_max,
+        total_score_gain: packageSet[selectedPackage].total_score_gain,
+      };
 
   return (
     <div className="min-h-screen bg-secondary-50">
@@ -265,10 +253,10 @@ export default function FullResultsContent() {
                       isNeeded={packageSet.custom.is_needed}
                       onToggle={handleToggleCustomService}
                       sectionSubtitle={lo === 'ar' ? packageSet.custom.tagline_ar : packageSet.custom.tagline_en}
-                      currentNetMonthlyEgp={revenue.current.netMonthlyEgp}
-                      netMonthlyEgp={revenue.optimized.netMonthlyEgp}
-                      breakEvenMonths={planFinancials.breakEvenMonths}
-                      year1ProjectedNetEgp={planFinancials.year1ProjectedNet}
+                      currentNetMonthlyEgp={revenueForSelected.current.netMonthlyEgp}
+                      netMonthlyEgp={revenueForSelected.optimized.netMonthlyEgp}
+                      breakEvenMonths={planForSelected.breakEvenMonths}
+                      year1ProjectedNetEgp={planForSelected.year1ProjectedNet}
                       locale={locale}
                       lo={lo}
                     />
@@ -276,12 +264,12 @@ export default function FullResultsContent() {
                     <PackageDetailPanel
                       services={packageSet[selectedPackage].services}
                       sectionSubtitle={lo === 'ar' ? packageSet[selectedPackage].tagline_ar : packageSet[selectedPackage].tagline_en}
-                      currentNetMonthlyEgp={revenue.current.netMonthlyEgp}
-                      netMonthlyEgp={revenue.optimized.netMonthlyEgp}
+                      currentNetMonthlyEgp={revenueForSelected.current.netMonthlyEgp}
+                      netMonthlyEgp={revenueForSelected.optimized.netMonthlyEgp}
                       totalCostMin={packageSet[selectedPackage].total_cost_min}
                       totalCostMax={packageSet[selectedPackage].total_cost_max}
-                      breakEvenMonths={planFinancials.breakEvenMonths}
-                      year1ProjectedNetEgp={planFinancials.year1ProjectedNet}
+                      breakEvenMonths={planForSelected.breakEvenMonths}
+                      year1ProjectedNetEgp={planForSelected.year1ProjectedNet}
                       locale={locale}
                       lo={lo}
                     />
@@ -318,8 +306,8 @@ export default function FullResultsContent() {
                       currentPkgTotals.total_cost_max,
                       locale
                     )}`}
-                    optimizedMonthlyText={formatMoney(revenue.optimized.netMonthlyEgp, locale)}
-                    currentMonthlyText={formatMoney(revenue.current.netMonthlyEgp, locale)}
+                    optimizedMonthlyText={formatMoney(revenueForSelected.optimized.netMonthlyEgp, locale)}
+                    currentMonthlyText={formatMoney(revenueForSelected.current.netMonthlyEgp, locale)}
                   />
 
                   <SpecialistHelpSection
