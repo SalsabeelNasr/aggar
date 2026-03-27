@@ -5,8 +5,7 @@ import { useLocale } from 'next-intl';
 import { useEvaluationStore } from '@/lib/store';
 import type { FurnishedPhotoChecklistId } from '@/models';
 import { cn } from '@/lib/utils';
-import { UploadCloud, Loader2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { UploadCloud } from 'lucide-react';
 import { WizardStepErrorBanner, useWizardFieldError } from '@/components/features/wizard/WizardValidationContext';
 
 function toggleId<T extends string>(list: T[] | undefined, id: T): T[] {
@@ -21,30 +20,29 @@ export function StepPhotos() {
   const { data, updateData } = useEvaluationStore();
   const photoErr = useWizardFieldError('photoUpload');
   const checklistErr = useWizardFieldError('furnishedPhotoChecklist');
-  const [isUploading, setIsUploading] = React.useState(false);
 
   const isAr = locale === 'ar';
   const selectedState = data.stateFlag;
   const showFurnishedChecklist = selectedState === 'FURNISHED';
 
-  const handleUpload = () => {
-    setIsUploading(true);
-    setTimeout(() => {
-      setIsUploading(false);
-      updateData({
-        photoUpload: {
-          ...data.photoUpload,
-          aiSignals: ['natural_light', 'view_potential'],
-          aiSummary: {
-            qualityTier: 'medium',
-            confidence: 76,
-            visibleStrengths: ['Natural light', 'Balcony / view potential'],
-            visibleIssues: ['Lighting could be improved'],
-            recommendedUpgrades: ['Lighting upgrade', 'Outdoor seating'],
-          },
-        },
-      });
-    }, 2500);
+  const fileInputId = 'wizard-photo-upload';
+  const uploadedCount = data.photoUpload?.files?.length ?? 0;
+
+  const handleFilesSelected = (files: FileList | null) => {
+    if (!files || files.length < 1) return;
+    const items = Array.from(files).map((f) => ({
+      id: typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID() : `${f.name}-${f.size}-${f.lastModified}`,
+      url: URL.createObjectURL(f),
+      name: f.name,
+    }));
+    updateData({
+      photoUpload: {
+        ...data.photoUpload,
+        files: items,
+        aiSignals: [],
+        aiSummary: undefined,
+      },
+    });
   };
 
   return (
@@ -52,13 +50,8 @@ export function StepPhotos() {
       <WizardStepErrorBanner fieldKeys={['photoUpload', 'furnishedPhotoChecklist']} />
       <div className="text-center mb-10">
         <h2 className="text-3xl font-heading font-bold text-secondary-900">
-          {isAr ? 'صور العقار' : 'Property photos'}
+          {isAr ? 'هل يمكنك رفع صور للعقار لتحليل الذكاء الاصطناعي؟' : 'Upload photos of the property for AI analysis?'}
         </h2>
-        <p className="text-secondary-600 mt-2 text-sm max-w-lg mx-auto">
-          {isAr
-            ? 'ارفع صورًا واضحة لمساعدتنا على تقييم الوحدة.'
-            : 'Upload clear photos so we can assess the unit.'}
-        </p>
       </div>
 
       {showFurnishedChecklist && (
@@ -144,55 +137,40 @@ export function StepPhotos() {
           photoErr.invalid ? 'border-red-400' : 'border-secondary-300'
         )}
       >
-        <AnimatePresence mode="wait">
-          {!isUploading && (
-            <motion.div
-              key="ready"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="flex flex-col items-center"
-            >
-              <UploadCloud className="w-12 h-12 text-secondary-400 mb-4" />
-              <p className="font-heading font-bold text-secondary-900 mb-1">
-                {isAr ? 'ارفع 5–10 صور (مطلوب)' : 'Upload 5–10 photos (required)'}
-              </p>
-              <p className="text-secondary-500 text-sm mb-4">
-                {isAr ? 'صور الصالة/غرفة النوم/المطبخ/الحمام/البلكونة.' : 'Living room, bedroom, kitchen, bathroom, balcony/view.'}
-              </p>
-              <button
-                onClick={handleUpload}
-                className="px-6 py-2 bg-secondary-100 font-medium text-secondary-900 rounded-lg hover:bg-secondary-200 transition-colors"
-                type="button"
-              >
-                {isAr ? 'تصفح الملفات' : 'Browse Files'}
-              </button>
-            </motion.div>
-          )}
+        <div className="flex flex-col items-center">
+          <UploadCloud className="w-12 h-12 text-secondary-400 mb-4" />
+          <p className="font-heading font-bold text-secondary-900 mb-1">
+            {isAr ? 'ارفع 5–10 صور (مطلوب)' : 'Upload 5–10 photos (required)'}
+          </p>
+          <p className="text-secondary-500 text-sm mb-4">
+            {isAr ? 'صور الصالة/غرفة النوم/المطبخ/الحمام/البلكونة.' : 'Living room, bedroom, kitchen, bathroom, balcony/view.'}
+          </p>
 
-          {isUploading && (
-            <motion.div
-              key="scanning"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="flex flex-col items-center py-4"
-            >
-              <Loader2 className="w-10 h-10 text-primary-600 animate-spin mb-4" />
-              <p className="font-heading font-bold text-primary-900">
-                {isAr ? 'جارِ تحليل الصور بذكاء...' : 'Running AI visual analysis...'}
-              </p>
-              <div className="w-full max-w-xs h-2 bg-secondary-100 rounded-full mt-4 overflow-hidden">
-                <motion.div
-                  className="h-full bg-primary-500 rounded-full"
-                  initial={{ width: '0%' }}
-                  animate={{ width: '100%' }}
-                  transition={{ duration: 2.5, ease: 'easeInOut' }}
-                />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+          <input
+            id={fileInputId}
+            type="file"
+            accept="image/*"
+            multiple
+            className="sr-only"
+            onChange={(e) => handleFilesSelected(e.target.files)}
+          />
+          <label
+            htmlFor={fileInputId}
+            className="px-6 py-2 bg-secondary-100 font-medium text-secondary-900 rounded-lg hover:bg-secondary-200 transition-colors cursor-pointer"
+          >
+            {isAr ? 'تصفح الملفات' : 'Browse Files'}
+          </label>
+
+          <p className="mt-4 text-sm text-secondary-600">
+            {uploadedCount > 0
+              ? isAr
+                ? `تم اختيار ${uploadedCount} صورة.`
+                : `${uploadedCount} photo(s) selected.`
+              : isAr
+                ? 'لم يتم اختيار صور بعد.'
+                : 'No photos selected yet.'}
+          </p>
+        </div>
       </div>
     </div>
   );

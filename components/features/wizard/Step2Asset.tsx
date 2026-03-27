@@ -14,6 +14,7 @@ const STEP0_ERROR_KEYS = [
   'bedrooms',
   'bathrooms',
   'sleepCapacity',
+  'propertySizeSqm',
   'inGatedCompound',
   'hasLift',
 ] as const;
@@ -40,6 +41,7 @@ export function Step2Asset() {
   const brErr = useWizardFieldError('bedrooms');
   const bathErr = useWizardFieldError('bathrooms');
   const sleepErr = useWizardFieldError('sleepCapacity');
+  const sqmErr = useWizardFieldError('propertySizeSqm');
   const gatedErr = useWizardFieldError('inGatedCompound');
   const liftErr = useWizardFieldError('hasLift');
 
@@ -78,52 +80,88 @@ export function Step2Asset() {
         })}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Beds */}
-        <div className="flex flex-col gap-2">
-          <label className="font-bold text-secondary-900">{locale === 'ar' ? 'غرف النوم' : 'Bedrooms'}</label>
-          <input 
-            type="number" min="0" max="10" 
-            className={cn(
-              'border-2 rounded-lg p-3 outline-none transition-colors',
-              brErr.invalid ? 'border-red-500 focus:border-red-500' : 'border-secondary-200 focus:border-primary-500'
-            )}
-            aria-invalid={brErr.invalid || undefined}
-            value={data.bedrooms} 
-            onChange={e => updateData({ bedrooms: Number(e.target.value) })}
-          />
-        </div>
-        {/* Baths */}
-        <div className="flex flex-col gap-2">
-          <label className="font-bold text-secondary-900">{locale === 'ar' ? 'الحمامات' : 'Bathrooms'}</label>
-          <input 
-            type="number" min="1" max="10" 
-            className={cn(
-              'border-2 rounded-lg p-3 outline-none transition-colors',
-              bathErr.invalid ? 'border-red-500 focus:border-red-500' : 'border-secondary-200 focus:border-primary-500'
-            )}
-            aria-invalid={bathErr.invalid || undefined}
-            value={data.bathrooms} 
-            onChange={e => updateData({ bathrooms: Number(e.target.value) })}
-          />
-        </div>
-        {/* Sleep Capacity */}
-        <div className="flex flex-col gap-2">
-          <label className="font-bold text-secondary-900">{locale === 'ar' ? 'يرحب بعدد ضيوف (السعة)' : 'Sleep Capacity'}</label>
-          <input 
-            type="number" min="1" max="20" 
-            className={cn(
-              'border-2 rounded-lg p-3 outline-none transition-colors',
-              sleepErr.invalid ? 'border-red-500 focus:border-red-500' : 'border-secondary-200 focus:border-primary-500'
-            )}
-            aria-invalid={sleepErr.invalid || undefined}
-            value={data.sleepCapacity} 
-            onChange={e => updateData({ sleepCapacity: Number(e.target.value) })}
-          />
+      <div className="mt-6 bg-white border border-secondary-200 rounded-2xl p-6 shadow-sm w-full">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="flex flex-col gap-2">
+            <label className="font-bold text-secondary-900">{locale === 'ar' ? 'غرف النوم' : 'Bedrooms'}</label>
+            <input
+              type="number"
+              min="0"
+              max="10"
+              className={cn(
+                'border-2 rounded-lg p-3 outline-none transition-colors',
+                brErr.invalid ? 'border-red-500 focus:border-red-500' : 'border-secondary-200 focus:border-primary-500'
+              )}
+              aria-invalid={brErr.invalid || undefined}
+              value={data.bedrooms}
+              onChange={(e) => updateData({ bedrooms: Number(e.target.value) })}
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="font-bold text-secondary-900">{locale === 'ar' ? 'الحمامات' : 'Bathrooms'}</label>
+            <input
+              type="number"
+              min="1"
+              max="10"
+              className={cn(
+                'border-2 rounded-lg p-3 outline-none transition-colors',
+                bathErr.invalid ? 'border-red-500 focus:border-red-500' : 'border-secondary-200 focus:border-primary-500'
+              )}
+              aria-invalid={bathErr.invalid || undefined}
+              value={data.bathrooms}
+              onChange={(e) => updateData({ bathrooms: Number(e.target.value) })}
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="font-bold text-secondary-900">
+              {locale === 'ar' ? 'يرحب بعدد ضيوف (السعة)' : 'Sleep Capacity'}
+            </label>
+            <input
+              type="number"
+              min="1"
+              max="20"
+              className={cn(
+                'border-2 rounded-lg p-3 outline-none transition-colors',
+                sleepErr.invalid ? 'border-red-500 focus:border-red-500' : 'border-secondary-200 focus:border-primary-500'
+              )}
+              aria-invalid={sleepErr.invalid || undefined}
+              value={data.sleepCapacity}
+              onChange={(e) => updateData({ sleepCapacity: Number(e.target.value) })}
+            />
+          </div>
         </div>
       </div>
 
       <div className="mt-8 flex flex-col gap-4 w-full">
+        <div
+          className={cn(
+            'bg-white border rounded-2xl p-6 shadow-sm w-full',
+            sqmErr.invalid ? 'border-red-500 border-2' : 'border-secondary-200'
+          )}
+        >
+          <div className="flex flex-col gap-2">
+            <label className="font-bold text-secondary-900 font-heading">
+              {isAr ? 'مساحة العقار (متر مربع)' : 'Property size (sqm)'}
+            </label>
+            <input
+              type="number"
+              min={10}
+              max={2000}
+              value={data.propertySizeSqm ?? ''}
+              onChange={(e) => {
+                const val = e.target.value === '' ? undefined : Number(e.target.value);
+                updateData({ propertySizeSqm: val });
+              }}
+              placeholder={isAr ? 'مثال: ١٢٠' : 'e.g. 120'}
+              className={cn(
+                'w-full border-2 rounded-lg p-3 outline-none transition-colors',
+                sqmErr.invalid ? 'border-red-500 focus:border-red-500' : 'border-secondary-200 focus:border-primary-500'
+              )}
+              aria-invalid={sqmErr.invalid || undefined}
+            />
+          </div>
+        </div>
+
         <div
           className={cn(
             'bg-white border rounded-2xl p-6 shadow-sm w-full',

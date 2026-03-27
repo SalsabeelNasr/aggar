@@ -5,7 +5,7 @@ import { useLocale } from 'next-intl';
 import { useEvaluationStore } from '@/lib/store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { ChevronLeft, MapPin } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { projectRevenue, regionalMarketBaselines } from '@/lib/engines/revenueEngine';
 import { evaluateRules } from '@/lib/engines/ruleEngine';
@@ -24,6 +24,9 @@ import { PackageDetailPanel } from './PackageDetailPanel';
 import { CustomPackageBuilder } from './CustomPackageBuilder';
 import { DiyUpgradesSection } from './DiyUpgradesSection';
 import { QuoteOrDiyLeadSection } from './QuoteOrDiyLeadSection';
+import { PropertyAnalysisCard } from './PropertyAnalysisCard';
+import { YourNeighboursPerformanceCard } from './YourNeighboursPerformanceCard';
+import { ResultsPhotoCarousel } from './ResultsPhotoCarousel';
 import {
   diyChecklistItemsForMissingFurnishedPhotos,
   FURNISHED_LISTING_PHOTO_COMPANION_DIY,
@@ -191,17 +194,6 @@ export default function FullResultsContent() {
             <h1 className="font-heading text-3xl font-semibold tracking-tight text-secondary-900 md:text-4xl">
               {lo === 'ar' ? 'تقرير جاهزية العقار' : 'Market readiness report'}
             </h1>
-            {data.photoUpload.files.filter((f) => f.url).length > 0 && (
-              <div className="flex flex-wrap gap-2 pt-2">
-                {data.photoUpload.files
-                  .filter((f) => f.url)
-                  .slice(0, 6)
-                  .map((f) => (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img key={f.id} src={f.url} alt="" className="h-14 w-14 rounded-lg border border-secondary-200 object-cover shadow-xs" />
-                  ))}
-              </div>
-            )}
           </header>
 
           {/* ── Score + Area Stats + Image Analysis ──────────────────────── */}
@@ -210,7 +202,7 @@ export default function FullResultsContent() {
               <div className="flex min-w-0 flex-col gap-4 md:col-span-1 lg:gap-5">
                 <Card className="flex w-full min-w-0 flex-col border-secondary-200 shadow-xs">
                   <CardHeader className="p-4 pb-1 pt-3 text-center">
-                    <CardTitle className="text-sm font-medium text-secondary-600">
+                    <CardTitle className="font-heading text-base font-semibold text-secondary-900">
                       {lo === 'ar' ? 'جاهزية السوق' : 'Market readiness'}
                     </CardTitle>
                   </CardHeader>
@@ -229,91 +221,25 @@ export default function FullResultsContent() {
                   </CardContent>
                 </Card>
 
-                {/* Property location card */}
-                <Card className="flex w-full flex-col border border-primary-200/60 bg-gradient-to-br from-white to-primary-50/40 shadow-xs">
-                  <CardContent className="p-3 sm:p-3.5 md:py-2.5 md:pe-4 md:ps-4">
-                    <div className="flex flex-col gap-2.5">
-                      <div className="flex min-w-0 items-center gap-2">
-                        <MapPin className="h-4 w-4 shrink-0 text-primary-600" aria-hidden />
-                        <span className="min-w-0 text-sm font-semibold text-secondary-900">{regionName}</span>
-                      </div>
-                      <div className="grid grid-cols-1 gap-2 border-t border-secondary-200/80 pt-2.5 text-sm">
-                        <div className="flex min-w-0 flex-col gap-0.5">
-                          <span className="text-secondary-600">{lo === 'ar' ? 'متوسط السعر الليلي' : 'Average daily rate'}</span>
-                          <span className="font-semibold tabular-nums text-secondary-900">
-                            {formatMoney(areaMarketBaselines.nightlyRateEgp, locale)}
-                            <span className="ms-1 text-xs font-normal text-secondary-500">{lo === 'ar' ? 'ج.م/ليلة' : 'EGP/night'}</span>
-                          </span>
-                        </div>
-                        <div className="flex min-w-0 flex-col gap-0.5">
-                          <span className="text-secondary-600">{lo === 'ar' ? 'متوسط الإشغال' : 'Avg occupancy'}</span>
-                          <span className="font-semibold tabular-nums text-secondary-900">{areaMarketBaselines.occupancyPct}%</span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <ResultsPhotoCarousel photos={data.photoUpload.files} />
               </div>
 
               <div className="flex min-w-0 flex-col gap-4 md:col-span-4 lg:gap-5">
-                <Card className="w-full border-primary-200 bg-primary-50/50 shadow-xs">
-                    <CardHeader className="p-4 pb-1.5 pt-3">
-                      <CardTitle className="font-heading text-base font-semibold text-secondary-900">
-                        {lo === 'ar' ? 'توصية نمط الإدارة' : 'Property analysis'}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="px-4 pb-3 pt-0 text-sm text-secondary-800">
-                      <ul className="mt-2 list-disc space-y-1 ps-5">
-                        <li>
-                          {selectedPainPoints.length > 0
-                            ? mgmtMode === 'MANAGED'
-                              ? lo === 'ar'
-                                ? 'سنركّز على هذه النقاط في خطتك ومع المشرف المخصص لك.'
-                                : 'We will prioritize these pain points in your plan and onboarding.'
-                              : lo === 'ar'
-                                ? 'بناءً على ما اخترته، التعاون في الإدارة أو DIY الكامل يعالجان أغلب هذه النقاط.'
-                                : 'From what you selected, co-management or full DIY usually addresses these pain points.'
-                            : lo === 'ar'
-                              ? 'لا توجد نقاط تشغيلية حرجة مختارة حالياً؛ سنحافظ على خطة إدارة بسيطة وواضحة.'
-                              : 'No critical operational pain points selected yet, so we will keep your management plan simple and focused.'}
-                        </li>
-                        <li>
-                          {!hasUploadedPhotos
-                            ? lo === 'ar'
-                              ? 'تحليل الصور: لا توجد صور مرفوعة بعد؛ أضف صور الغرف لتحسين دقة التوصيات.'
-                              : 'Image analysis: no photos uploaded yet; add room photos to improve recommendation accuracy.'
-                            : strengths.length === 0 && issues.length === 0
-                              ? lo === 'ar'
-                                ? 'تحليل الصور: جارٍ التحليل أو لا توجد ملاحظات مرئية كافية حالياً.'
-                                : 'Image analysis: insights are pending or there are no notable visual findings yet.'
-                              : lo === 'ar'
-                                ? `تحليل الصور: ${strengths.length} نقاط قوة و${issues.length} نقاط تحسين مرصودة.`
-                                : `Image analysis: ${strengths.length} strengths and ${issues.length} improvement areas detected.`}
-                        </li>
-                      </ul>
-                    </CardContent>
-                  </Card>
-
-                <Card className="w-full border-secondary-200 bg-white shadow-xs">
-                  <CardHeader className="p-4 pb-1.5 pt-3">
-                    <CardTitle className="font-heading text-base font-semibold text-secondary-900">
-                      {lo === 'ar' ? 'ما يحتاجه عقارك' : 'What your property needs'}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="px-4 pb-4 pt-0 text-sm text-secondary-800">
-                    <p className="text-secondary-600">
-                      {lo === 'ar'
-                        ? `حددنا ${ruleResult.missingServices.length} خدمة يمكنها تحسين نقاطك من ${scoring.finalScore} إلى ${ruleResult.maxPossibleScore} نقطة.`
-                        : `We identified ${ruleResult.missingServices.length} services that can improve your score from ${scoring.finalScore} to ${ruleResult.maxPossibleScore} points.`}
-                    </p>
-
-                    {revenue.seasonalityFlag && (
-                      <p className="mt-4 max-w-md rounded-lg border border-amber-100 bg-amber-50/80 p-2 text-xs text-amber-900">
-                        {lo === 'ar' ? 'سوق موسمي — لا تعامل الدخل كشهري ثابت.' : 'Seasonal market — avoid assuming flat monthly income year-round.'}
-                      </p>
-                    )}
-                  </CardContent>
-                </Card>
+                <YourNeighboursPerformanceCard
+                  lo={lo}
+                  locale={locale}
+                  regionName={regionName}
+                  nightlyRateEgp={areaMarketBaselines.nightlyRateEgp}
+                  occupancyPct={areaMarketBaselines.occupancyPct}
+                />
+                <PropertyAnalysisCard
+                  lo={lo}
+                  mgmtMode={mgmtMode}
+                  selectedPainPointsCount={selectedPainPoints.length}
+                  hasUploadedPhotos={hasUploadedPhotos}
+                  strengthsCount={strengths.length}
+                  issuesCount={issues.length}
+                />
               </div>
             </div>
 

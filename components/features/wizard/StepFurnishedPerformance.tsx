@@ -66,7 +66,6 @@ export function StepFurnishedPerformance() {
             <h2 className="text-3xl font-heading font-bold text-secondary-900">
               {isAr ? 'الأداء والتشغيل' : 'Performance'}
             </h2>
-            <p className="text-secondary-600 text-sm mt-3 max-w-xl mx-auto">{listingHint(listed, isAr)}</p>
           </div>
 
         </>

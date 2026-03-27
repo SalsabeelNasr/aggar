@@ -4,14 +4,7 @@ import * as React from 'react';
 import { useLocale } from 'next-intl';
 import { useEvaluationStore } from '@/lib/store';
 import { cn } from '@/lib/utils';
-import type {
-  FurnishedBuildingSecurity,
-  FurnishedLeadQualification,
-  FurnishedStrInsuranceCoverage,
-  FurnishedTourismLicenseStatus,
-  ListingStatus,
-  PropertyStateFlag,
-} from '@/models';
+import type { ListingStatus, PropertyStateFlag } from '@/models';
 import { Building2, TrendingDown, TrendingUp, Wand2 } from 'lucide-react';
 import { WizardStepErrorBanner, useWizardFieldError } from '@/components/features/wizard/WizardValidationContext';
 
@@ -66,18 +59,12 @@ export function Step0Listed() {
   const { data, updateData } = useEvaluationStore();
   const listingErr = useWizardFieldError('listingStatus');
   const isAr = locale === 'ar';
-  const flq = data.furnishedLeadQualification;
 
   const selected = data.listingStatus;
-  const patchFlq = (patch: Partial<FurnishedLeadQualification>) => {
-    updateData({
-      furnishedLeadQualification: { ...data.furnishedLeadQualification, ...patch },
-    });
-  };
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full">
-      <WizardStepErrorBanner fieldKeys={['listingStatus', 'buildingSecurity', 'tourismLicenseStatus', 'strInsuranceCoverage']} />
+      <WizardStepErrorBanner fieldKeys={['listingStatus']} />
       <div className="text-center mb-10">
         <h2 className="text-3xl font-heading font-bold text-secondary-900">
           {locale === 'ar'
@@ -106,7 +93,7 @@ export function Step0Listed() {
                 });
               }}
               className={cn(
-                'flex items-start gap-4 p-5 rounded-2xl border-2 text-start transition-all duration-200 focus:outline-none focus-visible:ring-4 ring-primary-500/30',
+                'flex items-center p-4 rounded-xl border-2 transition-all duration-200 focus:outline-none focus-visible:ring-4 ring-primary-500/30 text-start group',
                 isSelected
                   ? 'border-primary-600 bg-primary-50 shadow-sm'
                   : 'border-secondary-200 bg-white hover:border-primary-300 hover:bg-secondary-50'
@@ -114,83 +101,29 @@ export function Step0Listed() {
             >
               <div
                 className={cn(
-                  'p-3 rounded-xl border shrink-0',
-                  isSelected ? 'bg-primary-600 text-white border-primary-600' : 'bg-secondary-50 text-secondary-700 border-secondary-200'
+                  'p-3 rounded-lg mr-4 ml-4 transition-colors shrink-0',
+                  isSelected ? 'bg-primary-600 text-white' : 'bg-secondary-100 text-secondary-600'
                 )}
               >
                 <Icon className="w-6 h-6" />
               </div>
               <div className="flex-1">
-                <div className={cn('font-heading font-bold text-lg', isSelected ? 'text-primary-900' : 'text-secondary-900')}>
+                <h3
+                  className={cn(
+                    'font-heading font-bold text-lg',
+                    isSelected ? 'text-primary-900' : 'text-secondary-900'
+                  )}
+                >
                   {locale === 'ar' ? opt.ar : opt.en}
-                </div>
-                <div className="text-secondary-600 text-sm mt-1">
+                </h3>
+                <p className="text-secondary-500 text-sm mt-1">
                   {locale === 'ar' ? opt.hintAr : opt.hintEn}
-                </div>
+                </p>
               </div>
             </button>
           );
         })}
       </div>
-
-      {selected && (
-        <div className="mt-8 bg-white border border-secondary-200 rounded-2xl p-6 shadow-sm space-y-4">
-          <div className="font-heading font-bold text-secondary-900">
-            {isAr ? 'الأمان والامتثال' : 'Safety & compliance'}
-          </div>
-          <div>
-            <label className="font-semibold text-secondary-900 text-sm block mb-2">
-              {isAr ? 'أمان المبنى' : 'Building security'}
-            </label>
-            <select
-              className="border-2 border-secondary-200 rounded-lg p-3 bg-white w-full"
-              value={flq?.buildingSecurity ?? ''}
-              onChange={(e) =>
-                patchFlq({ buildingSecurity: (e.target.value || undefined) as FurnishedBuildingSecurity | undefined })
-              }
-            >
-              <option value="">{isAr ? 'اختر' : 'Select'}</option>
-              <option value="compound_24_7">{isAr ? 'كمبوند بحماية 24/7' : '24/7 gated / compound security'}</option>
-              <option value="bawab">{isAr ? 'عمارة مع بوّاب' : 'Building with doorman (bawab)'}</option>
-              <option value="unsecured_street">{isAr ? 'وصول من الشارع بدون حراسة ثابتة' : 'Street-level / unsecured access'}</option>
-            </select>
-          </div>
-          <div>
-            <label className="font-semibold text-secondary-900 text-sm block mb-2">
-              {isAr ? 'ترخيص سياحي/تجاري للوحدة؟' : 'Commercial / tourism license for this unit?'}
-            </label>
-            <select
-              className="border-2 border-secondary-200 rounded-lg p-3 bg-white w-full"
-              value={flq?.tourismLicenseStatus ?? ''}
-              onChange={(e) =>
-                patchFlq({ tourismLicenseStatus: (e.target.value || undefined) as FurnishedTourismLicenseStatus | undefined })
-              }
-            >
-              <option value="">{isAr ? 'اختر' : 'Select'}</option>
-              <option value="yes">{isAr ? 'نعم' : 'Yes'}</option>
-              <option value="no">{isAr ? 'لا' : 'No'}</option>
-              <option value="need_help">{isAr ? 'أحتاج مساعدة للحصول عليه' : 'I need help getting one'}</option>
-            </select>
-          </div>
-          <div>
-            <label className="font-semibold text-secondary-900 text-sm block mb-2">
-              {isAr ? 'هل يغطي التأمين أضرار الإيجار قصير الأمد؟' : 'Does insurance cover short-term rental damage?'}
-            </label>
-            <select
-              className="border-2 border-secondary-200 rounded-lg p-3 bg-white w-full"
-              value={flq?.strInsuranceCoverage ?? ''}
-              onChange={(e) =>
-                patchFlq({ strInsuranceCoverage: (e.target.value || undefined) as FurnishedStrInsuranceCoverage | undefined })
-              }
-            >
-              <option value="">{isAr ? 'اختر' : 'Select'}</option>
-              <option value="yes">{isAr ? 'نعم' : 'Yes'}</option>
-              <option value="no">{isAr ? 'لا' : 'No'}</option>
-              <option value="unknown">{isAr ? 'لا أعرف' : "I don't know"}</option>
-            </select>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -375,7 +375,7 @@ export function Step4StateDetails() {
       <WizardStepErrorBanner fieldKeys={[...STEP4_ERROR_KEYS]} />
       <div className="text-center mb-10">
         <h2 className="text-3xl font-heading font-bold text-secondary-900">
-          {isAr ? 'تفاصيل حالة العقار' : 'State details'}
+          {isAr ? 'ما تفاصيل حالة العقار؟' : 'What are the property details?'}
         </h2>
       </div>
 

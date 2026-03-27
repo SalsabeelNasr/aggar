@@ -18,7 +18,7 @@ type Props = {
 
 function ConsultantCardItem({ c, lo, onBook }: { c: ConsultantCard; lo: 'en' | 'ar'; onBook: (c: ConsultantCard) => void }) {
   return (
-    <Card className="flex h-[min(420px,72vh)] w-[240px] shrink-0 flex-col border-secondary-200 shadow-md sm:w-[260px] md:w-[272px]">
+    <Card className="flex h-[min(360px,64vh)] w-[240px] shrink-0 flex-col border-secondary-200 shadow-md sm:w-[260px] md:w-[272px]">
       <CardContent className="flex flex-1 flex-col gap-3 p-5 pt-6">
         <div className="flex flex-col items-center text-center">
           <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-primary-100 text-lg font-semibold text-primary-800">
@@ -27,7 +27,7 @@ function ConsultantCardItem({ c, lo, onBook }: { c: ConsultantCard; lo: 'en' | '
           <p className="mt-3 text-sm font-semibold text-secondary-900">{c.name[lo]}</p>
           <p className="text-xs text-primary-700">{c.title[lo]}</p>
         </div>
-        <p className="line-clamp-4 flex-1 text-center text-sm leading-relaxed text-secondary-600">{c.bio[lo]}</p>
+        <p className="line-clamp-4 h-[5.5rem] text-center text-sm leading-relaxed text-secondary-600">{c.bio[lo]}</p>
         <p className="text-center text-xs text-secondary-500">
           ★ {c.rating} · {c.consultations}+ {lo === 'ar' ? 'جلسات' : 'sessions'}
         </p>
@@ -82,7 +82,7 @@ export function ConsultantsCarousel({ consultants, lo, onBook }: Props) {
       <div className="overflow-hidden rounded-2xl pb-2" dir="ltr">
         <div
           className={cn(
-            'flex w-max gap-4 py-1 animate-consultants-marquee motion-reduce:animate-none',
+            'flex w-max gap-3 py-1 animate-consultants-marquee motion-reduce:animate-none',
             paused && '[animation-play-state:paused]'
           )}
           style={{ animationDuration: `${MARQUEE_DURATION_SEC}s` }}

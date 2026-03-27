@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocale } from 'next-intl';
 import { useEvaluationStore } from '@/lib/store';
 import { createWizardContactSchema, type WizardContactValues } from '@/lib/validations/wizard-contact';
+import { Lock } from 'lucide-react';
 
 const CONTACT_MSG = {
   en: {
@@ -64,9 +65,13 @@ export const Step7Contact = React.forwardRef<Step7ContactHandle, object>(functio
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full">
       <div className="text-center mb-10">
-        <h2 className="text-3xl font-heading font-bold text-secondary-900">
-          {isAr ? 'شارك بيانات التواصل للوصول إلى نتائجك' : 'Share your contact to access your results'}
+        <h2 className="text-3xl font-heading font-bold text-secondary-900 mb-3">
+          {isAr ? 'أين نرسل لك التقرير المخصص؟' : 'Where should we send your custom report?'}
         </h2>
+        <p className="text-secondary-600 flex items-center justify-center gap-2">
+          <Lock className="w-4 h-4 text-green-600" aria-hidden />
+          {isAr ? 'بياناتك آمنة تماماً. لا توجد رسائل مزعجة.' : 'Your data is secure. No spam.'}
+        </p>
       </div>
 
       <form className="bg-white p-8 rounded-2xl border border-secondary-200 shadow-sm flex flex-col gap-6" noValidate>

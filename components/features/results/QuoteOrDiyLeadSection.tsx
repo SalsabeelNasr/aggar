@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import type { CountryCode } from 'libphonenumber-js';
-import { BookOpen, ChevronDown, MessageCircle } from 'lucide-react';
+import { BookOpen, ChevronDown, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 import { useEvaluationStore } from '@/lib/store';
@@ -72,7 +72,6 @@ export function QuoteOrDiyLeadSection({
   currentMonthlyText,
 }: Props) {
   const { updateDiyGuideLead, diyGuideLead } = useEvaluationStore();
-  const [submitted, setSubmitted] = React.useState(!!diyGuideLead);
   const isAr = lo === 'ar';
   const messages = isAr
     ? {
@@ -113,20 +112,26 @@ export function QuoteOrDiyLeadSection({
       phone: normalizedPhone,
       requestedAtISO: new Date().toISOString(),
     });
-    setSubmitted(true);
   });
 
   const errCls = 'border-red-500 focus:border-red-500';
-  const whatsappHref = 'https://wa.me/201140988255';
 
   return (
     <div className="space-y-4">
       <section className="rounded-xl border border-secondary-200 bg-gradient-to-br from-secondary-50 to-white p-5 shadow-xs">
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-10 lg:divide-x lg:divide-secondary-200">
           <div className="flex h-full flex-col gap-3 lg:col-span-4 lg:pe-10">
+            <div className="mb-1 flex items-center gap-3">
+              <div className="rounded-lg bg-secondary-100 p-2.5">
+                <Mail className="h-5 w-5 text-secondary-600" />
+              </div>
+              <h3 className="font-heading text-base font-semibold text-secondary-900">
+                {isAr ? 'مهتم تبني هذا؟' : 'Reach out to us'}
+              </h3>
+            </div>
             <div className="py-2">
               <div className="flex flex-col gap-3">
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center justify-between gap-2 border-b border-secondary-100 pb-2">
                   <span className="font-heading text-xs font-extrabold uppercase tracking-wider text-secondary-700">
                     {isAr ? 'استثمر' : 'Invest'}
                   </span>
@@ -135,7 +140,7 @@ export function QuoteOrDiyLeadSection({
                     <span className="ms-1 text-[10px] font-semibold text-secondary-500">EGP</span>
                   </span>
                 </div>
-                <div className="flex flex-col gap-1 border-b border-secondary-100 pb-2">
+                <div className="flex flex-col gap-1">
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-heading text-xs font-extrabold uppercase tracking-tight text-primary-700">
                       {isAr ? 'تحصل على' : 'get'}
@@ -158,23 +163,10 @@ export function QuoteOrDiyLeadSection({
                 </div>
               </div>
             </div>
-            <h3 className="font-heading text-base font-semibold text-secondary-900">
-              {isAr ? 'مهتم تبني هذا؟' : 'Reach out to us'}
-            </h3>
-            <div className={cn('mt-auto flex flex-wrap gap-2', isAr ? 'justify-start' : 'justify-start')}>
-              <Button type="button" className="shadow-xs" onClick={onRequestQuote}>
-                {isAr ? 'طلب عرض سعر' : 'Email a qoute'}
+            <div className={cn('mt-auto flex flex-col gap-2', isAr ? 'justify-start' : 'justify-start')}>
+              <Button type="button" className="mt-auto w-full shadow-xs" onClick={onRequestQuote}>
+                {isAr ? 'طلب عرض سعر' : 'Email me a qoute'}
               </Button>
-              <a
-                href={whatsappHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={isAr ? 'تواصل عبر واتساب' : 'Contact via WhatsApp'}
-                className="inline-flex items-center gap-2 rounded-lg border border-secondary-200 bg-white px-3 py-2 text-sm font-medium text-green-700 shadow-xs transition-colors hover:bg-secondary-50"
-              >
-                <MessageCircle className="h-4 w-4" />
-                {isAr ? 'واتساب' : 'WhatsApp'}
-              </a>
             </div>
           </div>
 
@@ -190,92 +182,86 @@ export function QuoteOrDiyLeadSection({
               </div>
             </div>
 
-            {submitted ? (
-              <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800">
-                {isAr ? 'تم التسجيل! سنرسل لك الدليل قريباً.' : "You're registered! We'll send you the guide soon."}
-              </div>
-            ) : (
-              <form onSubmit={onSubmit} noValidate className="flex h-full flex-col gap-3">
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                  <div>
-                    <input
-                      type="text"
-                      placeholder={isAr ? 'الاسم الكامل' : 'Full name'}
-                      aria-invalid={form.formState.errors.fullName ? true : undefined}
-                      className={cn(
-                        'w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary-600 focus:ring-2 focus:ring-primary-500/30',
-                        form.formState.errors.fullName ? errCls : 'border-secondary-200'
-                      )}
-                      {...form.register('fullName')}
-                    />
-                    {form.formState.errors.fullName && (
-                      <p className="mt-1 text-sm font-medium text-red-600">{form.formState.errors.fullName.message}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <div
-                      className={cn(
-                        'flex overflow-hidden rounded-lg border bg-white transition-colors focus-within:border-primary-600 focus-within:ring-2 focus-within:ring-primary-500/30',
-                        form.formState.errors.phone ? 'border-red-500' : 'border-secondary-200'
-                      )}
-                    >
-                      <div className="relative w-11 shrink-0 border-e border-secondary-200 bg-secondary-50">
-                        <select
-                          aria-label={isAr ? 'رمز الدولة' : 'Country code'}
-                          className="h-full w-full cursor-pointer appearance-none bg-transparent py-2.5 text-transparent outline-none"
-                          {...form.register('countryCode')}
-                        >
-                          {PHONE_COUNTRIES.map((country) => (
-                            <option key={country.code} value={country.code}>
-                              {country.flag} {country.dial} - {isAr ? country.label.ar : country.label.en}
-                            </option>
-                          ))}
-                        </select>
-                        <span aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center ps-0.5">
-                          <span className="flex items-center gap-0.5 text-base">
-                            {selectedCountry.flag}
-                            <ChevronDown aria-hidden className="h-3.5 w-3.5 text-secondary-500" />
-                          </span>
-                        </span>
-                      </div>
-                      <input
-                        type="tel"
-                        dir="ltr"
-                        placeholder={isAr ? `${selectedCountry.dial} رقم الهاتف` : `${selectedCountry.dial} Phone number`}
-                        className="w-full px-3 py-2.5 text-sm outline-none"
-                        aria-invalid={form.formState.errors.phone ? true : undefined}
-                        {...form.register('phone')}
-                      />
-                    </div>
-                    {form.formState.errors.phone && (
-                      <p className="mt-1 text-sm font-medium text-red-600">{form.formState.errors.phone.message}</p>
-                    )}
-                  </div>
-                </div>
-
+            <form onSubmit={onSubmit} noValidate className="flex h-full flex-col gap-3">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 <div>
                   <input
-                    type="email"
-                    dir="ltr"
-                    placeholder={isAr ? 'البريد الإلكتروني' : 'Email address'}
-                    aria-invalid={form.formState.errors.email ? true : undefined}
+                    type="text"
+                    placeholder={isAr ? 'الاسم الكامل' : 'Full name'}
+                    aria-invalid={form.formState.errors.fullName ? true : undefined}
                     className={cn(
                       'w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary-600 focus:ring-2 focus:ring-primary-500/30',
-                      form.formState.errors.email ? errCls : 'border-secondary-200'
+                      form.formState.errors.fullName ? errCls : 'border-secondary-200'
                     )}
-                    {...form.register('email')}
+                    {...form.register('fullName')}
                   />
-                  {form.formState.errors.email && (
-                    <p className="mt-1 text-sm font-medium text-red-600">{form.formState.errors.email.message}</p>
+                  {form.formState.errors.fullName && (
+                    <p className="mt-1 text-sm font-medium text-red-600">{form.formState.errors.fullName.message}</p>
                   )}
                 </div>
 
-                <Button type="submit" className="mt-auto w-full shadow-xs">
-                  {isAr ? 'أرسل لي الدليل' : 'Send me the guide'}
-                </Button>
-              </form>
-            )}
+                <div>
+                  <div
+                    className={cn(
+                      'flex overflow-hidden rounded-lg border bg-white transition-colors focus-within:border-primary-600 focus-within:ring-2 focus-within:ring-primary-500/30',
+                      form.formState.errors.phone ? 'border-red-500' : 'border-secondary-200'
+                    )}
+                  >
+                    <div className="relative w-11 shrink-0 border-e border-secondary-200 bg-secondary-50">
+                      <select
+                        aria-label={isAr ? 'رمز الدولة' : 'Country code'}
+                        className="h-full w-full cursor-pointer appearance-none bg-transparent py-2.5 text-transparent outline-none"
+                        {...form.register('countryCode')}
+                      >
+                        {PHONE_COUNTRIES.map((country) => (
+                          <option key={country.code} value={country.code}>
+                            {country.flag} {country.dial} - {isAr ? country.label.ar : country.label.en}
+                          </option>
+                        ))}
+                      </select>
+                      <span aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center ps-0.5">
+                        <span className="flex items-center gap-0.5 text-base">
+                          {selectedCountry.flag}
+                          <ChevronDown aria-hidden className="h-3.5 w-3.5 text-secondary-500" />
+                        </span>
+                      </span>
+                    </div>
+                    <input
+                      type="tel"
+                      dir="ltr"
+                      placeholder={isAr ? `${selectedCountry.dial} رقم الهاتف` : `${selectedCountry.dial} Phone number`}
+                      className="w-full px-3 py-2.5 text-sm outline-none"
+                      aria-invalid={form.formState.errors.phone ? true : undefined}
+                      {...form.register('phone')}
+                    />
+                  </div>
+                  {form.formState.errors.phone && (
+                    <p className="mt-1 text-sm font-medium text-red-600">{form.formState.errors.phone.message}</p>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <input
+                  type="email"
+                  dir="ltr"
+                  placeholder={isAr ? 'البريد الإلكتروني' : 'Email address'}
+                  aria-invalid={form.formState.errors.email ? true : undefined}
+                  className={cn(
+                    'w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary-600 focus:ring-2 focus:ring-primary-500/30',
+                    form.formState.errors.email ? errCls : 'border-secondary-200'
+                  )}
+                  {...form.register('email')}
+                />
+                {form.formState.errors.email && (
+                  <p className="mt-1 text-sm font-medium text-red-600">{form.formState.errors.email.message}</p>
+                )}
+              </div>
+
+              <Button type="submit" className="mt-auto w-full shadow-xs">
+                {isAr ? 'أرسل لي الدليل' : 'Send me the guide'}
+              </Button>
+            </form>
           </div>
         </div>
       </section>

@@ -6,29 +6,36 @@ import { useEvaluationStore } from '@/lib/store';
 import type { BudgetBand } from '@/lib/data/budgetBands';
 import { BUDGET_BAND_OPTIONS } from '@/lib/data/budgetBands';
 import { cn } from '@/lib/utils';
-import { Wallet, Ruler } from 'lucide-react';
+import { Wallet } from 'lucide-react';
 import { WizardStepErrorBanner, useWizardFieldError } from '@/components/features/wizard/WizardValidationContext';
+import type { FurnishingBudgetBand, FurnishingPaymentPreference, UnfinishedBudgetPerSqm, UnfinishedFinancingPreference } from '@/models';
 
 export function StepBudgetSize() {
   const locale = useLocale();
   const { data, updateData } = useEvaluationStore();
   const budgetErr = useWizardFieldError('budgetBand');
-  const sqmErr = useWizardFieldError('propertySizeSqm');
+  const unfinishedBudgetErr = useWizardFieldError('unfinishedBudgetPerSqm');
+  const unfinishedFinanceErr = useWizardFieldError('unfinishedFinancingPreference');
+  const furnishingBudgetErr = useWizardFieldError('furnishingBudgetBand');
+  const furnishingPayErr = useWizardFieldError('furnishingPaymentPreference');
 
   const isAr = locale === 'ar';
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full">
-      <WizardStepErrorBanner fieldKeys={['budgetBand', 'propertySizeSqm']} />
+      <WizardStepErrorBanner
+        fieldKeys={[
+          'budgetBand',
+          'unfinishedBudgetPerSqm',
+          'unfinishedFinancingPreference',
+          'furnishingBudgetBand',
+          'furnishingPaymentPreference',
+        ]}
+      />
       <div className="text-center mb-10">
         <h2 className="text-3xl font-heading font-bold text-secondary-900">
-          {isAr ? 'الميزانية والمساحة' : 'Budget & Property Size'}
+          {isAr ? 'ما هي ميزانيتك للاستثمار؟' : 'What is your investment budget?'}
         </h2>
-        <p className="text-secondary-600 mt-2">
-          {isAr
-            ? 'ساعدنا نفهم ميزانيتك ومساحة العقار عشان نقدر نقترح الخطة المناسبة.'
-            : "Help us understand your budget and property size so we can recommend the right plan."}
-        </p>
       </div>
 
       {/* Budget band selection */}
@@ -67,35 +74,198 @@ export function StepBudgetSize() {
         </div>
       </div>
 
-      {/* Property size input */}
-      <div>
-        <div className="flex items-center gap-2 mb-4">
-          <Ruler className="w-5 h-5 text-primary-600" />
-          <h3 className="font-heading font-bold text-lg text-secondary-900">
-            {isAr ? 'مساحة العقار (متر مربع)' : 'Property size (sqm)'}
-          </h3>
-        </div>
-        <div className={cn('rounded-xl p-1 -m-1', sqmErr.invalid && 'ring-2 ring-red-500 ring-offset-2')}>
-          <input
-            type="number"
-            min={10}
-            max={2000}
-            value={data.propertySizeSqm ?? ''}
-            onChange={(e) => {
-              const val = e.target.value === '' ? undefined : Number(e.target.value);
-              updateData({ propertySizeSqm: val });
-            }}
-            placeholder={isAr ? 'مثال: ١٢٠' : 'e.g. 120'}
+      {data.stateFlag === 'SHELL' && (
+        <div className="space-y-6">
+          <div
             className={cn(
-              'w-full p-4 rounded-xl border-2 text-lg font-heading focus:outline-none focus:ring-4 ring-primary-500/30 transition-all',
-              sqmErr.invalid ? 'border-red-500' : 'border-secondary-200 focus:border-primary-600'
+              'bg-white border rounded-2xl p-6 shadow-sm w-full',
+              unfinishedBudgetErr.invalid ? 'border-red-500 border-2' : 'border-secondary-200'
             )}
-          />
+          >
+            <div className="font-heading font-bold text-secondary-900 mb-3">
+              {isAr ? 'ميزانية التشطيب للمتر المربع' : 'Finishing budget per sqm'}
+            </div>
+            <div className="flex flex-col gap-2">
+              {(
+                [
+                  {
+                    id: 'economy' as const,
+                    en: 'Economy: 2,500 – 4,000 EGP / sqm',
+                    ar: 'اقتصادي: 2,500 – 4,000 ج.م / م²',
+                  },
+                  {
+                    id: 'premium' as const,
+                    en: 'Premium: 4,000 – 7,000 EGP / sqm',
+                    ar: 'مميز: 4,000 – 7,000 ج.م / م²',
+                  },
+                  {
+                    id: 'luxury_custom' as const,
+                    en: 'Luxury / custom: 7,000+ EGP / sqm',
+                    ar: 'فاخر/مخصص: 7,000+ ج.م / م²',
+                  },
+                ] satisfies { id: UnfinishedBudgetPerSqm; en: string; ar: string }[]
+              ).map((opt) => {
+                const checked = data.unfinishedBudgetPerSqm === opt.id;
+                return (
+                  <label
+                    key={opt.id}
+                    className={cn(
+                      'flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-colors',
+                      checked ? 'border-primary-600 bg-primary-50' : 'border-secondary-200 hover:border-primary-300'
+                    )}
+                  >
+                    <input
+                      type="radio"
+                      name="unfinishedBudgetPerSqm"
+                      className="accent-primary-600"
+                      checked={checked}
+                      onChange={() => updateData({ unfinishedBudgetPerSqm: opt.id })}
+                    />
+                    <span className="text-base font-medium text-secondary-900">{isAr ? opt.ar : opt.en}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+
+          <div
+            className={cn(
+              'bg-white border rounded-2xl p-6 shadow-sm w-full',
+              unfinishedFinanceErr.invalid ? 'border-red-500 border-2' : 'border-secondary-200'
+            )}
+          >
+            <div className="font-heading font-bold text-secondary-900 mb-3">
+              {isAr ? 'تفضيل التمويل' : 'Financing preference'}
+            </div>
+            <div className="flex flex-col gap-2">
+              {(
+                [
+                  {
+                    id: 'lump_sum' as const,
+                    en: 'Lump sum (cash discount preferred)',
+                    ar: 'دفعة واحدة (يفضّل خصم نقدي)',
+                  },
+                  {
+                    id: 'installment_12_24' as const,
+                    en: 'Installment plan (12–24 months, e.g. valU / contact consumer finance)',
+                    ar: 'تقسيط (12–24 شهرًا، تمويل استهلاكي مثل valU / contact)',
+                  },
+                  {
+                    id: 'bank_loan_3_5y' as const,
+                    en: 'Long-term bank loan (3–5 years refurbishment loan)',
+                    ar: 'قرض بنكي طويل (3–5 سنوات لتشطيب/تجديد)',
+                  },
+                ] satisfies { id: UnfinishedFinancingPreference; en: string; ar: string }[]
+              ).map((opt) => {
+                const checked = data.unfinishedFinancingPreference === opt.id;
+                return (
+                  <label
+                    key={opt.id}
+                    className={cn(
+                      'flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-colors',
+                      checked ? 'border-primary-600 bg-primary-50' : 'border-secondary-200 hover:border-primary-300'
+                    )}
+                  >
+                    <input
+                      type="radio"
+                      name="unfinishedFinancingPreference"
+                      className="accent-primary-600"
+                      checked={checked}
+                      onChange={() => updateData({ unfinishedFinancingPreference: opt.id })}
+                    />
+                    <span className="text-base font-medium text-secondary-900">{isAr ? opt.ar : opt.en}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
         </div>
-        <p className="text-secondary-500 text-sm mt-2">
-          {isAr ? 'المساحة تساعدنا نحسب تكلفة التشطيب بدقة أكبر.' : 'Size helps us estimate renovation costs more accurately.'}
-        </p>
-      </div>
+      )}
+
+      {data.stateFlag === 'FINISHED_EMPTY' && (
+        <div className="space-y-6">
+          <div
+            className={cn(
+              'bg-white border rounded-2xl p-6 shadow-sm w-full',
+              furnishingBudgetErr.invalid ? 'border-red-500 border-2' : 'border-secondary-200'
+            )}
+          >
+            <div className="font-heading font-bold text-secondary-900 mb-3">
+              {isAr ? 'ميزانية الفرش (تقريبية)' : 'Furnishing budget range'}
+            </div>
+            <div className="flex flex-col gap-2">
+              {(
+                [
+                  { id: 'budget_250_450k' as const, en: 'Budget: EGP 250k – 450k', ar: 'اقتصادي: 250 – 450 ألف ج.م' },
+                  { id: 'premium_500_850k' as const, en: 'Premium: EGP 500k – 850k', ar: 'مميز: 500 – 850 ألف ج.م' },
+                  { id: 'luxury_1m_plus' as const, en: 'Luxury: EGP 1M+', ar: 'فاخر: مليون ج.م فأكثر' },
+                ] satisfies { id: FurnishingBudgetBand; en: string; ar: string }[]
+              ).map((opt) => {
+                const checked = data.furnishingBudgetBand === opt.id;
+                return (
+                  <label
+                    key={opt.id}
+                    className={cn(
+                      'flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-colors',
+                      checked ? 'border-primary-600 bg-primary-50' : 'border-secondary-200 hover:border-primary-300'
+                    )}
+                  >
+                    <input
+                      type="radio"
+                      name="furnishingBudgetBand"
+                      className="accent-primary-600"
+                      checked={checked}
+                      onChange={() => updateData({ furnishingBudgetBand: opt.id })}
+                    />
+                    <span className="text-base font-medium text-secondary-900">{isAr ? opt.ar : opt.en}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+
+          <div
+            className={cn(
+              'bg-white border rounded-2xl p-6 shadow-sm w-full',
+              furnishingPayErr.invalid ? 'border-red-500 border-2' : 'border-secondary-200'
+            )}
+          >
+            <div className="font-heading font-bold text-secondary-900 mb-3">
+              {isAr ? 'تفضيل الدفع / التمويل' : 'Payment & financing preference'}
+            </div>
+            <div className="flex flex-col gap-2">
+              {(
+                [
+                  { id: 'cash_package_discount' as const, en: 'Cash (package discount)', ar: 'نقدًا (خصم على الباقة)' },
+                  { id: 'short_installments_card_6_12' as const, en: 'Short installments (6–12 months, card)', ar: 'تقسيط قصير (6–12 شهرًا - بطاقة)' },
+                  { id: 'long_finance_valu_contact_halan' as const, en: 'Long-term financing (24–60 mo. via valU / Contact / Halan)', ar: 'تمويل طويل (24–60 شهرًا - valU / Contact / Halan)' },
+                  { id: 'revenue_share_management' as const, en: 'Revenue share (furnishing for mgmt %)', ar: 'مشاركة إيرادات (فرش مقابل نسبة تشغيل)' },
+                ] satisfies { id: FurnishingPaymentPreference; en: string; ar: string }[]
+              ).map((opt) => {
+                const checked = data.furnishingPaymentPreference === opt.id;
+                return (
+                  <label
+                    key={opt.id}
+                    className={cn(
+                      'flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-colors',
+                      checked ? 'border-primary-600 bg-primary-50' : 'border-secondary-200 hover:border-primary-300'
+                    )}
+                  >
+                    <input
+                      type="radio"
+                      name="furnishingPaymentPreference"
+                      className="accent-primary-600"
+                      checked={checked}
+                      onChange={() => updateData({ furnishingPaymentPreference: opt.id })}
+                    />
+                    <span className="text-base font-medium text-secondary-900">{isAr ? opt.ar : opt.en}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -14,7 +14,6 @@ import { Step0Listed } from '@/components/features/wizard/Step0Listed';
 import { Step1Location } from '@/components/features/wizard/Step1Location';
 import { Step2Asset } from '@/components/features/wizard/Step2Asset';
 import { Step3State } from '@/components/features/wizard/Step3State';
-import { Step4StateDetails } from '@/components/features/wizard/Step4StateDetails';
 import { StepPainPoints } from '@/components/features/wizard/StepPainPoints';
 import { StepFurnishedPerformance } from '@/components/features/wizard/StepFurnishedPerformance';
 import { Step5Hassle } from '@/components/features/wizard/Step5Hassle';
@@ -24,9 +23,9 @@ import { StepBudgetSize } from '@/components/features/wizard/StepBudgetSize';
 import { WizardValidationContext } from '@/components/features/wizard/WizardValidationContext';
 import { validateEvaluationStep } from '@/lib/validations/wizard-steps';
 
-/** Non-furnished: Property → Location → Listed? → State → Details → Budget → Photos → Operations → Results */
-const stepsAR_NF = ['العقار', 'الموقع', 'هل عقارك مُعلن؟', 'حالة العقار', 'التفاصيل', 'الميزانية', 'الصور', 'التشغيل', 'النتيجة'];
-const stepsEN_NF = ['Property', 'Location', 'Listed?', 'State', 'Details', 'Budget', 'Photos', 'Operations', 'Results'];
+/** Non-furnished: Property → Location → Listed? → State → Budget → Photos → Operations → Results */
+const stepsAR_NF = ['العقار', 'الموقع', 'هل عقارك مُعلن؟', 'حالة العقار', 'الميزانية', 'الصور', 'التشغيل', 'بيانات التواصل'];
+const stepsEN_NF = ['Property', 'Location', 'Listed?', 'State', 'Budget', 'Photos', 'Operations', 'Contact'];
 
 /** Furnished: + Pain points + Performance before Results */
 const stepsAR_F = [
@@ -34,32 +33,30 @@ const stepsAR_F = [
   'الموقع',
   'هل عقارك مُعلن؟',
   'حالة العقار',
-  'التفاصيل',
   'الميزانية',
   'الصور',
   'التشغيل',
   'نقاط الألم',
   'الأداء',
-  'النتيجة',
+  'بيانات التواصل',
 ];
 const stepsEN_F = [
   'Property',
   'Location',
   'Listed?',
   'State',
-  'Details',
   'Budget',
   'Photos',
   'Operations',
   'Pain points',
   'Performance',
-  'Results',
+  'Contact',
 ];
 
 export default function EvaluatePage() {
   const locale = useLocale();
   const router = useRouter();
-  const { currentStep, nextStep, prevStep, setStep, setResultsAccess, updateLead, updateData, data } =
+  const { currentStep, nextStep, prevStep, setStep, setResultsAccess, updateLead, updateData, updateDiyGuideLead, data } =
     useEvaluationStore();
 
   const [wizardFieldErrors, setWizardFieldErrors] = React.useState<Record<string, string>>({});
@@ -67,7 +64,7 @@ export default function EvaluatePage() {
 
   const isFurnished = data.stateFlag === 'FURNISHED';
   const skipPropertyStateStep = listingStatusSkipsPropertyStateStep(data.listingStatus);
-  const contactStep = isFurnished ? 10 : 8;
+  const finalStep = isFurnished ? 9 : 7;
 
   const steps = React.useMemo(() => {
     const ar = [...(isFurnished ? stepsAR_F : stepsAR_NF)];
@@ -89,18 +86,18 @@ export default function EvaluatePage() {
   }, [skipPropertyStateStep, currentStep, setStep, updateData]);
 
   React.useEffect(() => {
-    if (currentStep > contactStep) setStep(contactStep);
-  }, [currentStep, contactStep, setStep]);
+    if (currentStep > finalStep) setStep(finalStep);
+  }, [currentStep, finalStep, setStep]);
 
   const runStepValidation = React.useCallback(() => {
     return validateEvaluationStep({
       currentStep,
       data,
       isFurnished,
-      contactStep,
+      finalStep,
       locale: locale === 'ar' ? 'ar' : 'en',
     });
-  }, [contactStep, currentStep, data, isFurnished, locale]);
+  }, [finalStep, currentStep, data, isFurnished, locale]);
 
   const handleNext = async () => {
     if (currentStep === 2 && skipPropertyStateStep) {
@@ -114,12 +111,19 @@ export default function EvaluatePage() {
       return;
     }
 
-    if (currentStep === contactStep) {
+    if (currentStep === finalStep) {
       const ok = await contactRef.current?.validateAndSync();
       if (ok !== true) return;
       setWizardFieldErrors({});
       setResultsAccess('full');
       updateLead({ submittedAtISO: new Date().toISOString() });
+      const { lead } = useEvaluationStore.getState();
+      updateDiyGuideLead({
+        fullName: (lead.fullName ?? '').trim(),
+        email: (lead.email ?? '').trim(),
+        phone: (lead.whatsapp ?? '').trim(),
+        requestedAtISO: new Date().toISOString(),
+      });
       router.push('/results');
       return;
     }
@@ -159,13 +163,12 @@ export default function EvaluatePage() {
           {currentStep === 1 && <Step1Location />}
           {currentStep === 2 && <Step0Listed />}
           {currentStep === 3 && <Step3State />}
-          {currentStep === 4 && <Step4StateDetails />}
-          {currentStep === 5 && <StepBudgetSize />}
-          {currentStep === 6 && <StepPhotos />}
-          {currentStep === 7 && <Step5Hassle />}
-          {currentStep === 8 && (isFurnished ? <StepPainPoints /> : <Step7Contact ref={contactRef} />)}
-          {currentStep === 9 && isFurnished && <StepFurnishedPerformance />}
-          {currentStep === 10 && isFurnished && <Step7Contact ref={contactRef} />}
+          {currentStep === 4 && <StepBudgetSize />}
+          {currentStep === 5 && <StepPhotos />}
+          {currentStep === 6 && <Step5Hassle />}
+          {currentStep === 7 && (isFurnished ? <StepPainPoints /> : <Step7Contact ref={contactRef} />)}
+          {currentStep === 8 && isFurnished && <StepFurnishedPerformance />}
+          {currentStep === 9 && isFurnished && <Step7Contact ref={contactRef} />}
         </div>
       </WizardValidationContext.Provider>
 
@@ -176,11 +179,11 @@ export default function EvaluatePage() {
         </Button>
         <Button onClick={() => void handleNext()} className="gap-2 px-6 shadow-sm shadow-primary-500/20 shrink-0">
           {locale === 'ar'
-            ? currentStep === contactStep
-              ? 'عرض النتيجة المخصصة'
+            ? currentStep === finalStep
+              ? 'إنشاء تقريري'
               : 'التالي'
-            : currentStep === contactStep
-              ? 'Get Custom Results'
+            : currentStep === finalStep
+              ? 'Generate my report'
               : 'Next'}
           {locale === 'ar' ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
         </Button>

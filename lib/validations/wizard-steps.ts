@@ -35,12 +35,12 @@ export function validateEvaluationStep(params: {
   currentStep: number;
   data: WizardData;
   isFurnished: boolean;
-  contactStep: number;
+  finalStep: number;
   locale: Locale;
 }): WizardStepValidationResult {
-  const { currentStep, data, isFurnished, contactStep, locale } = params;
-  /** Contact step handled by Step7Contact RHF — do not validate lead here. */
-  if (currentStep === contactStep) return { ok: true };
+  const { currentStep, data, isFurnished, finalStep, locale } = params;
+  /** Final summary step: no extra validation here. */
+  if (currentStep === finalStep) return { ok: true };
 
   switch (currentStep) {
     case 0:
@@ -53,17 +53,15 @@ export function validateEvaluationStep(params: {
       if (listingStatusSkipsPropertyStateStep(data.listingStatus)) return { ok: true };
       return validateStepState(data, locale);
     case 4:
-      return validateStepStateDetails(data, locale);
-    case 5:
       return validateStepBudgetSize(data, locale);
-    case 6:
+    case 5:
       return validateStepPhotos(data, locale);
-    case 7:
+    case 6:
       return validateStepHassle(data, locale);
-    case 8:
+    case 7:
       if (isFurnished) return validateStepPainPoints(data, locale);
       return { ok: true };
-    case 9:
+    case 8:
       if (isFurnished) return validateStepFurnishedPerformance(data, locale);
       return { ok: true };
     default:
@@ -99,37 +97,25 @@ function validateStepListed(data: WizardData, locale: Locale): WizardStepValidat
   const s = m(locale);
   const errors: Record<string, string> = {};
   if (!data.listingStatus) errors.listingStatus = s.selectOption;
-  if (!data.furnishedLeadQualification?.buildingSecurity) errors.buildingSecurity = s.selectOption;
-  if (!data.furnishedLeadQualification?.tourismLicenseStatus) errors.tourismLicenseStatus = s.selectOption;
-  if (!data.furnishedLeadQualification?.strInsuranceCoverage) errors.strInsuranceCoverage = s.selectOption;
   if (Object.keys(errors).length) return fail(errors);
   return { ok: true };
 }
 
 function validateStepState(data: WizardData, locale: Locale): WizardStepValidationResult {
   const s = m(locale);
-  if (!data.stateFlag) return fail({ stateFlag: s.selectOption });
-  return { ok: true };
-}
-
-function validateStepStateDetails(data: WizardData, locale: Locale): WizardStepValidationResult {
-  const s = m(locale);
   const sf = data.stateFlag;
   const errors: Record<string, string> = {};
+  if (!sf) return fail({ stateFlag: s.selectOption });
 
   if (sf === 'SHELL') {
     if (!data.unfinishedFinishingLevel) errors.unfinishedFinishingLevel = s.selectOption;
     if (!data.unfinishedInfrastructure?.length) errors.unfinishedInfrastructure = s.selectAtLeastOne;
     if (!data.unfinishedSmartHome) errors.unfinishedSmartHome = s.selectOption;
-    if (!data.unfinishedBudgetPerSqm) errors.unfinishedBudgetPerSqm = s.selectOption;
-    if (!data.unfinishedFinancingPreference) errors.unfinishedFinancingPreference = s.selectOption;
   } else if (sf === 'FINISHED_EMPTY') {
     if (!data.furnishingScope?.length) errors.furnishingScope = s.selectAtLeastOne;
     if (!data.furnishingAesthetic) errors.furnishingAesthetic = s.selectOption;
     if (typeof data.petFriendly !== 'boolean') errors.petFriendly = s.selectOption;
     if (!data.furnishingInstallDeadline) errors.furnishingInstallDeadline = s.selectOption;
-    if (!data.furnishingBudgetBand) errors.furnishingBudgetBand = s.selectOption;
-    if (!data.furnishingPaymentPreference) errors.furnishingPaymentPreference = s.selectOption;
   } else if (sf === 'FURNISHED') {
     if (!data.furnishedUnitLuxe?.waterHeating) errors.waterHeating = s.selectOption;
     if (!data.acCoverage) errors.acCoverage = s.selectOption;
@@ -149,14 +135,23 @@ function validateStepBudgetSize(data: WizardData, locale: Locale): WizardStepVal
   if (!data.budgetBand) errors.budgetBand = s.selectOption;
   const sqm = data.propertySizeSqm;
   if (sqm == null || Number.isNaN(sqm) || sqm < 10 || sqm > 2000) errors.propertySizeSqm = s.fillField;
+
+   if (data.stateFlag === 'SHELL') {
+     if (!data.unfinishedBudgetPerSqm) errors.unfinishedBudgetPerSqm = s.selectOption;
+     if (!data.unfinishedFinancingPreference) errors.unfinishedFinancingPreference = s.selectOption;
+   }
+   if (data.stateFlag === 'FINISHED_EMPTY') {
+     if (!data.furnishingBudgetBand) errors.furnishingBudgetBand = s.selectOption;
+     if (!data.furnishingPaymentPreference) errors.furnishingPaymentPreference = s.selectOption;
+   }
+
   return Object.keys(errors).length ? fail(errors) : { ok: true };
 }
 
 function validateStepPhotos(data: WizardData, locale: Locale): WizardStepValidationResult {
   const s = m(locale);
   const files = data.photoUpload?.files?.length ?? 0;
-  const signals = data.photoUpload?.aiSignals?.length ?? 0;
-  if (files < 1 && signals < 1) return fail({ photoUpload: s.zipPhotos });
+  if (files < 1) return fail({ photoUpload: s.zipPhotos });
 
   if (data.stateFlag === 'FURNISHED') {
     const checklist = data.furnishedPhotoChecklist ?? [];
