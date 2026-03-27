@@ -205,6 +205,9 @@ export default function FullResultsContent() {
                           </div>
                         </div>
                       </div>
+                      <p className="mt-2 text-center text-xs text-secondary-600 max-w-[220px]">
+                        {report.cardInsights?.readinessNarrative?.[lo] ?? ''}
+                      </p>
                     </div>
                   </CardContent>
                 </Card>
@@ -219,14 +222,13 @@ export default function FullResultsContent() {
                   regionName={regionName}
                   nightlyRateEgp={areaMarketBaselines.nightlyRateEgp}
                   occupancyPct={areaMarketBaselines.occupancyPct}
+                  typicalMonthlyUsd={report.cardInsights?.neighbours?.typicalMonthlyUsd ?? null}
+                  top10MonthlyUsd={report.cardInsights?.neighbours?.top10MonthlyUsd ?? null}
+                  peakSeasonNote={report.cardInsights?.neighbours?.peakSeasonNote ?? { en: '', ar: '' }}
                 />
                 <PropertyAnalysisCard
                   lo={lo}
-                  mgmtMode={mgmtMode}
-                  selectedPainPointsCount={selectedPainPoints.length}
-                  hasUploadedPhotos={hasUploadedPhotos}
-                  strengthsCount={strengths.length}
-                  issuesCount={issues.length}
+                  bullets={report.cardInsights?.propertyAnalysisBullets ?? []}
                 />
               </div>
             </div>

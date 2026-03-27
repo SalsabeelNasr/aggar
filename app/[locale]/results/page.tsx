@@ -16,12 +16,18 @@ export default function ResultsPage() {
   const [storeHydrated, setStoreHydrated] = React.useState(false);
 
   React.useEffect(() => {
+    // Fallback: avoid indefinite loading if hydration callbacks don't fire (Safari/private mode edge-cases).
+    const t = window.setTimeout(() => setStoreHydrated(true), 1500);
     if (useEvaluationStore.persist.hasHydrated()) {
       setStoreHydrated(true);
-      return;
+      window.clearTimeout(t);
+      return () => window.clearTimeout(t);
     }
     const unsub = useEvaluationStore.persist.onFinishHydration(() => setStoreHydrated(true));
-    return unsub;
+    return () => {
+      window.clearTimeout(t);
+      unsub();
+    };
   }, []);
 
   if (!storeHydrated || resultsAccess !== 'full' || !report) {
@@ -41,7 +47,7 @@ export default function ResultsPage() {
             {locale === 'ar' ? 'يرجى الانتظار لحظة.' : 'This will only take a moment.'}
           </p>
         </div>
-        {storeHydrated && (resultsAccess !== 'full' || !report) && (
+        {(resultsAccess !== 'full' || !report) && (
           <button
             type="button"
             onClick={() => router.push('/evaluate')}

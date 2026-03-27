@@ -83,6 +83,14 @@ export const useEvaluationStore = create<EvaluationStore>()(
     {
       name: 'aggar-evaluation-v10',
       storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        // Backward-compatible migration: older persisted reports may not include `cardInsights`.
+        // Clear stale report snapshots to avoid crashing the Results UI.
+        const report = state?.report as unknown as { version?: number; cardInsights?: unknown } | null | undefined;
+        if (report && report.version === 1 && report.cardInsights == null) {
+          state?.setReport(null);
+        }
+      },
       partialize: (state) => ({
         data: state.data,
         currentStep: state.currentStep,

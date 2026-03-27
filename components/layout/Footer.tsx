@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { Instagram } from 'lucide-react';
 
@@ -14,20 +13,7 @@ function WhatsAppIcon(props: React.SVGProps<SVGSVGElement>) {
 export function Footer() {
   return (
     <footer className="border-t border-secondary-200 bg-white py-8 mt-auto">
-      <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
-        <div className="flex flex-col md:flex-row items-center gap-6">
-          <div className="relative h-7 w-32 overflow-hidden">
-            <Image
-              src="/images/logo.png"
-              alt="Aggar"
-              fill
-              unoptimized
-              sizes="(max-width: 768px) 8rem, 10rem"
-              className="object-contain object-left"
-            />
-          </div>
-        </div>
-
+      <div className="container mx-auto px-4 flex flex-col md:flex-row justify-center items-center gap-6">
         <div className="flex flex-wrap items-center justify-center gap-4">
           <Link href="/partner" className="text-secondary-600 hover:text-primary-600 text-sm font-bold font-heading">
             Become a Partner
