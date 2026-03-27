@@ -43,13 +43,6 @@ export function PackageComparisonCards({ packages, selectedPackage, onSelect, lo
                 : 'border-secondary-200 bg-white hover:border-primary-300 hover:bg-secondary-50'
             )}
           >
-            {/* Budget fit badge */}
-            {!isCustom && fitsBudget && (
-              <span className="absolute start-2 top-2 rounded-full bg-green-600 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-white">
-                {lo === 'ar' ? 'يناسب ميزانيتك' : 'Fits budget'}
-              </span>
-            )}
-
             <div className="w-full px-1 pb-1">
               <p className={cn('font-heading font-bold text-sm leading-snug', isSelected ? 'text-primary-900' : 'text-secondary-900')}>
                 {lo === 'ar' ? nameAr : name}
