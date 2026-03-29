@@ -19,43 +19,43 @@ const STYLES: {
     id: 'boho',
     image: '/images/design-styles/boho.png',
     en: 'Boho',
-    ar: 'بوهو (Boho)',
+    ar: 'بوهو شيك (Boho)',
   },
   {
     id: 'hotel_like',
     image: '/images/design-styles/hotel.png',
     en: 'Hotel',
-    ar: 'فندقي راقي',
+    ar: 'فندقي مودرن',
   },
   {
     id: 'classic',
     image: '/images/design-styles/classic.png',
     en: 'Classic',
-    ar: 'كلاسيك',
+    ar: 'كلاسيك شيك',
   },
   {
     id: 'coastal',
     image: '/images/design-styles/coastal.png',
     en: 'Coastal',
-    ar: 'ساحلي',
+    ar: 'ساحلي / مصيفي',
   },
   {
     id: 'industrial',
     image: '/images/design-styles/artistic.png',
     en: 'Artistic',
-    ar: 'فني / مودرن',
+    ar: 'مودرن فني',
   },
   {
     id: 'fun',
     image: '/images/design-styles/fun.png',
     en: 'Fun',
-    ar: 'مبهج وعصري',
+    ar: 'ألوان مبهجة وعصرية',
   },
   {
     id: 'modern_minimalist',
     image: '/images/design-styles/modern.png',
     en: 'Modern',
-    ar: 'مودرن بسيط',
+    ar: 'مودرن سمبل',
   },
 ];
 
@@ -72,7 +72,10 @@ export function DesignStyleCarousel({ value, onChange, isAr }: DesignStyleCarous
     const el = scrollRef.current;
     if (!el) return;
     const step = CARD_WIDTH + CARD_GAP;
-    el.scrollBy({ left: dir * step, behavior: 'smooth' });
+    const rtl = typeof window !== 'undefined' && getComputedStyle(el).direction === 'rtl';
+    // Under RTL, positive `left` scroll moves the viewport the opposite way vs LTR.
+    const delta = (rtl ? -1 : 1) * dir * step;
+    el.scrollBy({ left: delta, behavior: 'smooth' });
   };
 
   return (
@@ -121,7 +124,12 @@ export function DesignStyleCarousel({ value, onChange, isAr }: DesignStyleCarous
                 />
                 
                 {selected && (
-                  <div className="absolute top-3 right-3 h-7 w-7 rounded-full bg-primary-500 flex items-center justify-center text-white shadow-lg animate-in zoom-in fade-in duration-300">
+                  <div
+                    className={cn(
+                      'absolute top-3 h-7 w-7 rounded-full bg-primary-500 flex items-center justify-center text-white shadow-lg animate-in zoom-in fade-in duration-300',
+                      isAr ? 'left-3' : 'right-3'
+                    )}
+                  >
                     <Check className="h-4 w-4" strokeWidth={3} />
                   </div>
                 )}
@@ -154,7 +162,11 @@ export function DesignStyleCarousel({ value, onChange, isAr }: DesignStyleCarous
           onClick={() => scroll(-1)}
           className="flex h-10 w-10 items-center justify-center rounded-full border border-secondary-200 bg-white text-secondary-600 shadow-sm transition-all hover:border-primary-300 hover:text-primary-600 hover:shadow-md active:scale-95"
         >
-          <ChevronLeft className="h-5 w-5" strokeWidth={2} />
+          {isAr ? (
+            <ChevronRight className="h-5 w-5" strokeWidth={2} aria-hidden />
+          ) : (
+            <ChevronLeft className="h-5 w-5" strokeWidth={2} aria-hidden />
+          )}
         </button>
         <button
           type="button"
@@ -162,7 +174,11 @@ export function DesignStyleCarousel({ value, onChange, isAr }: DesignStyleCarous
           onClick={() => scroll(1)}
           className="flex h-10 w-10 items-center justify-center rounded-full border border-secondary-200 bg-white text-secondary-600 shadow-sm transition-all hover:border-primary-300 hover:text-primary-600 hover:shadow-md active:scale-95"
         >
-          <ChevronRight className="h-5 w-5" strokeWidth={2} />
+          {isAr ? (
+            <ChevronLeft className="h-5 w-5" strokeWidth={2} aria-hidden />
+          ) : (
+            <ChevronRight className="h-5 w-5" strokeWidth={2} aria-hidden />
+          )}
         </button>
       </div>
     </div>

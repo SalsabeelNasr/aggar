@@ -108,7 +108,7 @@ export function ServicesSection() {
         </div>
 
         {/* Operations Services */}
-        <div className="bg-secondary-50 w-full rounded-3xl p-8 md:p-12 border border-secondary-200">
+        <div className="w-full">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-heading font-bold text-secondary-900 mb-4">
               {locale === 'ar' ? 'لو الشقة جاهزة للتأجير' : 'If it is ready to rent'}

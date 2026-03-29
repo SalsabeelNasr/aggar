@@ -109,7 +109,7 @@ export function QuoteOrDiyLeadSection({
   return (
     <div className="space-y-4">
       <section className="rounded-xl border border-secondary-200 bg-gradient-to-br from-secondary-50 to-white p-5 shadow-xs">
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-10 lg:divide-x lg:divide-secondary-200">
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-10">
           <div className="flex h-full flex-col gap-3 lg:col-span-4 lg:pe-10">
             <div className="mb-1 flex items-center gap-3">
               <div className="rounded-lg bg-secondary-100 p-2.5">
@@ -160,7 +160,7 @@ export function QuoteOrDiyLeadSection({
             </div>
           </div>
 
-          <div className="flex h-full flex-col lg:col-span-6 lg:ps-10">
+          <div className="flex h-full flex-col border-secondary-200 lg:col-span-6 lg:border-s lg:ps-10">
             <div className="mb-4 flex items-center gap-3">
               <div className="rounded-lg bg-secondary-100 p-2.5">
                 <BookOpen className="h-5 w-5 text-secondary-600" />

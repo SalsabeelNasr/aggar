@@ -21,12 +21,12 @@ const PARTNER_MSG = {
     email: 'Enter a valid email address.',
   },
   ar: {
-    companyName: 'اسم الشركة يجب أن يكون حرفين على الأقل.',
-    primaryService: 'اختر الخدمة الأساسية.',
-    operatingZones: 'صف نطاق عملك (حرفان على الأقل).',
-    portfolioUrl: 'أدخل رابطًا صالحًا لمعرض الأعمال.',
-    phone: 'أدخل رقم هاتف صالح (مثل مصر +20).',
-    email: 'أدخل بريدًا إلكترونيًا صالحًا.',
+    companyName: 'يا ريت تكتب اسم الشركة (حرفين على الأقل).',
+    primaryService: 'اختار الخدمة الأساسية اللي بتقدمها.',
+    operatingZones: 'قولنا بتغطي مناطق إيه (حرفين على الأقل).',
+    portfolioUrl: 'حط رابط صح لمعرض أعمالك.',
+    phone: 'اكتب رقم موبايل صح.',
+    email: 'اكتب بريد إلكتروني صح.',
   },
 } as const;
 
@@ -64,18 +64,18 @@ export default function PartnerPage() {
     ? [
         {
           icon: TrendingUp,
-          title: 'عملاء جاهزون',
-          desc: 'نوفر لك عملاء ذوي نية عالية يبحثون بنشاط عن خدماتك.',
+          title: 'عملاء جاهزين',
+          desc: 'بنوصلك بعملاء مهتمين فعلاً ومحتاجين خدماتك دلوقتي.',
         },
         {
           icon: Briefcase,
-          title: 'بدون تكلفة تسويق',
-          desc: 'نحن نتولى عبء التسويق وجلب المشاريع إليك مباشرة.',
+          title: 'وفر تكاليف التسويق',
+          desc: 'إحنا بنقوم بالدور ده وبنجيب لك المشاريع لحد عندك.',
         },
         {
           icon: CheckCircle,
-          title: 'بيانات دقيقة',
-          desc: 'نرسل لك حالة العقار والصور لتقديم تسعير دقيق وشفاف.',
+          title: 'بيانات واضحة',
+          desc: 'بنبعت لك تفاصيل العقار والصور عشان تسعر صح وبكل شفافية.',
         },
       ]
     : [
@@ -118,11 +118,11 @@ export default function PartnerPage() {
           <CheckCircle className="w-10 h-10" />
         </div>
         <h2 className="text-3xl font-heading font-bold text-secondary-900 mb-4">
-          {isAr ? 'تم استلام طلبك بنجاح!' : 'Application Received!'}
+          {isAr ? 'طلبك وصل بنجاح!' : 'Application Received!'}
         </h2>
         <p className="text-secondary-600 text-lg font-medium">
           {isAr
-            ? 'سنقوم بمراجعة طلبك والتواصل معك خلال 48 ساعة لتحديد موعد مقابلة والتأكد من توافقنا.'
+            ? 'هنراجع طلبك ونكلمك في خلال ٤٨ ساعة عشان نحدد ميعاد ونتعرف على بعض أكتر.'
             : 'We will review your application and contact you within 48 hours for an interview.'}
         </p>
       </div>
@@ -137,14 +137,14 @@ export default function PartnerPage() {
             <div className="lg:w-1/2 flex flex-col items-start text-start">
               <div className="inline-flex items-center gap-2 px-5 py-2 bg-primary-50 text-primary-700 rounded-full text-sm font-bold border border-primary-100 mb-8 font-heading">
                 <Sparkles className="w-4 h-4" />
-                {isAr ? 'رحلة نجاح مشتركة' : 'Join the Elite Network'}
+                {isAr ? 'شراكة حقيقية لنجاح أكبر' : 'Join the Elite Network'}
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-extrabold mb-6 tracking-tight text-secondary-900 leading-[1.15]">
-                {isAr ? 'انضم إلينا في نجاح الاستثمار العقاري' : 'Join Us for Real Estate Success'}
+                {isAr ? 'خليك شريك في نجاح الاستثمار العقاري' : 'Join Us for Real Estate Success'}
               </h1>
               <p className="text-xl md:text-2xl text-secondary-600 mb-10 font-medium leading-relaxed max-w-xl">
                 {isAr
-                  ? 'نصلك بأصحاب العقارات الذين يبحثون عن خدمات فندقية راقية. وسّع نطاق عملك، قلل تكاليف تسويقك، وحقق أرباح مستدامة.'
+                  ? 'بنوصلك بأصحاب العقارات اللي بيدوروا على محترفين يجهزوا ويديروا عقاراتهم للإيجار قصير المدى. كبّر شغلك، وفر مصاريف التسويق، وحقق أرباح مستدامة.'
                   : 'Connect with property owners actively seeking transformation and operations services without worrying about customer acquisition.'}
               </p>
               <Button
@@ -152,7 +152,7 @@ export default function PartnerPage() {
                 className="px-8 h-14 text-lg font-bold shadow-xl shadow-primary-500/20"
                 onClick={() => document.getElementById('application-form')?.scrollIntoView({ behavior: 'smooth' })}
               >
-                {isAr ? 'انضم إلينا الآن' : 'Apply to Join Us'}
+                {isAr ? 'سجل بياناتك وانضم لينا' : 'Apply to Join Us'}
               </Button>
             </div>
 
@@ -191,7 +191,7 @@ export default function PartnerPage() {
           <Card className="w-full shadow-xl border-secondary-200 bg-white overflow-hidden">
             <CardHeader className="bg-secondary-50 border-b border-secondary-100 p-8 text-center pt-10">
               <CardTitle className="text-3xl font-heading font-bold text-secondary-900">
-                {isAr ? 'طلب الانضمام كشريك' : 'Partner Application Form'}
+                {isAr ? 'بيانات طلب الانضمام' : 'Partner Application Form'}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-8 md:p-12">
@@ -199,13 +199,13 @@ export default function PartnerPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="flex flex-col gap-3">
                     <label className="font-bold font-heading text-secondary-900 text-lg" htmlFor="partner-company">
-                      {isAr ? 'اسم الشركة / النشاط' : 'Company Name'}
+                      {isAr ? 'اسم الشركة أو النشاط' : 'Company Name'}
                       {requiredMark}
                     </label>
                     <input
                       id="partner-company"
                       className={err('companyName')}
-                      placeholder={isAr ? 'مثال: شركة التشطيب الحديث' : 'e.g. Modern Decor Ltd.'}
+                      placeholder={isAr ? 'مثلاً: شركة التشطيب الحديث' : 'e.g. Modern Decor Ltd.'}
                       aria-invalid={form.formState.errors.companyName ? true : undefined}
                       {...form.register('companyName')}
                     />
@@ -215,7 +215,7 @@ export default function PartnerPage() {
                   </div>
                   <div className="flex flex-col gap-3">
                     <label className="font-bold font-heading text-secondary-900 text-lg" htmlFor="partner-service">
-                      {isAr ? 'نوع الخدمة' : 'Primary Service'}
+                      {isAr ? 'بتقدم خدمة إيه؟' : 'Primary Service'}
                       {requiredMark}
                     </label>
                     <div className="relative">
@@ -225,13 +225,13 @@ export default function PartnerPage() {
                         aria-invalid={form.formState.errors.primaryService ? true : undefined}
                         {...form.register('primaryService')}
                       >
-                        <option value="">{isAr ? 'اختر الخدمة الأساسية' : 'Select Service'}</option>
+                        <option value="">{isAr ? 'اختار الخدمة الأساسية' : 'Select Service'}</option>
                         <option value="ren">{isAr ? 'تشطيب ومقاولات' : 'Renovation & Contracting'}</option>
                         <option value="sty">{isAr ? 'فرش وتصميم داخلي' : 'Interior Styling & Furnishing'}</option>
                         <option value="pho">{isAr ? 'تصوير عقاري' : 'Property Photography'}</option>
                         <option value="cle">{isAr ? 'نظافة فندقية' : 'Deep Cleaning'}</option>
                         <option value="man">{isAr ? 'إدارة أملاك' : 'Property Management'}</option>
-                        <option value="oth">{isAr ? 'أخرى' : 'Other'}</option>
+                        <option value="oth">{isAr ? 'حاجة تانية' : 'Other'}</option>
                       </select>
                     </div>
                     {form.formState.errors.primaryService && (
@@ -242,14 +242,14 @@ export default function PartnerPage() {
                     <label className="font-bold font-heading text-secondary-900 text-lg flex items-center gap-2 flex-wrap" htmlFor="partner-zones">
                       <MapPin className="w-5 h-5 text-secondary-400 shrink-0" />
                       <span>
-                        {isAr ? 'نطاق العمل (المناطق)' : 'Operating Zones'}
+                        {isAr ? 'بتغطي مناطق إيه؟' : 'Operating Zones'}
                         {requiredMark}
                       </span>
                     </label>
                     <input
                       id="partner-zones"
                       className={err('operatingZones')}
-                      placeholder={isAr ? 'أين يمكنك تقديم الخدمة بفاعلية؟' : 'e.g. New Cairo, Sahel...'}
+                      placeholder={isAr ? 'مثلاً: التجمع، الساحل، الجونة...' : 'e.g. New Cairo, Sahel...'}
                       aria-invalid={form.formState.errors.operatingZones ? true : undefined}
                       {...form.register('operatingZones')}
                     />
@@ -259,7 +259,7 @@ export default function PartnerPage() {
                   </div>
                   <div className="flex flex-col gap-3 md:col-span-2">
                     <label className="font-bold font-heading text-secondary-900 text-lg" htmlFor="partner-url">
-                      {isAr ? 'رابط سابقة الأعمال (إنستقرام / موقع ويب)' : 'Portfolio Link'}
+                      {isAr ? 'رابط سابقة الأعمال (إنستجرام أو موقعك)' : 'Portfolio Link'}
                       {requiredMark}
                     </label>
                     <input
@@ -279,7 +279,7 @@ export default function PartnerPage() {
                     <label className="font-bold font-heading text-secondary-900 text-lg flex items-center gap-2 flex-wrap" htmlFor="partner-phone">
                       <Phone className="w-5 h-5 text-secondary-400 shrink-0" />
                       <span>
-                        {isAr ? 'رقم الهاتف' : 'Phone Number'}
+                        {isAr ? 'رقم الموبايل' : 'Phone Number'}
                         {requiredMark}
                       </span>
                     </label>
@@ -321,7 +321,7 @@ export default function PartnerPage() {
 
                 <div className="pt-6 border-t border-secondary-100">
                   <Button type="submit" size="lg" className="w-full h-16 text-xl shadow-lg shadow-primary-500/20" disabled={isSubmitting}>
-                    {isSubmitting ? (isAr ? 'جاري الإرسال...' : 'Sending...') : isAr ? 'تقديم طلب الانضمام' : 'Submit Application'}
+                    {isSubmitting ? (isAr ? 'جاري الإرسال...' : 'Sending...') : isAr ? 'انضم لشبكة شركائنا' : 'Submit Application'}
                   </Button>
                 </div>
               </form>

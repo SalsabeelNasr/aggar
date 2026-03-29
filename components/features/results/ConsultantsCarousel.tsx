@@ -1,13 +1,16 @@
 'use client';
 
 import * as React from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 import type { ConsultantCard } from '@/lib/results/resultsStatic';
 
-/** Slower loop on wide viewports (more cards visible = longer perceived path). */
-const MARQUEE_DURATION_SEC = 140;
+const CARD_GAP_PX = 12; // gap-3
+/** Match `tailwind.config.ts` animation duration (one full half-loop). */
+const MARQUEE_DURATION_SEC = 110;
+const DRAG_THRESHOLD_PX = 8;
 
 function usePrefersReducedMotion(): boolean {
   const [reduce, setReduce] = React.useState(false);
@@ -19,6 +22,10 @@ function usePrefersReducedMotion(): boolean {
     return () => mq.removeEventListener('change', apply);
   }, []);
   return reduce;
+}
+
+function isInteractiveTarget(target: EventTarget | null): boolean {
+  return Boolean((target as HTMLElement | null)?.closest('button, a, [role="button"]'));
 }
 
 type Props = {
@@ -56,12 +63,154 @@ function ConsultantCardItem({ c, lo, onBook }: { c: ConsultantCard; lo: 'en' | '
 export function ConsultantsCarousel({ consultants, lo, onBook }: Props) {
   const n = consultants.length;
   const reduceMotion = usePrefersReducedMotion();
-  const [paused, setPaused] = React.useState(false);
+  const trackRef = React.useRef<HTMLDivElement>(null);
+  const innerRef = React.useRef<HTMLDivElement>(null);
+  const xRef = React.useRef(0);
+  const modeRef = React.useRef<'auto' | 'drag'>('auto');
+  const halfWidthRef = React.useRef(1);
+  const lastTRef = React.useRef<number | null>(null);
+  const rafRef = React.useRef<number | null>(null);
+
+  const dragSession = React.useRef<{
+    pointerId: number | null;
+    armed: boolean;
+    dragging: boolean;
+    startClientX: number;
+    startX: number;
+  }>({ pointerId: null, armed: false, dragging: false, startClientX: 0, startX: 0 });
+
+  const [draggingUi, setDraggingUi] = React.useState(false);
+
+  const loop = React.useMemo(() => [...consultants, ...consultants], [consultants]);
+  const loopKey = consultants.map((c) => c.id).join('|');
+
+  const applyTransform = React.useCallback(() => {
+    const inner = innerRef.current;
+    if (inner) inner.style.transform = `translate3d(${xRef.current}px,0,0)`;
+  }, []);
+
+  React.useEffect(() => {
+    if (reduceMotion || n <= 1) return;
+
+    xRef.current = 0;
+    lastTRef.current = null;
+
+    const inner = innerRef.current;
+    if (!inner) return;
+
+    const measure = () => {
+      halfWidthRef.current = Math.max(1, inner.scrollWidth / 2);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(inner);
+
+    const speedPxPerSec = () => halfWidthRef.current / MARQUEE_DURATION_SEC;
+
+    const tick = (t: number) => {
+      if (lastTRef.current == null) lastTRef.current = t;
+      const dt = Math.min((t - lastTRef.current) / 1000, 0.064);
+      lastTRef.current = t;
+
+      if (modeRef.current === 'auto') {
+        xRef.current -= speedPxPerSec() * dt;
+        const half = halfWidthRef.current;
+        while (xRef.current <= -half) xRef.current += half;
+      }
+      inner.style.transform = `translate3d(${xRef.current}px,0,0)`;
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+
+    return () => {
+      ro.disconnect();
+      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+      lastTRef.current = null;
+    };
+  }, [reduceMotion, n, loopKey]);
+
+  const scrollByStep = React.useCallback(
+    (dir: -1 | 1) => {
+      const inner = innerRef.current;
+      if (!inner) return;
+      const first = inner.querySelector('[data-carousel-snap]') as HTMLElement | null;
+      const step = (first?.offsetWidth ?? 260) + CARD_GAP_PX;
+      const half = Math.max(1, inner.scrollWidth / 2);
+      halfWidthRef.current = half;
+      xRef.current += dir * step;
+      while (xRef.current > 0) xRef.current -= half;
+      while (xRef.current <= -half) xRef.current += half;
+      inner.style.transform = `translate3d(${xRef.current}px,0,0)`;
+    },
+    []
+  );
+
+  const endPointer = React.useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      const s = dragSession.current;
+      if (s.pointerId !== e.pointerId) return;
+      const track = trackRef.current;
+      if (track && s.dragging && track.hasPointerCapture(e.pointerId)) {
+        track.releasePointerCapture(e.pointerId);
+      }
+      if (s.dragging) {
+        modeRef.current = 'auto';
+        lastTRef.current = null;
+      }
+      s.pointerId = null;
+      s.armed = false;
+      s.dragging = false;
+      setDraggingUi(false);
+    },
+    []
+  );
+
+  const onPointerDown = React.useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.button !== 0 || isInteractiveTarget(e.target)) return;
+    const inner = innerRef.current;
+    if (!inner) return;
+
+    dragSession.current = {
+      pointerId: e.pointerId,
+      armed: true,
+      dragging: false,
+      startClientX: e.clientX,
+      startX: xRef.current,
+    };
+  }, []);
+
+  const onPointerMove = React.useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    const s = dragSession.current;
+    if (!s.armed || s.pointerId !== e.pointerId) return;
+
+    const dx = e.clientX - s.startClientX;
+
+    if (!s.dragging) {
+      if (Math.abs(dx) < DRAG_THRESHOLD_PX) return;
+      s.dragging = true;
+      modeRef.current = 'drag';
+      lastTRef.current = null;
+      trackRef.current?.setPointerCapture(e.pointerId);
+      setDraggingUi(true);
+    }
+
+    xRef.current = s.startX + dx;
+    const half = halfWidthRef.current;
+    while (xRef.current > 0) xRef.current -= half;
+    while (xRef.current <= -half) xRef.current += half;
+    applyTransform();
+  }, [applyTransform]);
+
+  const onPointerUp = React.useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      endPointer(e);
+    },
+    [endPointer]
+  );
 
   if (n === 0) return null;
-
-  /** Two identical sequences for a seamless loop (tail rotates into view). */
-  const loop = React.useMemo(() => [...consultants, ...consultants], [consultants]);
 
   if (reduceMotion || n === 1) {
     return (
@@ -76,32 +225,54 @@ export function ConsultantsCarousel({ consultants, lo, onBook }: Props) {
   }
 
   return (
-    <div
-      className="group relative w-full"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocusCapture={() => setPaused(true)}
-      onBlurCapture={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(false);
-      }}
-    >
+    <div className="relative w-full space-y-4">
       <p className="sr-only">
         {lo === 'ar'
-          ? 'شريط متحرك للمختصين — يتوقف عند تمرير المؤشر أو التركيز.'
-          : 'Scrolling specialist strip — pauses on hover or keyboard focus.'}
+          ? 'شريط متحرك للمختصين — يتحرك تلقائياً؛ اسحب أفقياً لتصفح يدوياً، أو استخدم الأزرار.'
+          : 'Auto-scrolling specialist strip — drags horizontally for manual browsing, or use the arrow buttons.'}
       </p>
       <div className="overflow-hidden rounded-2xl pb-2" dir="ltr">
         <div
+          ref={trackRef}
+          role="region"
+          aria-label={lo === 'ar' ? 'مختصون متاحون' : 'Available specialists'}
           className={cn(
-            'flex w-max gap-3 py-1 animate-consultants-marquee motion-reduce:animate-none',
-            paused && '[animation-play-state:paused]'
+            'relative w-full touch-pan-y',
+            !draggingUi && 'cursor-grab',
+            draggingUi && 'cursor-grabbing select-none'
           )}
-          style={{ animationDuration: `${MARQUEE_DURATION_SEC}s` }}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
         >
-          {loop.map((c, i) => (
-            <ConsultantCardItem key={`${c.id}-${i}`} c={c} lo={lo} onBook={onBook} />
-          ))}
+          <div ref={innerRef} className="flex w-max gap-3 py-1 will-change-transform" style={{ gap: CARD_GAP_PX }}>
+            {loop.map((c, i) => (
+              <div key={`${c.id}-${i}`} data-carousel-snap className="shrink-0">
+                <ConsultantCardItem c={c} lo={lo} onBook={onBook} />
+              </div>
+            ))}
+          </div>
         </div>
+      </div>
+
+      <div className="flex items-center justify-center gap-4" dir="ltr">
+        <button
+          type="button"
+          aria-label={lo === 'ar' ? 'المختص السابق' : 'Previous specialist'}
+          onClick={() => scrollByStep(-1)}
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-secondary-200 bg-white text-secondary-600 shadow-sm transition-all hover:border-primary-300 hover:text-primary-600 hover:shadow-md active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+        >
+          <ChevronLeft className="h-5 w-5" strokeWidth={2} />
+        </button>
+        <button
+          type="button"
+          aria-label={lo === 'ar' ? 'المختص التالي' : 'Next specialist'}
+          onClick={() => scrollByStep(1)}
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-secondary-200 bg-white text-secondary-600 shadow-sm transition-all hover:border-primary-300 hover:text-primary-600 hover:shadow-md active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+        >
+          <ChevronRight className="h-5 w-5" strokeWidth={2} />
+        </button>
       </div>
     </div>
   );
