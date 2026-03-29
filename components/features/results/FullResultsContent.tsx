@@ -10,12 +10,12 @@ import { cn } from '@/lib/utils';
 import type { ManagementMode, WizardData } from '@/models';
 import type { PackageType } from '@/lib/engines/packageBuilder';
 import {
-  CONSULTANT_MOCK,
   filterConsultantsByPartnerCategory,
   rankConsultantsForProperty,
   type ConsultantCard,
   type PartnerCategoryId,
 } from '@/lib/results/resultsStatic';
+import { buildResultsExtrasMock } from '@/lib/mocks/resultsExtras';
 import { PackageComparisonCards } from './PackageComparisonCards';
 import { PackageDetailPanel } from './PackageDetailPanel';
 import { CustomPackageBuilder } from './CustomPackageBuilder';
@@ -24,10 +24,7 @@ import { QuoteOrDiyLeadSection } from './QuoteOrDiyLeadSection';
 import { PropertyAnalysisCard } from './PropertyAnalysisCard';
 import { YourNeighboursPerformanceCard } from './YourNeighboursPerformanceCard';
 import { ResultsPhotoCarousel } from './ResultsPhotoCarousel';
-import {
-  diyChecklistItemsForMissingFurnishedPhotos,
-  FURNISHED_LISTING_PHOTO_COMPANION_DIY,
-} from '@/lib/results/furnishedPhotoProofDiy';
+import { diyChecklistItemsForMissingFurnishedPhotos } from '@/lib/results/furnishedPhotoProofDiy';
 import { formatMoney } from './utils';
 import { SpecialistHelpSection } from './SpecialistHelpSection';
 
@@ -88,6 +85,8 @@ export default function FullResultsContent() {
 
   if (!report || !data) return null;
 
+  const resultsExtras = report.resultsExtras ?? buildResultsExtrasMock();
+
   const [selectedPackage, setSelectedPackage] = React.useState<PackageType>('sweet_spot');
   const [customEnabledIds, setCustomEnabledIds] = React.useState<string[]>(() => report.packageSet.custom.enabled_service_ids);
 
@@ -111,8 +110,8 @@ export default function FullResultsContent() {
   const [specialistFilter, setSpecialistFilter] = React.useState<PartnerCategoryId | null>(null);
 
   const consultants = React.useMemo(
-    () => rankConsultantsForProperty(CONSULTANT_MOCK, data.regionId, data.stateFlag, licensingFirst),
-    [data.regionId, data.stateFlag, licensingFirst]
+    () => rankConsultantsForProperty(resultsExtras.consultants, data.regionId, data.stateFlag, licensingFirst),
+    [resultsExtras.consultants, data.regionId, data.stateFlag, licensingFirst]
   );
   const filteredConsultants = React.useMemo(
     () => filterConsultantsByPartnerCategory(consultants, specialistFilter),
@@ -273,8 +272,11 @@ export default function FullResultsContent() {
                   <DiyUpgradesSection
                     lo={lo}
                     selectedPackage={selectedPackage}
+                    comfortDiyItems={resultsExtras.diyChecklist}
                     photoProofItems={furnishedPhotoDiy.photoProofItems}
-                    photoCompanionItems={furnishedPhotoDiy.showCompanions ? FURNISHED_LISTING_PHOTO_COMPANION_DIY : []}
+                    photoCompanionItems={
+                      furnishedPhotoDiy.showCompanions ? resultsExtras.furnishedListingPhotoCompanionDiy : []
+                    }
                   />
 
                   <div className="pt-2">

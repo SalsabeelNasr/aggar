@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useLocale } from 'next-intl';
 import { useEvaluationStore } from '@/lib/store';
-import { getRegions } from '@/services/mockApi';
+import { listRegions } from '@/lib/evaluationApi/client';
 import { Region, RegionId } from '@/models';
 import { cn } from '@/lib/utils';
 import { MapPin } from 'lucide-react';
@@ -16,7 +16,7 @@ export function Step1Location() {
   const cardRegionIds: RegionId[] = ['new_cairo', 'sheikh_zayed', 'north_coast', 'el_gouna'];
 
   React.useEffect(() => {
-    getRegions().then(setRegions);
+    listRegions().then(setRegions);
   }, []);
 
   /** `other` is not selectable — results need a concrete regional baseline. */

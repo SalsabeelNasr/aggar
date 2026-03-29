@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 import type { PackageType } from '@/lib/engines/packageBuilder';
-import { DIY_CHECKLIST_ITEMS, type DiyChecklistItem } from '@/lib/results/resultsStatic';
+import type { DiyChecklistItem } from '@/lib/results/resultsStatic';
 
 type Lo = 'en' | 'ar';
 
@@ -68,12 +68,15 @@ function DiyServiceRowCompact({ lo, item }: { lo: Lo; item: DiyChecklistItem }) 
 export function DiyUpgradesSection({
   lo,
   selectedPackage,
+  comfortDiyItems,
   photoProofItems = [],
   photoCompanionItems = [],
 }: {
   lo: Lo;
   /** Used to enforce: not shown in `quick_start`, shown in `sweet_spot` + `custom`. */
   selectedPackage: PackageType;
+  /** Comfort / streaming / wifi DIY rows from report extras or API. */
+  comfortDiyItems: DiyChecklistItem[];
   /** Missing shots from the furnished photo checklist (stepper). */
   photoProofItems?: DiyChecklistItem[];
   /** Extra high-scoring listing-photo habits for furnished hosts. */
@@ -90,7 +93,7 @@ export function DiyUpgradesSection({
 
   const showPhotoSection = paidPhotoProofItems.length > 0 || paidPhotoCompanionItems.length > 0;
 
-  const comfortItems = React.useMemo(() => DIY_CHECKLIST_ITEMS.filter((i) => !isFreeCost(i)), []);
+  const comfortItems = React.useMemo(() => comfortDiyItems.filter((i) => !isFreeCost(i)), [comfortDiyItems]);
 
   const comfortItemsOrdered = React.useMemo(() => {
     const map = new Map<ComfortTopicId, DiyChecklistItem[]>();

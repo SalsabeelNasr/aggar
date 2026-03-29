@@ -33,3 +33,10 @@
 {"sessionId":"c87316","hypothesisId":"H4","location":"evaluate/page.tsx:handleNext:apiStatus","message":"evaluate API HTTP result","data":{"ok":true,"status":200},"timestamp":1774795322533}
 {"sessionId":"c87316","hypothesisId":"H4","location":"evaluate/page.tsx:handleNext:apiBody","message":"evaluate JSON shape","data":{"hasReport":true,"version":2},"timestamp":1774795322535}
 {"sessionId":"c87316","hypothesisId":"H5","location":"evaluate/page.tsx:handleNext:beforeNav","message":"calling router.push results","data":{},"timestamp":1774795322538}
+{"sessionId":"c87316","hypothesisId":"H6","location":"evaluate/page.tsx:primaryButton:onClick","message":"primary button click","data":{"submitting":false,"currentStep":9,"finalStep":9},"timestamp":1774796077680}
+{"sessionId":"c87316","hypothesisId":"H-branch","location":"evaluate/page.tsx:handleNext:entry","message":"handleNext called","data":{"currentStep":9,"finalStep":9,"submitting":false,"skipPropertyStateStep":true,"isFurnished":true},"timestamp":1774796077681}
+{"sessionId":"c87316","hypothesisId":"H1","location":"evaluate/page.tsx:handleNext:finalStep","message":"final step submit path","data":{"hasContactRef":true},"timestamp":1774796077682}
+{"sessionId":"c87316","hypothesisId":"H2","location":"evaluate/page.tsx:handleNext:afterValidate","message":"contact validateAndSync result","data":{"syncOk":true},"timestamp":1774796077688}
+{"sessionId":"c87316","hypothesisId":"H4","location":"evaluate/page.tsx:handleNext:apiStatus","message":"evaluate API HTTP result","data":{"ok":true,"status":200},"timestamp":1774796077985}
+{"sessionId":"c87316","hypothesisId":"H4","location":"evaluate/page.tsx:handleNext:apiBody","message":"evaluate JSON shape","data":{"hasReport":true,"version":2},"timestamp":1774796077986}
+{"sessionId":"c87316","hypothesisId":"H5","location":"evaluate/page.tsx:handleNext:beforeNav","message":"calling router.push results","data":{},"timestamp":1774796077990}

@@ -9,11 +9,14 @@ interface EvaluationStore {
   lead: WizardLead;
   diyGuideLead: DiyGuideLead | null;
   report: EvaluationReport | null;
+  /** Server / mock id to refetch the report when session snapshot is missing body. */
+  reportId: string | null;
   resultsAccess: WizardState['resultsAccess'];
   updateData: (updates: Partial<WizardData>) => void;
   updateLead: (updates: Partial<WizardLead>) => void;
   updateDiyGuideLead: (lead: DiyGuideLead) => void;
   setReport: (report: EvaluationReport | null) => void;
+  setReportId: (id: string | null) => void;
   setResultsAccess: (access: WizardState['resultsAccess']) => void;
   nextStep: () => void;
   prevStep: () => void;
@@ -61,11 +64,13 @@ export const useEvaluationStore = create<EvaluationStore>()(
       lead: { ...initialLead },
       diyGuideLead: null,
       report: null,
+      reportId: null,
       resultsAccess: 'teaser',
       updateData: (updates) => set((state) => ({ data: { ...state.data, ...updates } })),
       updateLead: (updates) => set((state) => ({ lead: { ...state.lead, ...updates } })),
       updateDiyGuideLead: (lead) => set({ diyGuideLead: lead }),
       setReport: (report) => set({ report }),
+      setReportId: (reportId) => set({ reportId }),
       setResultsAccess: (access) => set({ resultsAccess: access }),
       nextStep: () => set((state) => ({ currentStep: state.currentStep + 1 })),
       prevStep: () => set((state) => ({ currentStep: Math.max(0, state.currentStep - 1) })),
@@ -77,6 +82,7 @@ export const useEvaluationStore = create<EvaluationStore>()(
           lead: { ...initialLead },
           diyGuideLead: null,
           report: null,
+          reportId: null,
           resultsAccess: 'teaser',
         }),
     }),
@@ -103,6 +109,7 @@ export const useEvaluationStore = create<EvaluationStore>()(
             r.cardInsights.neighbours?.competitionSnapshot == null)
         ) {
           state?.setReport(null);
+          state?.setReportId(null);
         }
       },
       partialize: (state) => ({
@@ -111,6 +118,7 @@ export const useEvaluationStore = create<EvaluationStore>()(
         lead: state.lead,
         diyGuideLead: state.diyGuideLead,
         report: state.report,
+        reportId: state.reportId,
         resultsAccess: state.resultsAccess,
       }),
     }

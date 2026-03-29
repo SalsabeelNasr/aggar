@@ -1,4 +1,12 @@
 import type { WizardData, Region, LocalizedString } from '@/models';
+import type { ConsultantCard, DiyChecklistItem } from '@/lib/results/resultsStatic';
+
+/** Results-page catalog payloads; mock or API may supply. */
+export interface ReportResultsExtras {
+  consultants: ConsultantCard[];
+  diyChecklist: DiyChecklistItem[];
+  furnishedListingPhotoCompanionDiy: DiyChecklistItem[];
+}
 import type { RuleEngineResult } from '@/lib/engines/ruleEngine';
 import type { PackageSet, PackageType } from '@/lib/engines/packageBuilder';
 import type { RevenueResult } from '@/lib/engines/revenueEngine';
@@ -80,5 +88,11 @@ export interface EvaluationReport {
 
   /** Pre-computed card copy/benchmarks to keep Results UI “dumb”. */
   cardInsights: ReportCardInsights;
+
+  /**
+   * Consultants + DIY copy for Results. Mock fills this; backends may attach the same shape.
+   * UI falls back to local mocks when absent (older persisted sessions).
+   */
+  resultsExtras?: ReportResultsExtras;
 }
 

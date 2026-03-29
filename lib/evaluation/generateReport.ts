@@ -1,5 +1,6 @@
 import type { WizardData, PropertyStateFlag, InternetSpeed, ACCoverage, ListingStatus } from '@/models';
-import { getRegionById } from '@/services/mockApi';
+import { getRegionById } from '@/lib/mocks/regions';
+import { buildResultsExtrasMock } from '@/lib/mocks/resultsExtras';
 import { evaluateRules } from '@/lib/engines/ruleEngine';
 import {
   buildPackages,
@@ -245,6 +246,7 @@ export function generateReport(data: WizardData): EvaluationReport {
     revenueByPackage,
     planFinancialsByPackage,
     cardInsights,
+    resultsExtras: buildResultsExtrasMock(),
   };
 }
 
