@@ -8,8 +8,8 @@ export const BUDGET_BAND_RANGES: Record<BudgetBand, { min: number; max: number }
 };
 
 export const BUDGET_BAND_OPTIONS: Array<{ id: BudgetBand; en: string; ar: string }> = [
-  { id: 'under_50k', en: 'Under 50,000 EGP', ar: 'أقل من ٥٠٬٠٠٠ ج.م' },
-  { id: '50_150k', en: '50,000 – 150,000 EGP', ar: '٥٠٬٠٠٠ – ١٥٠٬٠٠٠ ج.م' },
-  { id: '150_400k', en: '150,000 – 400,000 EGP', ar: '١٥٠٬٠٠٠ – ٤٠٠٬٠٠٠ ج.م' },
-  { id: 'over_400k', en: 'Over 400,000 EGP', ar: 'أكثر من ٤٠٠٬٠٠٠ ج.م' },
+  { id: 'under_50k', en: 'Under 50,000 EGP', ar: 'أقل من 50,000 ج.م' },
+  { id: '50_150k', en: '50,000 – 150,000 EGP', ar: '50,000 – 150,000 ج.م' },
+  { id: '150_400k', en: '150,000 – 400,000 EGP', ar: '150,000 – 400,000 ج.م' },
+  { id: 'over_400k', en: 'Over 400,000 EGP', ar: 'أكثر من 400,000 ج.م' },
 ];

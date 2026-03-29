@@ -12,7 +12,7 @@ export const MOCK_SERVICES: Service[] = [
     name_en: 'Deep clean & sanitization',
     name_ar: 'تنضيف عميق وتعقيم',
     description_en: 'First impressions start at the door. A spotless handover sets the tone for reviews and repeat bookings.',
-    description_ar: 'أول انطباع بيبدأ من عتبة الباب. تسليم الشقة وهي بتلمع بيضمن لك تقييمات ٥ نجوم وضمان إن الضيف يرجع تاني.',
+    description_ar: 'أول انطباع بيبدأ من عتبة الباب. تسليم الشقة وهي بتلمع بيضمن لك تقييمات 5 نجوم وضمان إن الضيف يرجع تاني.',
     cost_min_egp: 700,
     cost_max_egp: 900,
     cost_unit: 'fixed',
@@ -328,7 +328,7 @@ export const MOCK_SERVICES: Service[] = [
   {
     id: 'licensing',
     name_en: 'STR licensing (Decree 209)',
-    name_ar: 'ترخيص سياحي (قرار ٢٠٩)',
+    name_ar: 'ترخيص سياحي (قرار 209)',
     description_en: 'Operating with the right STR paperwork removes platform and guest anxiety — it is a trust signal, not just paperwork.',
     description_ar: 'اشتغل قانوني وريح بالك. الترخيص بيدي أمان للضيف وللمنصة، وبيحمي استثمارك من أي مشاكل.',
     cost_min_egp: 3100,

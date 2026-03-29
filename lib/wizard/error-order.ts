@@ -1,6 +1,6 @@
 /** DOM/visual order for scrolling to the first invalid field per evaluate step index. */
 export const WIZARD_ERROR_SCROLL_ORDER: Record<number, readonly string[]> = {
-  0: ['propertyType', 'bedrooms', 'bathrooms', 'sleepCapacity', 'inGatedCompound', 'hasLift'],
+  0: ['propertyType', 'bedrooms', 'bathrooms', 'sleepCapacity', 'propertySizeSqm', 'inGatedCompound', 'hasLift'],
   1: ['regionId', 'address'],
   2: ['listingStatus'],
   3: [
@@ -19,7 +19,6 @@ export const WIZARD_ERROR_SCROLL_ORDER: Record<number, readonly string[]> = {
     'guestPolicyAudiences',
   ],
   4: [
-    'propertySizeSqm',
     'budgetBand',
     'unfinishedBudgetPerSqm',
     'unfinishedFinancingPreference',

@@ -49,12 +49,14 @@ export default async function LocaleLayout({
 }) {
   const messages = await getMessages();
   const direction = locale === 'ar' ? 'rtl' : 'ltr';
+  /** BCP 47 `-u-nu-latn`: Western digits in Arabic UI (RTL layout unchanged). */
+  const htmlLang = locale === 'ar' ? 'ar-u-nu-latn' : locale;
 
   const headingFont = locale === 'ar' ? tajawal.variable : nunito.variable;
   const bodyFont = locale === 'ar' ? almarai.variable : dmSans.variable;
 
   return (
-    <html lang={locale} dir={direction} className={`${headingFont} ${bodyFont}`}>
+    <html lang={htmlLang} dir={direction} className={`${headingFont} ${bodyFont}`}>
       <body className="antialiased min-h-screen flex flex-col bg-secondary-50 text-secondary-900 font-body">
         <NextIntlClientProvider messages={messages} locale={locale}>
           <Navbar />

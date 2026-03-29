@@ -51,7 +51,7 @@ export function PackageComparisonCards({ packages, selectedPackage, onSelect, lo
 
             {isRecommended && (
               <span className="absolute end-2 top-0 z-10 -translate-y-1/2 rounded-full bg-primary-700 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-white">
-                {lo === 'ar' ? 'موصى به' : 'Recommended'}
+                {lo === 'ar' ? 'الأفضل قيمة' : 'Recommended'}
               </span>
             )}
           </button>

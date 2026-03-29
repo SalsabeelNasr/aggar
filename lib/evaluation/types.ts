@@ -1,7 +1,24 @@
-import type { WizardData, Region } from '@/models';
+import type { WizardData, Region, LocalizedString } from '@/models';
 import type { RuleEngineResult } from '@/lib/engines/ruleEngine';
 import type { PackageSet, PackageType } from '@/lib/engines/packageBuilder';
 import type { RevenueResult } from '@/lib/engines/revenueEngine';
+
+/** FOMO-forward “competition snapshot” derived from mock MARKET_DATA + listing signals. */
+export interface CompetitionSnapshot {
+  /** e.g. 40 → “top 40%” band (modeled). */
+  topPercentile: number;
+  percentileHeadline: LocalizedString;
+  revenueGapEgp: number | null;
+  revenueGapLine: LocalizedString;
+  amenityAhaLine: LocalizedString;
+  designBenchmarkLine: LocalizedString;
+  responseDeltaLine: LocalizedString;
+  footnote: LocalizedString;
+  modeledGrossMonthlyTopEgp: number;
+  modeledGrossMonthlyAvgEgp: number;
+  modeledTypicalMonthlyUsd: number;
+  modeledTop10MonthlyUsd: number;
+}
 
 export interface NeighboursBenchmarks {
   /** Typical monthly earnings benchmark for the region (guide, USD). */
@@ -10,18 +27,30 @@ export interface NeighboursBenchmarks {
   top10MonthlyUsd: number | null;
   /** Short peak/seasonality note to set expectation. */
   peakSeasonNote: { en: string; ar: string };
+  competitionSnapshot: CompetitionSnapshot;
+}
+
+export interface PropertyAnalysisItem {
+  /** Short label shown above the insight body (e.g. “Premium Security Tier”). */
+  title?: { en: string; ar: string };
+  body: { en: string; ar: string };
 }
 
 export interface ReportCardInsights {
   neighbours: NeighboursBenchmarks;
   /** 1–2 sentences mapping the user “stage” to next priorities (guide). */
   readinessNarrative: { en: string; ar: string };
-  /** Ordered bullets (3–5) that are explicitly tied to wizard inputs. */
+  /**
+   * Rules-engine insights + optional legacy fill-ins (max 5).
+   * Prefer this for Results UI; see `propertyAnalysisBullets` for plain-text fallback.
+   */
+  propertyAnalysisItems: PropertyAnalysisItem[];
+  /** Ordered bullets (3–5) — title+body joined where a title exists; backward compatible. */
   propertyAnalysisBullets: Array<{ en: string; ar: string }>;
 }
 
 export interface EvaluationReport {
-  version: 1;
+  version: 2;
   createdAtISO: string;
   /** Snapshot of what the user submitted (stepper values). */
   wizardData: WizardData;

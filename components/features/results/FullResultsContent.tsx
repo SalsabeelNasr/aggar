@@ -66,16 +66,16 @@ function decree209Label(
   if (lift === false && floor >= 5) {
     return {
       level: 'critical',
-      text: locale === 'ar' ? 'امتثال ٢٠٩: خطر حرج (بدون مصعد، أدوار مرتفعة)' : 'Decree 209: critical risk (no lift, high floor)',
+      text: locale === 'ar' ? 'امتثال 209: خطر حرج (بدون مصعد، أدوار مرتفعة)' : 'Decree 209: critical risk (no lift, high floor)',
     };
   }
   if (lift === false && floor >= 2) {
-    return { level: 'high', text: locale === 'ar' ? 'امتثال ٢٠٩: مخاطر عالية' : 'Decree 209: high compliance risk' };
+    return { level: 'high', text: locale === 'ar' ? 'امتثال 209: مخاطر عالية' : 'Decree 209: high compliance risk' };
   }
   if (data.regulatory?.inGatedCompound) {
-    return { level: 'low', text: locale === 'ar' ? 'امتثال ٢٠٩: منطقة مجمعات مسجلة عادة' : 'Decree 209: typical gated-track eligibility' };
+    return { level: 'low', text: locale === 'ar' ? 'امتثال 209: منطقة مجمعات مسجلة عادة' : 'Decree 209: typical gated-track eligibility' };
   }
-  return { level: 'moderate', text: locale === 'ar' ? 'امتثال ٢٠٩: راجع المبنى والدور' : 'Decree 209: verify building & floor rules' };
+  return { level: 'moderate', text: locale === 'ar' ? 'امتثال 209: راجع المبنى والدور' : 'Decree 209: verify building & floor rules' };
 }
 
 export default function FullResultsContent() {
@@ -102,7 +102,6 @@ export default function FullResultsContent() {
 
   // ── Region & UI data ─────────────────────────────────────────────────
   const regionName = report.region.name[lo];
-  const areaMarketBaselines = report.areaMarketBaselines;
   const isNewCairo = data.regionId === 'new_cairo';
 
   const scoring = report.ruleResult.scoreResult;
@@ -180,7 +179,7 @@ export default function FullResultsContent() {
 
           <header className="mb-10 space-y-2">
             <h1 className="font-heading text-3xl font-semibold tracking-tight text-secondary-900 md:text-4xl">
-              {lo === 'ar' ? 'تقرير جاهزية العقار' : 'Market readiness report'}
+              {lo === 'ar' ? 'تقرير جاهزية عقارك' : 'Market readiness report'}
             </h1>
           </header>
 
@@ -191,7 +190,7 @@ export default function FullResultsContent() {
                 <Card className="flex w-full min-w-0 flex-col border-secondary-200 shadow-xs">
                   <CardHeader className="p-4 pb-1 pt-3 text-center">
                     <CardTitle className="font-heading text-base font-semibold text-secondary-900">
-                      {lo === 'ar' ? 'جاهزية السوق' : 'Market readiness'}
+                      {lo === 'ar' ? 'جاهزية العقار' : 'Market readiness'}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="flex justify-center px-4 pb-3 pt-0">
@@ -217,15 +216,12 @@ export default function FullResultsContent() {
                   lo={lo}
                   locale={locale}
                   regionName={regionName}
-                  nightlyRateEgp={areaMarketBaselines.nightlyRateEgp}
-                  occupancyPct={areaMarketBaselines.occupancyPct}
-                  typicalMonthlyUsd={report.cardInsights?.neighbours?.typicalMonthlyUsd ?? null}
-                  top10MonthlyUsd={report.cardInsights?.neighbours?.top10MonthlyUsd ?? null}
-                  peakSeasonNote={report.cardInsights?.neighbours?.peakSeasonNote ?? { en: '', ar: '' }}
-                />
-                <PropertyAnalysisCard
-                  lo={lo}
-                  bullets={report.cardInsights?.propertyAnalysisBullets ?? []}
+                  snapshot={report.cardInsights.neighbours.competitionSnapshot}
+                  analysisItems={
+                    report.cardInsights?.propertyAnalysisItems?.length
+                      ? report.cardInsights.propertyAnalysisItems
+                      : (report.cardInsights?.propertyAnalysisBullets ?? []).map((b) => ({ body: b }))
+                  }
                 />
               </div>
             </div>
@@ -235,7 +231,7 @@ export default function FullResultsContent() {
               {/* ── Package tabs + detail ──────────────────────────────── */}
               <div className="space-y-6 px-4 py-5 md:px-6 md:py-6">
                   <h2 className="font-heading text-lg font-semibold text-secondary-900">
-                    {lo === 'ar' ? 'كيف تحسّن؟' : 'How do you improve?'}
+                    {lo === 'ar' ? 'إزاي تحسن أداء عقارك؟' : 'How do you improve?'}
                   </h2>
 
                   <PackageComparisonCards
@@ -293,7 +289,7 @@ export default function FullResultsContent() {
                   </div>
 
                   <h2 className="font-heading text-lg font-semibold text-secondary-900">
-                    {lo === 'ar' ? 'مهتم تبني هذا؟' : 'Interested in building this?'}
+                    {lo === 'ar' ? 'حابب نبدأ في التنفيذ؟' : 'Interested in building this?'}
                   </h2>
 
                   <QuoteOrDiyLeadSection

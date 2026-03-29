@@ -27,7 +27,6 @@ import { cn } from '@/lib/utils';
 import { Hammer, PaintRoller, Sofa } from 'lucide-react';
 import { WizardInlineFieldError, useWizardFieldError } from '@/components/features/wizard/WizardValidationContext';
 import { getStateFieldApplicability } from '@/lib/wizard/stateFieldApplicability';
-import { AccessComplianceCard } from '@/components/features/wizard/AccessComplianceCard';
 import { DesignStyleCarousel } from '@/components/features/wizard/DesignStyleCarousel';
 import { AcInternetFields } from '@/components/features/wizard/state-details/AcInternetFields';
 import { EssentialTechFields } from '@/components/features/wizard/state-details/EssentialTechFields';
@@ -487,10 +486,10 @@ export function Step3State() {
             >
               <option value="">{locale === 'ar' ? 'اختار' : 'Select'}</option>
               <option value="under_3_weeks">
-                {locale === 'ar' ? 'سريع جداً: أقل من ٣ أسابيع (فرش جاهز)' : 'Express: under 3 weeks (ready-made focus)'}
+                {locale === 'ar' ? 'سريع جداً: أقل من 3 أسابيع (فرش جاهز)' : 'Express: under 3 weeks (ready-made focus)'}
               </option>
-              <option value="weeks_4_8">{locale === 'ar' ? 'عادي: ٤ – ٨ أسابيع' : 'Standard: 4 – 8 weeks'}</option>
-              <option value="months_3_plus">{locale === 'ar' ? 'براحتي: ٣ شهور أو أكتر' : 'Custom: 3+ months'}</option>
+              <option value="weeks_4_8">{locale === 'ar' ? 'عادي: 4 – 8 أسابيع' : 'Standard: 4 – 8 weeks'}</option>
+              <option value="months_3_plus">{locale === 'ar' ? 'براحتي: 3 شهور أو أكتر' : 'Custom: 3+ months'}</option>
             </WizardDetailSelect>
             <WizardInlineFieldError message={furnishingDeadlineErr.error} />
           </WizardDetailCard>
@@ -645,23 +644,6 @@ export function Step3State() {
           </WizardDetailCard>
         </div>
       )}
-
-      {selectedState !== 'FURNISHED' && applicability.showAcInternetDetails && (
-        <WizardDetailCard className="mb-10">
-          <AcInternetFields
-            isAr={locale === 'ar'}
-            acCoverage={data.acCoverage}
-            internetSpeed={data.internetSpeed}
-            onAcChange={setAcCoverage}
-            onInternetChange={setInternetSpeed}
-          />
-          {applicability.showEssentialTechDetails && (
-            <EssentialTechFields isAr={locale === 'ar'} selectedIds={data.essentialTechNeeds} onToggle={setEssentialTech} />
-          )}
-        </WizardDetailCard>
-      )}
-
-      {selectedState !== 'FURNISHED' && applicability.showAccessComplianceDetails && <AccessComplianceCard />}
     </div>
   );
 }

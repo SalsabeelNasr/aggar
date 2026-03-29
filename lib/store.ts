@@ -88,7 +88,20 @@ export const useEvaluationStore = create<EvaluationStore>()(
         // Backward-compatible migration: older persisted reports may not include `cardInsights`.
         // Clear stale report snapshots to avoid crashing the Results UI.
         const report = state?.report as unknown as { version?: number; cardInsights?: unknown } | null | undefined;
-        if (report && report.version === 1 && report.cardInsights == null) {
+        const r = report as unknown as {
+          version?: number;
+          cardInsights?: {
+            propertyAnalysisItems?: unknown;
+            neighbours?: { competitionSnapshot?: unknown } | null;
+          } | null;
+        } | null;
+        if (
+          r &&
+          (r.version !== 2 ||
+            r.cardInsights == null ||
+            !Array.isArray(r.cardInsights.propertyAnalysisItems) ||
+            r.cardInsights.neighbours?.competitionSnapshot == null)
+        ) {
           state?.setReport(null);
         }
       },

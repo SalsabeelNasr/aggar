@@ -31,6 +31,7 @@ export function Step2Asset() {
   const brErr = useWizardFieldError('bedrooms');
   const bathErr = useWizardFieldError('bathrooms');
   const sleepErr = useWizardFieldError('sleepCapacity');
+  const sqmErr = useWizardFieldError('propertySizeSqm');
   const gatedErr = useWizardFieldError('inGatedCompound');
   const liftErr = useWizardFieldError('hasLift');
 
@@ -138,14 +139,20 @@ export function Step2Asset() {
               type="number"
               min={10}
               max={2000}
+              data-wizard-field="propertySizeSqm"
               value={data.propertySizeSqm ?? ''}
               onChange={(e) => {
                 const val = e.target.value === '' ? undefined : Number(e.target.value);
                 updateData({ propertySizeSqm: val });
               }}
-              placeholder={isAr ? 'مثلاً: ١٢٠' : 'e.g. 120'}
-              className="w-full border-2 border-secondary-200 rounded-lg p-3 outline-none transition-colors focus:border-primary-500"
+              placeholder={isAr ? 'مثلاً: 120' : 'e.g. 120'}
+              className={cn(
+                'w-full border-2 rounded-lg p-3 outline-none transition-colors',
+                sqmErr.invalid ? 'border-red-500 focus:border-red-500' : 'border-secondary-200 focus:border-primary-500'
+              )}
+              aria-invalid={sqmErr.invalid || undefined}
             />
+            <WizardInlineFieldError message={sqmErr.error} />
           </div>
         </div>
 

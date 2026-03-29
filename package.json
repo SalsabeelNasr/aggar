@@ -13,7 +13,6 @@
     "next-intl": "^3.12.0",
     "react": "^18",
     "react-dom": "^18",
-    "framer-motion": "^11.0.0",
     "lucide-react": "^0.370.0",
     "zustand": "^4.5.2",
     "react-hook-form": "^7.51.0",

@@ -1,3 +1,6 @@
+const moneyFmt = (locale: string) =>
+  new Intl.NumberFormat(locale === 'ar' ? 'ar-EG' : 'en-US', { numberingSystem: 'latn' });
+
 export function formatMoney(n: number, locale: string) {
-  return n.toLocaleString(locale === 'ar' ? 'ar-EG' : 'en-US');
+  return moneyFmt(locale).format(n);
 }

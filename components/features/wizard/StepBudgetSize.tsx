@@ -18,7 +18,6 @@ export function StepBudgetSize() {
   const unfinishedFinanceErr = useWizardFieldError('unfinishedFinancingPreference');
   const furnishingBudgetErr = useWizardFieldError('furnishingBudgetBand');
   const furnishingPayErr = useWizardFieldError('furnishingPaymentPreference');
-  const sqmErr = useWizardFieldError('propertySizeSqm');
 
   const isAr = locale === 'ar';
 
@@ -30,36 +29,12 @@ export function StepBudgetSize() {
         </h2>
       </div>
 
-      <div className="mb-8 bg-white border border-secondary-200 rounded-2xl p-6 shadow-sm w-full">
-        <label className="font-heading font-bold text-secondary-900 block mb-2">
-          {isAr ? 'مساحة العقار (متر مربع)' : 'Property size (sqm)'}
-        </label>
-        <input
-          type="number"
-          min={10}
-          max={2000}
-          data-wizard-field="propertySizeSqm"
-          value={data.propertySizeSqm ?? ''}
-          onChange={(e) => {
-            const val = e.target.value === '' ? undefined : Number(e.target.value);
-            updateData({ propertySizeSqm: val });
-          }}
-          placeholder={isAr ? 'مثلاً: ١٢٠' : 'e.g. 120'}
-          className={cn(
-            'w-full border-2 rounded-lg p-3 outline-none transition-colors',
-            sqmErr.invalid ? 'border-red-500 focus:border-red-500' : 'border-secondary-200 focus:border-primary-500'
-          )}
-          aria-invalid={sqmErr.invalid || undefined}
-        />
-        <WizardInlineFieldError message={sqmErr.error} />
-      </div>
-
       {/* Budget band selection */}
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-4">
           <Wallet className="w-5 h-5 text-primary-600" />
           <h3 className="font-heading font-bold text-lg text-secondary-900">
-            {isAr ? 'ميزانيتك للاستثمار كام؟' : 'What is your investment budget?'}
+            {isAr ? 'اختار النطاق المناسب' : 'Choose a budget band'}
           </h3>
         </div>
         <div
@@ -110,17 +85,17 @@ export function StepBudgetSize() {
                   {
                     id: 'economy' as const,
                     en: 'Economy: 2,500 – 4,000 EGP / sqm',
-                    ar: 'اقتصادي: ٢,٥٠٠ – ٤,٠٠٠ ج.م / م²',
+                    ar: 'اقتصادي: 2,500 – 4,000 ج.م / م²',
                   },
                   {
                     id: 'premium' as const,
                     en: 'Premium: 4,000 – 7,000 EGP / sqm',
-                    ar: 'مميز: ٤,٠٠٠ – ٧,٠٠٠ ج.م / م²',
+                    ar: 'مميز: 4,000 – 7,000 ج.م / م²',
                   },
                   {
                     id: 'luxury_custom' as const,
                     en: 'Luxury / custom: 7,000+ EGP / sqm',
-                    ar: 'فاخر/مخصص: ٧,٠٠٠+ ج.م / م²',
+                    ar: 'فاخر/مخصص: 7,000+ ج.م / م²',
                   },
                 ] satisfies { id: UnfinishedBudgetPerSqm; en: string; ar: string }[]
               ).map((opt) => {
@@ -169,12 +144,12 @@ export function StepBudgetSize() {
                   {
                     id: 'installment_12_24' as const,
                     en: 'Installment plan (12–24 months, e.g. valU / contact consumer finance)',
-                    ar: 'تقسيط (١٢–٢٤ شهر، زي valU أو Contact)',
+                    ar: 'تقسيط (12–24 شهر، زي valU أو Contact)',
                   },
                   {
                     id: 'bank_loan_3_5y' as const,
                     en: 'Long-term bank loan (3–5 years refurbishment loan)',
-                    ar: 'قرض بنكي طويل (٣–٥ سنوات لتشطيب/تجديد)',
+                    ar: 'قرض بنكي طويل (3–5 سنوات لتشطيب/تجديد)',
                   },
                 ] satisfies { id: UnfinishedFinancingPreference; en: string; ar: string }[]
               ).map((opt) => {
@@ -219,8 +194,8 @@ export function StepBudgetSize() {
             >
               {(
                 [
-                  { id: 'budget_250_450k' as const, en: 'Budget: EGP 250k – 450k', ar: 'اقتصادي: ٢٥٠ – ٤٥٠ ألف ج.م' },
-                  { id: 'premium_500_850k' as const, en: 'Premium: EGP 500k – 850k', ar: 'مميز: ٥٠٠ – ٨٥٠ ألف ج.م' },
+                  { id: 'budget_250_450k' as const, en: 'Budget: EGP 250k – 450k', ar: 'اقتصادي: 250 – 450 ألف ج.م' },
+                  { id: 'premium_500_850k' as const, en: 'Premium: EGP 500k – 850k', ar: 'مميز: 500 – 850 ألف ج.م' },
                   { id: 'luxury_1m_plus' as const, en: 'Luxury: EGP 1M+', ar: 'فاخر: مليون ج.م أو أكتر' },
                 ] satisfies { id: FurnishingBudgetBand; en: string; ar: string }[]
               ).map((opt) => {
@@ -262,8 +237,8 @@ export function StepBudgetSize() {
               {(
                 [
                   { id: 'cash_package_discount' as const, en: 'Cash (package discount)', ar: 'كاش (عشان تاخد خصم الباقة)' },
-                  { id: 'short_installments_card_6_12' as const, en: 'Short installments (6–12 months, card)', ar: 'تقسيط قصير (٦–١٢ شهر - بطاقة)' },
-                  { id: 'long_finance_valu_contact_halan' as const, en: 'Long-term financing (24–60 mo. via valU / Contact / Halan)', ar: 'تمويل طويل (٢٤–٦٠ شهر - valU / Contact)' },
+                  { id: 'short_installments_card_6_12' as const, en: 'Short installments (6–12 months, card)', ar: 'تقسيط قصير (6–12 شهر - بطاقة)' },
+                  { id: 'long_finance_valu_contact_halan' as const, en: 'Long-term financing (24–60 mo. via valU / Contact / Halan)', ar: 'تمويل طويل (24–60 شهر - valU / Contact)' },
                   { id: 'revenue_share_management' as const, en: 'Revenue share (furnishing for mgmt %)', ar: 'مشاركة أرباح (فرش مقابل نسبة من الإيراد)' },
                 ] satisfies { id: FurnishingPaymentPreference; en: string; ar: string }[]
               ).map((opt) => {

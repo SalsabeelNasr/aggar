@@ -12,7 +12,7 @@ const MOCK_REGIONS: Record<string, Region> = {
     seasonalityNotes: { en: 'High demand during summer and winter holidays.', ar: 'طلب عالي في الصيف وإجازات الشتا.' },
     marketFact: { 
       en: 'Properties in New Cairo see 15% higher occupancy than the Cairo average.', 
-      ar: 'العقارات في التجمع والقاهرة الجديدة فيها نسبة إشغال أعلى بـ ١٥٪ من متوسط القاهرة.' 
+      ar: 'العقارات في التجمع والقاهرة الجديدة فيها نسبة إشغال أعلى بـ 15% من متوسط القاهرة.' 
     }
   },
   sheikh_zayed: {
@@ -40,7 +40,7 @@ const MOCK_REGIONS: Record<string, Region> = {
     seasonalityNotes: { en: 'Peak season: June to August.', ar: 'موسم الذروة: من يونيو لأغسطس.' },
     marketFact: { 
       en: 'Sahel properties can generate a year of revenue in just 3 summer months.', 
-      ar: 'عقارات الساحل ممكن تعمل دخل سنة كاملة في ٣ شهور صيف بس!' 
+      ar: 'عقارات الساحل ممكن تعمل دخل سنة كاملة في 3 شهور صيف بس!' 
     }
   },
   el_gouna: {
@@ -184,3 +184,9 @@ export async function getRegions(): Promise<Region[]> {
   await new Promise(r => setTimeout(r, 600));
   return Object.values(MOCK_REGIONS);
 }
+
+export {
+  MARKET_DATA,
+  getNeighborhoodMarketData,
+  REGION_ID_TO_MARKET_LABEL,
+} from '@/lib/data/marketData';

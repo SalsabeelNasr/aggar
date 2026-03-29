@@ -4,8 +4,8 @@ import * as React from 'react';
 import { useLocale } from 'next-intl';
 import { useEvaluationStore } from '@/lib/store';
 import { useRouter } from '@/lib/navigation';
-import { Loader2 } from 'lucide-react';
 import FullResultsContent from '@/components/features/results/FullResultsContent';
+import { ReportLoadingStatus } from '@/components/ui/ReportLoadingStatus';
 
 export default function ResultsPage() {
   const locale = useLocale();
@@ -38,15 +38,7 @@ export default function ResultsPage() {
         aria-live="polite"
         aria-busy="true"
       >
-        <Loader2 className="h-12 w-12 text-primary-600 animate-spin shrink-0" aria-hidden />
-        <div className="text-center space-y-2 max-w-sm">
-          <p className="font-heading font-bold text-lg text-secondary-900">
-            {locale === 'ar' ? 'جاري تحميل التقرير…' : 'Loading your report…'}
-          </p>
-          <p className="text-sm text-secondary-600">
-            {locale === 'ar' ? 'يرجى الانتظار لحظة.' : 'This will only take a moment.'}
-          </p>
-        </div>
+        <ReportLoadingStatus locale={locale === 'ar' ? 'ar' : 'en'} />
         {(resultsAccess !== 'full' || !report) && (
           <button
             type="button"

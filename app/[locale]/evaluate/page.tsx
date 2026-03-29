@@ -10,6 +10,7 @@ import type { EvaluationReport } from '@/lib/evaluation/types';
 import { Stepper } from '@/components/ui/Stepper';
 import { CookieConsent } from '@/components/layout/CookieConsent';
 import { Button } from '@/components/ui/Button';
+import { ReportLoadingStatus } from '@/components/ui/ReportLoadingStatus';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 
 import { Step0Listed } from '@/components/features/wizard/Step0Listed';
@@ -171,6 +172,20 @@ export default function EvaluatePage() {
   }, [finalStep, currentStep, data, isFurnished, locale]);
 
   const handleNext = async () => {
+    // #region agent log
+    fetch('http://127.0.0.1:7456/ingest/e6ca7b6f-778b-4b40-b569-f1ca0ea5ebc1', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c87316' },
+      body: JSON.stringify({
+        sessionId: 'c87316',
+        hypothesisId: 'H-branch',
+        location: 'evaluate/page.tsx:handleNext:entry',
+        message: 'handleNext called',
+        data: { currentStep, finalStep, submitting, skipPropertyStateStep, isFurnished },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
     if (currentStep === 2 && skipPropertyStateStep) {
       const v = runStepValidation();
       if (!v.ok) {
@@ -194,7 +209,45 @@ export default function EvaluatePage() {
     }
 
     if (currentStep === finalStep) {
-      const ok = await contactRef.current?.validateAndSync();
+      setSubmitError(null);
+      const contact = contactRef.current;
+      // #region agent log
+      fetch('http://127.0.0.1:7456/ingest/e6ca7b6f-778b-4b40-b569-f1ca0ea5ebc1', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c87316' },
+        body: JSON.stringify({
+          sessionId: 'c87316',
+          hypothesisId: 'H1',
+          location: 'evaluate/page.tsx:handleNext:finalStep',
+          message: 'final step submit path',
+          data: { hasContactRef: !!contact },
+          timestamp: Date.now(),
+        }),
+      }).catch(() => {});
+      // #endregion
+      if (!contact) {
+        setSubmitError(
+          locale === 'ar'
+            ? 'النموذج ما زال يُحمّل. أعد المحاولة بعد لحظة.'
+            : 'The form is still loading. Please try again in a moment.'
+        );
+        return;
+      }
+      const ok = await contact.validateAndSync();
+      // #region agent log
+      fetch('http://127.0.0.1:7456/ingest/e6ca7b6f-778b-4b40-b569-f1ca0ea5ebc1', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c87316' },
+        body: JSON.stringify({
+          sessionId: 'c87316',
+          hypothesisId: 'H2',
+          location: 'evaluate/page.tsx:handleNext:afterValidate',
+          message: 'contact validateAndSync result',
+          data: { syncOk: ok === true },
+          timestamp: Date.now(),
+        }),
+      }).catch(() => {});
+      // #endregion
       if (ok !== true) return;
 
       const snapshotPre = useEvaluationStore.getState().data;
@@ -206,7 +259,26 @@ export default function EvaluatePage() {
         locale: locale === 'ar' ? 'ar' : 'en',
       });
       if (!locV.ok) {
+        // #region agent log
+        fetch('http://127.0.0.1:7456/ingest/e6ca7b6f-778b-4b40-b569-f1ca0ea5ebc1', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c87316' },
+          body: JSON.stringify({
+            sessionId: 'c87316',
+            hypothesisId: 'H3',
+            location: 'evaluate/page.tsx:handleNext:locVFail',
+            message: 'location re-validation failed',
+            data: { errorKeys: Object.keys(locV.errors) },
+            timestamp: Date.now(),
+          }),
+        }).catch(() => {});
+        // #endregion
         setWizardFieldErrors(locV.errors);
+        setSubmitError(
+          locale === 'ar'
+            ? 'يرجى تصحيح بيانات الموقع قبل إنشاء التقرير.'
+            : 'Please fix your property location before generating the report.'
+        );
         setStep(1);
         return;
       }
@@ -223,9 +295,41 @@ export default function EvaluatePage() {
           body: JSON.stringify(snapshot),
         });
 
+        // #region agent log
+        fetch('http://127.0.0.1:7456/ingest/e6ca7b6f-778b-4b40-b569-f1ca0ea5ebc1', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c87316' },
+          body: JSON.stringify({
+            sessionId: 'c87316',
+            hypothesisId: 'H4',
+            location: 'evaluate/page.tsx:handleNext:apiStatus',
+            message: 'evaluate API HTTP result',
+            data: { ok: res.ok, status: res.status },
+            timestamp: Date.now(),
+          }),
+        }).catch(() => {});
+        // #endregion
+
         if (!res.ok) throw new Error('Evaluate failed');
         const json = (await res.json()) as { report?: EvaluationReport };
-        if (!json.report || json.report.version !== 1) throw new Error('No report');
+        // #region agent log
+        fetch('http://127.0.0.1:7456/ingest/e6ca7b6f-778b-4b40-b569-f1ca0ea5ebc1', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c87316' },
+          body: JSON.stringify({
+            sessionId: 'c87316',
+            hypothesisId: 'H4',
+            location: 'evaluate/page.tsx:handleNext:apiBody',
+            message: 'evaluate JSON shape',
+            data: {
+              hasReport: !!json.report,
+              version: json.report?.version ?? null,
+            },
+            timestamp: Date.now(),
+          }),
+        }).catch(() => {});
+        // #endregion
+        if (!json.report || json.report.version !== 2) throw new Error('No report');
 
         setReport(json.report);
         setResultsAccess('full');
@@ -243,6 +347,20 @@ export default function EvaluatePage() {
         phone: (lead.whatsapp ?? '').trim(),
         requestedAtISO: new Date().toISOString(),
       });
+      // #region agent log
+      fetch('http://127.0.0.1:7456/ingest/e6ca7b6f-778b-4b40-b569-f1ca0ea5ebc1', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c87316' },
+        body: JSON.stringify({
+          sessionId: 'c87316',
+          hypothesisId: 'H5',
+          location: 'evaluate/page.tsx:handleNext:beforeNav',
+          message: 'calling router.push results',
+          data: {},
+          timestamp: Date.now(),
+        }),
+      }).catch(() => {});
+      // #endregion
       router.push('/results');
       return;
     }
@@ -278,6 +396,16 @@ export default function EvaluatePage() {
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12 max-w-3xl flex flex-col min-h-[calc(100vh-200px)]">
+      {submitting && (
+        <div
+          className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-6 bg-secondary-50/95 px-4 backdrop-blur-sm"
+          role="status"
+          aria-live="polite"
+          aria-busy="true"
+        >
+          <ReportLoadingStatus locale={locale === 'ar' ? 'ar' : 'en'} />
+        </div>
+      )}
       <Stepper steps={steps} currentStep={stepperCurrentStep} className="mb-12" />
       <CookieConsent variant="inline" />
 
@@ -307,7 +435,27 @@ export default function EvaluatePage() {
           {locale === 'ar' ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
           <span className="hidden sm:inline">{locale === 'ar' ? (currentStep === 0 ? 'رجوع' : 'السابق') : (currentStep === 0 ? 'Back' : 'Previous')}</span>
         </Button>
-        <Button onClick={() => void handleNext()} className="gap-2 px-6 shadow-sm shadow-primary-500/20 shrink-0" disabled={submitting}>
+        <Button
+          onClick={() => {
+            // #region agent log
+            fetch('http://127.0.0.1:7456/ingest/e6ca7b6f-778b-4b40-b569-f1ca0ea5ebc1', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c87316' },
+              body: JSON.stringify({
+                sessionId: 'c87316',
+                hypothesisId: 'H6',
+                location: 'evaluate/page.tsx:primaryButton:onClick',
+                message: 'primary button click',
+                data: { submitting, currentStep, finalStep },
+                timestamp: Date.now(),
+              }),
+            }).catch(() => {});
+            // #endregion
+            void handleNext();
+          }}
+          className="gap-2 px-6 shadow-sm shadow-primary-500/20 shrink-0"
+          disabled={submitting}
+        >
           {locale === 'ar'
             ? currentStep === finalStep
               ? submitting

@@ -53,7 +53,7 @@ export function ServicesSection() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
           <Card className="border-secondary-100 shadow-md overflow-hidden group flex flex-col h-full bg-white">
             <div className="relative h-64 w-full overflow-hidden shrink-0">
-              <Image src="/images/worker.jpg" alt={locale === 'ar' ? 'تشطيب' : 'Finishing'} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+              <Image src="/images/worker.jpg" alt={locale === 'ar' ? 'تشطيب' : 'Finishing'} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
               <div className="absolute inset-0 bg-gradient-to-t from-secondary-900/40 to-transparent pointer-events-none" />
             </div>
             <CardContent className="p-8 flex-1 flex flex-col">
@@ -73,7 +73,7 @@ export function ServicesSection() {
 
           <Card className="border-secondary-100 shadow-md overflow-hidden group flex flex-col h-full bg-white">
             <div className="relative h-64 w-full overflow-hidden shrink-0">
-              <Image src="/images/decor.jpg" alt={locale === 'ar' ? 'فرش' : 'Styling'} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+              <Image src="/images/decor.jpg" alt={locale === 'ar' ? 'فرش' : 'Styling'} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
               <div className="absolute inset-0 bg-gradient-to-t from-secondary-900/40 to-transparent pointer-events-none" />
             </div>
             <CardContent className="p-8 flex-1 flex flex-col">
@@ -91,7 +91,7 @@ export function ServicesSection() {
 
           <Card className="border-secondary-100 shadow-md overflow-hidden group flex flex-col h-full bg-white">
             <div className="relative h-64 w-full overflow-hidden shrink-0">
-              <Image src="/images/photographer.jpg" alt={locale === 'ar' ? 'تصوير' : 'Photography'} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+              <Image src="/images/photographer.jpg" alt={locale === 'ar' ? 'تصوير' : 'Photography'} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
               <div className="absolute inset-0 bg-gradient-to-t from-secondary-900/40 to-transparent pointer-events-none" />
             </div>
             <CardContent className="p-8 flex-1 flex flex-col">
@@ -121,7 +121,7 @@ export function ServicesSection() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card className="border-secondary-100 shadow-sm overflow-hidden group bg-white flex flex-col h-full">
               <div className="relative h-56 w-full shrink-0 overflow-hidden">
-                <Image src="/images/vacuum.jpg" alt="Cleaning" fill className="object-cover object-center scale-110 group-hover:scale-125 transition-transform duration-700" />
+                <Image src="/images/vacuum.jpg" alt="Cleaning" fill sizes="(max-width: 640px) 100vw, (max-width: 1023px) 50vw, 25vw" className="object-cover object-center scale-110 group-hover:scale-125 transition-transform duration-700" />
               </div>
               <CardContent className="p-6 flex-1 flex flex-col items-center justify-start text-center">
                 <span className="font-bold font-heading text-secondary-900 text-xl mb-2">{locale === 'ar' ? 'التنظيف' : 'Cleaning'}</span>
@@ -133,7 +133,7 @@ export function ServicesSection() {
 
             <Card className="border-secondary-100 shadow-sm overflow-hidden group bg-white flex flex-col h-full">
               <div className="relative h-56 w-full shrink-0 overflow-hidden">
-                <Image src="/images/bed.jpg" alt="Linen Swap" fill className="object-cover object-center scale-110 group-hover:scale-125 transition-transform duration-700" />
+                <Image src="/images/bed.jpg" alt="Linen Swap" fill sizes="(max-width: 640px) 100vw, (max-width: 1023px) 50vw, 25vw" className="object-cover object-center scale-110 group-hover:scale-125 transition-transform duration-700" />
               </div>
               <CardContent className="p-6 flex-1 flex flex-col items-center justify-start text-center">
                 <span className="font-bold font-heading text-secondary-900 text-xl mb-2">{locale === 'ar' ? 'المفروشات' : 'Linens'}</span>
@@ -145,7 +145,7 @@ export function ServicesSection() {
 
             <Card className="border-secondary-100 shadow-sm overflow-hidden group bg-white flex flex-col h-full">
               <div className="relative h-56 w-full shrink-0 overflow-hidden">
-                <Image src="/images/phone.jpg" alt="Digital Management" fill className="object-cover object-center scale-110 group-hover:scale-125 transition-transform duration-700" />
+                <Image src="/images/phone.jpg" alt="Digital Management" fill sizes="(max-width: 640px) 100vw, (max-width: 1023px) 50vw, 25vw" className="object-cover object-center scale-110 group-hover:scale-125 transition-transform duration-700" />
               </div>
               <CardContent className="p-6 flex-1 flex flex-col items-center justify-start text-center">
                 <span className="font-bold font-heading text-secondary-900 text-xl mb-2">{locale === 'ar' ? 'الإدارة' : 'Management'}</span>
@@ -157,7 +157,7 @@ export function ServicesSection() {
 
             <Card className="border-secondary-100 shadow-sm overflow-hidden group bg-white flex flex-col h-full">
               <div className="relative h-56 w-full shrink-0 overflow-hidden">
-                <Image src="/images/contract.jpg" alt="Licensing" fill className="object-cover object-center scale-110 group-hover:scale-125 transition-transform duration-700" />
+                <Image src="/images/contract.jpg" alt="Licensing" fill sizes="(max-width: 640px) 100vw, (max-width: 1023px) 50vw, 25vw" className="object-cover object-center scale-110 group-hover:scale-125 transition-transform duration-700" />
               </div>
               <CardContent className="p-6 flex-1 flex flex-col items-center justify-start text-center">
                 <span className="font-bold font-heading text-secondary-900 text-xl mb-2">{locale === 'ar' ? 'التراخيص' : 'Licensing'}</span>

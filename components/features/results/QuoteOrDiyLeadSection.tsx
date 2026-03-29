@@ -65,9 +65,9 @@ export function QuoteOrDiyLeadSection({
   const isAr = lo === 'ar';
   const messages = isAr
     ? {
-        fullName: 'أدخل الاسم الكامل (حرفان على الأقل).',
-        email: 'أدخل بريدًا إلكترونيًا صالحًا.',
-        phone: 'أدخل رقم هاتف صالح لهذه المنطقة.',
+        fullName: 'أدخل اسمك الكريم (حرفين على الأقل).',
+        email: 'أدخل بريد إلكتروني صح.',
+        phone: 'أدخل رقم موبايل صح.',
       }
     : {
         fullName: 'Enter your full name (at least 2 characters).',
@@ -116,24 +116,24 @@ export function QuoteOrDiyLeadSection({
                 <Mail className="h-5 w-5 text-secondary-600" />
               </div>
               <h3 className="font-heading text-base font-semibold text-secondary-900">
-                {isAr ? 'مهتم تبني هذا؟' : 'Reach out to us'}
+                {isAr ? 'حابب نبدأ في التنفيذ؟' : 'Reach out to us'}
               </h3>
             </div>
             <div className="py-2">
               <div className="flex flex-col gap-3">
                 <div className="flex items-center justify-between gap-2 border-b border-secondary-100 pb-2">
                   <span className="font-heading text-xs font-extrabold uppercase tracking-wider text-secondary-700">
-                    {isAr ? 'استثمر' : 'Invest'}
+                    {isAr ? 'استثمار' : 'Invest'}
                   </span>
                   <span className="font-heading text-sm font-bold text-secondary-900">
                     {payAmountText}
-                    <span className="ms-1 text-[10px] font-semibold text-secondary-500">EGP</span>
+                    <span className="ms-1 text-[10px] font-semibold text-secondary-500">ج.م</span>
                   </span>
                 </div>
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-heading text-xs font-extrabold uppercase tracking-tight text-primary-700">
-                      {isAr ? 'تحصل على' : 'get'}
+                      {isAr ? 'العائد المتوقع' : 'get'}
                     </span>
                     <span className="font-heading text-sm font-bold text-primary-700">
                       {optimizedMonthlyText}
@@ -144,7 +144,7 @@ export function QuoteOrDiyLeadSection({
                   </div>
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-heading text-xs font-extrabold uppercase tracking-tight text-primary-700">
-                      {isAr ? 'بدلاً من' : 'Instead of'}
+                      {isAr ? 'بدل ما تاخد' : 'Instead of'}
                     </span>
                     <span className="text-sm font-bold text-secondary-400 line-through decoration-red-400/50">
                       {currentMonthlyText}
@@ -155,7 +155,7 @@ export function QuoteOrDiyLeadSection({
             </div>
             <div className={cn('mt-auto flex flex-col gap-2', isAr ? 'justify-start' : 'justify-start')}>
               <Button type="button" className="mt-auto w-full shadow-xs" onClick={onRequestQuote}>
-                {isAr ? 'طلب عرض سعر' : 'Email me a qoute'}
+                {isAr ? 'اطلب عرض سعر' : 'Email me a qoute'}
               </Button>
             </div>
           </div>
@@ -167,7 +167,7 @@ export function QuoteOrDiyLeadSection({
               </div>
               <div>
                 <h3 className="font-heading text-base font-semibold text-secondary-900">
-                  {isAr ? 'مش جاهز تستثمر؟ خد دليل DIY مجاني' : 'Wanna do everything yourself? Request our free guide'}
+                  {isAr ? 'مش جاهز دلوقتي؟ خد دليل الـ DIY مجاناً' : 'Wanna do everything yourself? Request our free guide'}
                 </h3>
               </div>
             </div>
@@ -177,7 +177,7 @@ export function QuoteOrDiyLeadSection({
                 <div>
                   <input
                     type="text"
-                    placeholder={isAr ? 'الاسم الكامل' : 'Full name'}
+                    placeholder={isAr ? 'الاسم بالكامل' : 'Full name'}
                     aria-invalid={form.formState.errors.fullName ? true : undefined}
                     className={cn(
                       'w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary-600 focus:ring-2 focus:ring-primary-500/30',
@@ -199,7 +199,7 @@ export function QuoteOrDiyLeadSection({
                   >
                     <div className="relative w-11 shrink-0 border-e border-secondary-200 bg-secondary-50">
                       <select
-                        aria-label={isAr ? 'رمز الدولة' : 'Country code'}
+                        aria-label={isAr ? 'كود الدولة' : 'Country code'}
                         className="h-full w-full cursor-pointer appearance-none bg-transparent py-2.5 text-transparent outline-none"
                         {...form.register('countryCode')}
                       >
@@ -219,7 +219,7 @@ export function QuoteOrDiyLeadSection({
                     <input
                       type="tel"
                       dir="ltr"
-                      placeholder={isAr ? `${selectedCountry.dial} رقم الهاتف` : `${selectedCountry.dial} Phone number`}
+                      placeholder={isAr ? `رقم الموبايل` : `${selectedCountry.dial} Phone number`}
                       className="w-full px-3 py-2.5 text-sm outline-none"
                       aria-invalid={form.formState.errors.phone ? true : undefined}
                       {...form.register('phone')}
@@ -249,7 +249,7 @@ export function QuoteOrDiyLeadSection({
               </div>
 
               <Button type="submit" className="mt-auto w-full shadow-xs">
-                {isAr ? 'أرسل لي الدليل' : 'Send me the guide'}
+                {isAr ? 'ابعت لي الدليل' : 'Send me the guide'}
               </Button>
             </form>
           </div>

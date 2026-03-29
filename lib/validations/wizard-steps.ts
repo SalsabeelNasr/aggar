@@ -79,6 +79,8 @@ function validateStepAsset(data: WizardData, locale: Locale): WizardStepValidati
   if (bath == null || Number.isNaN(bath) || bath < 1 || bath > 10) errors.bathrooms = s.fillField;
   const sleep = data.sleepCapacity;
   if (sleep == null || Number.isNaN(sleep) || sleep < 1 || sleep > 20) errors.sleepCapacity = s.fillField;
+  const sqm = data.propertySizeSqm;
+  if (sqm == null || Number.isNaN(sqm) || sqm < 10 || sqm > 2000) errors.propertySizeSqm = s.fillField;
   if (typeof data.regulatory?.inGatedCompound !== 'boolean') errors.inGatedCompound = s.selectOption;
   if (typeof data.regulatory?.hasLift !== 'boolean') errors.hasLift = s.selectOption;
   return Object.keys(errors).length ? fail(errors) : { ok: true };
@@ -133,8 +135,6 @@ function validateStepBudgetSize(data: WizardData, locale: Locale): WizardStepVal
   const s = m(locale);
   const errors: Record<string, string> = {};
   if (!data.budgetBand) errors.budgetBand = s.selectOption;
-  const sqm = data.propertySizeSqm;
-  if (sqm == null || Number.isNaN(sqm) || sqm < 10 || sqm > 2000) errors.propertySizeSqm = s.fillField;
 
    if (data.stateFlag === 'SHELL') {
      if (!data.unfinishedBudgetPerSqm) errors.unfinishedBudgetPerSqm = s.selectOption;

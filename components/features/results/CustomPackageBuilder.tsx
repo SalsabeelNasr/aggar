@@ -52,13 +52,13 @@ export function CustomPackageBuilder({
   }, [allServices]);
 
   const categoryLabels: Record<string, { en: string; ar: string }> = {
-    cleaning: { en: 'Cleaning', ar: 'تنظيف' },
-    photography: { en: 'Photography & Listing', ar: 'تصوير وإعلان' },
-    furniture: { en: 'Furniture & Design', ar: 'أثاث وتصميم' },
-    renovation: { en: 'Renovation', ar: 'تشطيب' },
-    tech: { en: 'Technology & Access', ar: 'تقنية ودخول' },
-    operations: { en: 'Operations & Pricing', ar: 'تشغيل وتسعير' },
-    compliance: { en: 'Compliance', ar: 'امتثال' },
+    cleaning: { en: 'Cleaning', ar: 'التنضيف' },
+    photography: { en: 'Photography & Listing', ar: 'التصوير والإعلان' },
+    furniture: { en: 'Furniture & Design', ar: 'الفرش والديكور' },
+    renovation: { en: 'Renovation', ar: 'التشطيبات' },
+    tech: { en: 'Technology & Access', ar: 'التكنولوجيا والدخول' },
+    operations: { en: 'Operations & Pricing', ar: 'التشغيل والتسعير' },
+    compliance: { en: 'Compliance', ar: 'التراخيص والامتثال' },
     comfort: { en: 'Guest Comfort', ar: 'راحة الضيف' },
   };
 

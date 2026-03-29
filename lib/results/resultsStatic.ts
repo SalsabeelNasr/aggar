@@ -13,7 +13,7 @@ export const DIY_CHECKLIST_ITEMS: DiyChecklistItem[] = [
   {
     id: 'netflix',
     name: { en: 'Netflix Standard', ar: 'اشتراك نتفليكس' },
-    cost: { en: '165–210 EGP/mo', ar: '١٦٥–٢١٠ ج.م/شهر' },
+    cost: { en: '165–210 EGP/mo', ar: '165–210 ج.م/شهر' },
     tip: {
       en: 'Create a guest profile, not your personal account.',
       ar: 'اعمل بروفايل خاص للضيوف، بلاش تستخدم حسابك الشخصي.',
@@ -26,7 +26,7 @@ export const DIY_CHECKLIST_ITEMS: DiyChecklistItem[] = [
   {
     id: 'shahid',
     name: { en: 'Shahid VIP', ar: 'اشتراك شاهد VIP' },
-    cost: { en: '100–150 EGP/mo', ar: '١٠٠–١٥٠ ج.م/شهر' },
+    cost: { en: '100–150 EGP/mo', ar: '100–150 ج.م/شهر' },
     tip: { en: 'Essential for Arabic-speaking guests.', ar: 'مهم جداً للضيوف العرب والمصريين.' },
     whyItHelps: {
       en: 'For many regional guests this matters as much as Wi‑Fi — it is an easy way to lift perceived hospitality without touching your floorplan.',
@@ -36,17 +36,17 @@ export const DIY_CHECKLIST_ITEMS: DiyChecklistItem[] = [
   {
     id: 'mesh',
     name: { en: 'Mesh Wi‑Fi (TP-Link Deco)', ar: 'مقوي واي فاي (Mesh)' },
-    cost: { en: '2,500–4,500 EGP', ar: '٢٬٥٠٠–٤٬٥٠٠ ج.م' },
+    cost: { en: '2,500–4,500 EGP', ar: '2,500–4,500 ج.م' },
     tip: { en: 'Post tested speed visibly in the unit.', ar: 'اعرض سرعة النت بوضوح في الشقة عشان الضيف يطمن.' },
     whyItHelps: {
       en: 'Dead zones kill reviews. Solid Wi‑Fi is one of the fastest paths to “great stay” mentions — platforms weight that heavily in practice.',
-      ar: 'النت الضعيف بيقتل التقييمات. واي فاي قوي في كل ركن هو أسرع طريق لتقييم ٥ نجوم.',
+      ar: 'النت الضعيف بيقتل التقييمات. واي فاي قوي في كل ركن هو أسرع طريق لتقييم 5 نجوم.',
     },
   },
   {
     id: 'welcome',
     name: { en: 'Welcome basket (water, sweets, fruit)', ar: 'سلة ترحيب (مياه، سناكس، فاكهة)' },
-    cost: { en: '200–400 EGP/stay', ar: '٢٠٠–٤٠٠ ج.م/إقامة' },
+    cost: { en: '200–400 EGP/stay', ar: '200–400 ج.م/إقامة' },
     tip: { en: 'Guests mention this in reviews.', ar: 'الضيوف دايماً بيشكروا في الحركة دي في التقييمات.' },
     whyItHelps: {
       en: 'Tiny touches often become five-star sentences — they do not replace photos, but they nudge review tone in your favor.',
@@ -56,7 +56,7 @@ export const DIY_CHECKLIST_ITEMS: DiyChecklistItem[] = [
   {
     id: 'first_aid',
     name: { en: 'First aid kit', ar: 'شنطة إسعافات أولية' },
-    cost: { en: '300–500 EGP', ar: '٣٠٠–٥٠٠ ج.م' },
+    cost: { en: '300–500 EGP', ar: '300–500 ج.م' },
     tip: { en: 'Panadol, plasters, antiseptic wipes.', ar: 'بنادول، بلاستر، ومناديل مطهرة.' },
     whyItHelps: {
       en: 'Safety and care read as professionalism — families notice, and calmer guests write calmer reviews.',
@@ -76,32 +76,32 @@ export const SCORE_IMPROVEMENT_ROWS: ScoreImprovementRow[] = [
   {
     id: 'photo',
     title: { en: 'Professional photography', ar: 'تصوير احترافي' },
-    scoreGain: { en: '+6 pts', ar: '+٦ نقاط' },
-    cost: { en: '5,000–16,000 EGP', ar: '٥٬٠٠٠–١٦٬٠٠٠ ج.م' },
+    scoreGain: { en: '+6 pts', ar: '+6 نقاط' },
+    cost: { en: '5,000–16,000 EGP', ar: '5,000–16,000 ج.م' },
   },
   {
     id: 'lighting',
     title: { en: 'Improve lighting', ar: 'تحسين الإضاءة' },
-    scoreGain: { en: '+5 pts', ar: '+٥ نقاط' },
-    cost: { en: '8,000–15,000 EGP', ar: '٨٬٠٠٠–١٥٬٠٠٠ ج.م' },
+    scoreGain: { en: '+5 pts', ar: '+5 نقاط' },
+    cost: { en: '8,000–15,000 EGP', ar: '8,000–15,000 ج.م' },
   },
   {
     id: 'linen',
     title: { en: 'Linen upgrade to triple par', ar: 'مفروشات فندقية (طقم ثلاثي)' },
-    scoreGain: { en: '+4 pts', ar: '+٤ نقاط' },
-    cost: { en: '9,000–10,500 EGP', ar: '٩٬٠٠٠–١٠٬٥٠٠ ج.م' },
+    scoreGain: { en: '+4 pts', ar: '+4 نقاط' },
+    cost: { en: '9,000–10,500 EGP', ar: '9,000–10,500 ج.م' },
   },
   {
     id: 'bath',
     title: { en: 'Bathroom non-slip + fixtures', ar: 'تجديد الحمام (أمان + خلاطات)' },
-    scoreGain: { en: '+3 pts', ar: '+٣ نقاط' },
-    cost: { en: '8,000–20,000 EGP', ar: '٨٬٠٠٠–٢٠٬٠٠٠ ج.م' },
+    scoreGain: { en: '+3 pts', ar: '+3 نقاط' },
+    cost: { en: '8,000–20,000 EGP', ar: '8,000–20,000 ج.م' },
   },
   {
     id: 'workspace',
     title: { en: 'Add workspace (desk + chair)', ar: 'إضافة ركن للعمل' },
-    scoreGain: { en: '+2 pts', ar: '+٢ نقاط' },
-    cost: { en: '3,500–7,000 EGP', ar: '٣٬٥٠٠–٧٬٠٠٠ ج.م' },
+    scoreGain: { en: '+2 pts', ar: '+2 نقاط' },
+    cost: { en: '3,500–7,000 EGP', ar: '3,500–7,000 ج.م' },
   },
 ];
 
@@ -127,12 +127,12 @@ export const CONSULTANT_MOCK: ConsultantCard[] = [
     title: { en: 'Renovation & interior design', ar: 'تشطيب وتصميم داخلي' },
     bio: {
       en: '15+ renewals in New Cairo & Sheikh Zayed. STR-first floorplans.',
-      ar: 'أكتر من ١٥ مشروع تجديد في التجمع وزايد بتركيز خاص على الإيجار القصير.',
+      ar: 'أكتر من 15 مشروع تجديد في التجمع وزايد بتركيز خاص على الإيجار القصير.',
     },
     regionIds: ['new_cairo', 'sheikh_zayed', 'north_coast'],
     rating: 4.9,
     consultations: 214,
-    availability: { en: 'Next slot: Thu 3pm', ar: 'الموعد الجاي: الخميس ٣ م' },
+    availability: { en: 'Next slot: Thu 3pm', ar: 'الموعد الجاي: الخميس 3 م' },
     priceEgp: 1000,
     specialties: ['reno', 'styling'],
   },
@@ -154,7 +154,7 @@ export const CONSULTANT_MOCK: ConsultantCard[] = [
   {
     id: 'c3',
     name: { en: 'Layla Khaled', ar: 'ليلى خالد' },
-    title: { en: 'Decree 209 & licensing', ar: 'تراخيص سياحية (قرار ٢٠٩)' },
+    title: { en: 'Decree 209 & licensing', ar: 'تراخيص سياحية (قرار 209)' },
     bio: {
       en: 'Compliance-first onboarding for Zamalek & Maadi mixed-use.',
       ar: 'متخصصة في التراخيص والامتثال القانوني، خصوصاً في الزمالك والمعادي.',
@@ -162,7 +162,7 @@ export const CONSULTANT_MOCK: ConsultantCard[] = [
     regionIds: ['zamalek', 'maadi', 'new_cairo'],
     rating: 5.0,
     consultations: 132,
-    availability: { en: 'Next slot: Wed 11am', ar: 'الموعد الجاي: الأربعاء ١١ ص' },
+    availability: { en: 'Next slot: Wed 11am', ar: 'الموعد الجاي: الأربعاء 11 ص' },
     priceEgp: 1200,
     specialties: ['licensing'],
   },
@@ -177,7 +177,7 @@ export const CONSULTANT_MOCK: ConsultantCard[] = [
     regionIds: ['north_coast', 'el_gouna', 'new_cairo'],
     rating: 4.7,
     consultations: 98,
-    availability: { en: 'Next slot: Fri 10am', ar: 'الموعد الجاي: الجمعة ١٠ ص' },
+    availability: { en: 'Next slot: Fri 10am', ar: 'الموعد الجاي: الجمعة 10 ص' },
     priceEgp: 900,
     specialties: ['invest'],
   },

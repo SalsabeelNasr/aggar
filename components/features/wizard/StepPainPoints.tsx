@@ -5,11 +5,7 @@ import { useLocale } from 'next-intl';
 import { useEvaluationStore } from '@/lib/store';
 import type { FurnishedLeadQualification, FurnishedOperationalPainId, ManagementMode } from '@/models';
 import { isFurnishedPerformanceSectionVisible } from '@/lib/wizard/furnishedPerformanceVisibility';
-import { GuestAccessReliabilityChoice } from '@/components/features/wizard/state-details/GuestAccessReliabilityChoice';
-import {
-  ManagedCleaningTeamField,
-  ManagedPropertyManagerField,
-} from '@/components/features/wizard/state-details/ManagedOpsFields';
+import { AccessComplianceCard } from '@/components/features/wizard/AccessComplianceCard';
 import { cn } from '@/lib/utils';
 import { WizardInlineFieldError, useWizardFieldError } from '@/components/features/wizard/WizardValidationContext';
 
@@ -103,11 +99,7 @@ export function StepPainPoints() {
         </h2>
       </div>
 
-      <div className="flex flex-col gap-8">
-        <ManagedPropertyManagerField isAr={isAr} />
-        <ManagedCleaningTeamField isAr={isAr} />
-        <GuestAccessReliabilityChoice isAr={isAr} />
-      </div>
+      <AccessComplianceCard />
 
       <div className="bg-white border border-secondary-200 rounded-2xl p-6 shadow-sm">
         <div className="font-heading font-bold text-secondary-900 mb-4">

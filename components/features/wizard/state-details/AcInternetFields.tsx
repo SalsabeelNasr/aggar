@@ -65,8 +65,8 @@ export function AcInternetFields({
           onChange={(e) => onInternetChange(e.target.value as InternetSpeed)}
         >
           <option value="none_or_adsl">{isAr ? 'مفيش / ADSL بطيء' : 'None / ADSL'}</option>
-          <option value="basic_under_50">{isAr ? 'أقل من ٥٠ ميجا' : 'Under 50 Mbps'}</option>
-          <option value="fiber_100_plus">{isAr ? 'فايبر ١٠٠ ميجا أو أكتر' : 'Fiber 100+ Mbps'}</option>
+          <option value="basic_under_50">{isAr ? 'أقل من 50 ميجا' : 'Under 50 Mbps'}</option>
+          <option value="fiber_100_plus">{isAr ? 'فايبر 100 ميجا أو أكتر' : 'Fiber 100+ Mbps'}</option>
           <option value="mesh_200_plus">{isAr ? 'سرعة عالية جداً مع Mesh' : '200+ Mbps + mesh'}</option>
         </select>
         <WizardInlineFieldError message={netFieldErr.error} />

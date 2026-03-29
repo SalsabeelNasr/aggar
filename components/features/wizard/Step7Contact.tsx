@@ -73,11 +73,17 @@ export const Step7Contact = React.forwardRef<Step7ContactHandle, object>(functio
       const ok = await form.trigger();
       if (!ok) {
         const state = form.formState;
-        const order = ['fullName', 'phone', 'email'] as const;
+        const order = ['fullName', 'countryCode', 'phone', 'email'] as const;
         for (const name of order) {
           if (!form.getFieldState(name, state).invalid) continue;
           const id =
-            name === 'fullName' ? 'contact-fullName' : name === 'phone' ? 'contact-phone' : 'contact-email';
+            name === 'fullName'
+              ? 'contact-fullName'
+              : name === 'countryCode'
+                ? 'contact-countryCode'
+                : name === 'phone'
+                  ? 'contact-phone'
+                  : 'contact-email';
           const el = document.getElementById(id);
           el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
           el?.focus();
@@ -141,8 +147,10 @@ export const Step7Contact = React.forwardRef<Step7ContactHandle, object>(functio
           >
             <div className="relative w-11 shrink-0 border-e border-secondary-200 bg-secondary-50">
               <select
+                id="contact-countryCode"
                 aria-label={isAr ? 'رمز الدولة' : 'Country code'}
                 className="h-full w-full min-h-[48px] cursor-pointer appearance-none bg-transparent py-2.5 text-transparent outline-none"
+                aria-invalid={form.formState.errors.countryCode ? true : undefined}
                 {...form.register('countryCode')}
               >
                 {PHONE_COUNTRIES.map((country) => (
@@ -174,6 +182,9 @@ export const Step7Contact = React.forwardRef<Step7ContactHandle, object>(functio
               {...form.register('phone')}
             />
           </div>
+          {form.formState.errors.countryCode && (
+            <p className="text-sm text-red-600 font-medium">{form.formState.errors.countryCode.message}</p>
+          )}
           {form.formState.errors.phone && (
             <p className="text-sm text-red-600 font-medium">{form.formState.errors.phone.message}</p>
           )}

@@ -52,17 +52,17 @@ export function PackageTopMetrics({
               {/* Break-even moved under investment */}
               <div className="mt-2 flex items-center gap-2 text-xs font-medium text-secondary-500">
                 <Calendar className="h-3.5 w-3.5 text-secondary-400" />
-                <span>{isAr ? 'مدة التعادل المتوقعة:' : 'Expected break-even:'}</span>
+                <span>{isAr ? 'هترجع استثمارك في خلال:' : 'Expected break-even:'}</span>
                 <span className="font-bold text-secondary-900">
                   {breakEvenMonths ? `${breakEvenMonths.min}–${breakEvenMonths.max}` : '—'}
-                  <span className="ml-0.5 text-[10px] font-normal text-secondary-500">{isAr ? 'شهر' : 'mo'}</span>
+                  <span className="ml-0.5 text-[10px] font-normal text-secondary-500">{isAr ? 'شهور' : 'mo'}</span>
                 </span>
               </div>
             </div>
 
             <div className="max-w-md">
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-secondary-400 mb-0.5">
-                {isAr ? 'الهدف من الاستثمار' : 'Investment Goal'}
+                {isAr ? 'الهدف من الباقة' : 'Investment Goal'}
               </p>
               <h3 className="text-lg font-bold leading-tight text-secondary-800">
                 {sectionSubtitle}
@@ -77,7 +77,7 @@ export function PackageTopMetrics({
             <div className="space-y-4">
               <div className="space-y-1">
                 <p className="text-[9px] font-bold uppercase tracking-widest text-secondary-400">
-                  {isAr ? 'صافي الدخل الشهري' : 'Target Monthly Net'}
+                  {isAr ? 'صافي الدخل الشهري المستهدف' : 'Target Monthly Net'}
                 </p>
                 <div className="flex items-baseline gap-1">
                   <span className="text-2xl font-black text-primary-700 tabular-nums">
@@ -87,14 +87,14 @@ export function PackageTopMetrics({
                 </div>
                 <div className="inline-flex items-center gap-1 rounded-full bg-primary-100/50 px-2 py-0.5 text-[9px] font-bold text-primary-700">
                   <ArrowUpRight className="h-2.5 w-2.5" />
-                  {isAr ? 'زيادة عن اليوم' : 'Increase from today'}
+                  {isAr ? 'أعلى من دخلك الحالي' : 'Increase from today'}
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3 pt-4 border-t border-secondary-200/60">
                 <div className="space-y-0.5">
                   <p className="text-[8px] font-bold uppercase tracking-widest text-secondary-400">
-                    {isAr ? 'صافي السنة ١' : 'Year 1 Net'}
+                    {isAr ? 'صافي أول سنة' : 'Year 1 Net'}
                   </p>
                   <p className="text-xs font-bold text-secondary-900">
                     {year1ProjectedNetEgp ? formatMoney(year1ProjectedNetEgp.min, locale) : '—'}
@@ -102,7 +102,7 @@ export function PackageTopMetrics({
                 </div>
                 <div className="space-y-0.5">
                   <p className="text-[8px] font-bold uppercase tracking-widest text-secondary-400">
-                    {isAr ? 'العائد السنوي' : 'Annual Net'}
+                    {isAr ? 'إجمالي السنة' : 'Annual Net'}
                   </p>
                   <p className="text-xs font-bold text-secondary-900">
                     {year1ProjectedNetEgp ? formatMoney(year1ProjectedNetEgp.max, locale) : '—'}

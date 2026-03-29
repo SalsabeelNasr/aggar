@@ -141,9 +141,9 @@ export function StepFurnishedPerformance() {
             }
           >
             <option value="">{isAr ? 'اختار' : 'Select'}</option>
-            <option value="under_5_min">{isAr ? 'أقل من ١٥ دقيقة' : 'Under 15 minutes'}</option>
+            <option value="under_5_min">{isAr ? 'أقل من 15 دقيقة' : 'Under 15 minutes'}</option>
             <option value="about_1_hour">{isAr ? 'في حدود ساعة' : 'About 1 hour'}</option>
-            <option value="several_hours">{isAr ? 'أكتر من ٤ ساعات' : '4+ hours'}</option>
+            <option value="several_hours">{isAr ? 'أكتر من 4 ساعات' : '4+ hours'}</option>
             <option value="often_miss">{isAr ? 'مش منتظم / برد متأخر' : 'Inconsistent / often slow to reply'}</option>
           </select>
           <WizardInlineFieldError message={guestResponseErr.error} />
@@ -174,7 +174,7 @@ export function StepFurnishedPerformance() {
                 revenueErr.invalid ? 'border-red-500' : 'border-secondary-200'
               )}
               aria-invalid={revenueErr.invalid || undefined}
-              placeholder={isAr ? 'مثلاً: ٢٥٠٠٠' : 'e.g. 25000'}
+              placeholder={isAr ? 'مثلاً: 25000' : 'e.g. 25000'}
               value={flq?.monthlyRevenueEgp ?? ''}
               onChange={(e) => {
                 const v = e.target.value;
@@ -206,10 +206,10 @@ export function StepFurnishedPerformance() {
               }
             >
               <option value="">{isAr ? 'اختار' : 'Select'}</option>
-              <option value="under_30">{isAr ? 'أقل من ٣٠٪ (ضعيف)' : 'Under 30% (struggling)'}</option>
-              <option value="between_30_60">{isAr ? '٣٠٪ – ٦٠٪ (متوسط)' : '30% – 60% (average)'}</option>
+              <option value="under_30">{isAr ? 'أقل من 30% (ضعيف)' : 'Under 30% (struggling)'}</option>
+              <option value="between_30_60">{isAr ? '30% – 60% (متوسط)' : '30% – 60% (average)'}</option>
               <option value="over_60">
-                {isAr ? 'أكتر من ٦٠٪ (ممتاز)' : '60%+ (high — maybe underpriced?)'}
+                {isAr ? 'أكتر من 60% (ممتاز)' : '60%+ (high — maybe underpriced?)'}
               </option>
             </select>
             <WizardInlineFieldError message={occupancyErr.error} />

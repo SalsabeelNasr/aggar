@@ -141,7 +141,7 @@ export function StepPhotos() {
         <div className="flex flex-col items-center">
           <UploadCloud className="w-12 h-12 text-secondary-400 mb-4" />
           <p className="font-heading font-bold text-secondary-900 mb-1">
-            {isAr ? 'ارفع من ٥ لـ ١٠ صور (مطلوب)' : 'Upload 5–10 photos (required)'}
+            {isAr ? 'ارفع من 5 لـ 10 صور (مطلوب)' : 'Upload 5–10 photos (required)'}
           </p>
           <p className="text-secondary-500 text-sm mb-4">
             {isAr ? 'صور الصالة، أوضة النوم، المطبخ، الحمام، والبلكونة.' : 'Living room, bedroom, kitchen, bathroom, balcony/view.'}

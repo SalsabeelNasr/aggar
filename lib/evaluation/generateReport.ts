@@ -1,4 +1,4 @@
-import type { RegionId, WizardData, PropertyStateFlag, InternetSpeed, ACCoverage, ListingStatus } from '@/models';
+import type { WizardData, PropertyStateFlag, InternetSpeed, ACCoverage, ListingStatus } from '@/models';
 import { getRegionById } from '@/services/mockApi';
 import { evaluateRules } from '@/lib/engines/ruleEngine';
 import {
@@ -8,40 +8,15 @@ import {
   type PackageType,
 } from '@/lib/engines/packageBuilder';
 import { projectRevenue, regionalMarketBaselines } from '@/lib/engines/revenueEngine';
-import type { EvaluationReport } from './types';
+import {
+  computeWeeklyVacancyOpportunityEgp,
+  evaluatePropertyInsights,
+} from '@/lib/results/propertyInsights';
+import type { EvaluationReport, PropertyAnalysisItem } from './types';
+import { buildCompetitionSnapshot } from './competitionSnapshot';
 
 function localized(en: string, ar: string) {
   return { en, ar };
-}
-
-function neighboursBenchmarks(regionId: RegionId | undefined): EvaluationReport['cardInsights']['neighbours'] {
-  const id = regionId ?? 'other';
-  switch (id) {
-    case 'zamalek':
-      return { typicalMonthlyUsd: 744, top10MonthlyUsd: 2130, peakSeasonNote: localized('Peak: Dec–Feb', 'الذروة: ديسمبر–فبراير') };
-    case 'new_cairo':
-      return { typicalMonthlyUsd: 465, top10MonthlyUsd: 1500, peakSeasonNote: localized('Year-round corporate demand', 'طلب ثابت (شركات) طوال العام') };
-    case 'hurghada':
-      return { typicalMonthlyUsd: 940, top10MonthlyUsd: 2000, peakSeasonNote: localized('Peak: Oct–Apr', 'الذروة: أكتوبر–أبريل') };
-    case 'el_gouna':
-      return { typicalMonthlyUsd: 2000, top10MonthlyUsd: 3000, peakSeasonNote: localized('Peak: Oct–Apr (winter sun)', 'الذروة: أكتوبر–أبريل') };
-    case 'north_coast':
-      return { typicalMonthlyUsd: null, top10MonthlyUsd: 3000, peakSeasonNote: localized('Peak: Jun–Aug · off-season is low', 'الذروة: يونيو–أغسطس · خارج الموسم منخفض') };
-    case 'dahab':
-      return { typicalMonthlyUsd: 800, top10MonthlyUsd: 1500, peakSeasonNote: localized('Steady year-round when design is strong', 'يميل للاستقرار إذا كان التصميم قويًا') };
-    case 'maadi':
-      return { typicalMonthlyUsd: 569, top10MonthlyUsd: 1827, peakSeasonNote: localized('Urban demand · strongest Oct–Jan', 'طلب حضري · الأقوى أكتوبر–يناير') };
-    case 'sharm':
-      return { typicalMonthlyUsd: 569, top10MonthlyUsd: 1827, peakSeasonNote: localized('Tourism market · watch holidays', 'سوق سياحي · راقب المواسم') };
-    case 'luxor_aswan':
-      return { typicalMonthlyUsd: 569, top10MonthlyUsd: 1827, peakSeasonNote: localized('Seasonal cultural demand', 'طلب موسمي مرتبط بالسياحة الثقافية') };
-    case 'sheikh_zayed':
-    case 'nasr_city_6th_october':
-    case 'industrial_informal':
-    case 'other':
-    default:
-      return { typicalMonthlyUsd: 569, top10MonthlyUsd: 1827, peakSeasonNote: localized('Benchmarked to Cairo averages', 'مقارن بمتوسطات القاهرة') };
-  }
 }
 
 function isListedUnderperform(status: ListingStatus | undefined) {
@@ -54,28 +29,31 @@ function readinessNarrative(data: WizardData): EvaluationReport['cardInsights'][
   if (state === 'SHELL') {
     return localized(
       'You are in the shell stage: build for STR first. Get bathroom/bedroom/kitchen fundamentals right before decor.',
-      'أنت في مرحلة الشِّل: ابني بعقلية STR أولاً. ركّز على الأساسيات (الحمام/غرفة النوم/المطبخ) قبل الديكور.'
+      'إنت لسه في مرحلة الطوب: ابدأ صح وأسس الشقة للإيجار القصير. ظبط أساسيات الحمام وأوض النوم والمطبخ قبل ما تفكر في الديكور.'
     );
   }
   if (state === 'FINISHED_EMPTY') {
     return localized(
       'You are finished but empty: furnishing for ROI is the fastest lever. Sleep quality + blackout + lighting beat extra decor.',
-      'أنت مُشطب لكن بدون فرش: الفرش بعائد استثماري هو أسرع رافعة. جودة النوم + بلاك آوت + الإضاءة أهم من الزينة.'
+      'الشقة متشطبة بس فاضية: الفرش الاستثماري هو أسرع طريق للربح. جودة النوم، ستائر البلاك آوت، والإضاءة أهم بكتير من أي ديكورات زيادة.'
     );
   }
   if (state === 'FURNISHED' && underperform) {
     return localized(
       'You are furnished but underperforming: fix presentation first. Photos + bilingual listing + response time usually unlock results.',
-      'أنت مُفروش لكن الأداء ضعيف: أصلح العرض أولاً. الصور + الإعلان ثنائي اللغة + سرعة الرد غالباً يفتحون النتائج.'
+      'الشقة مفروشة بس الأرباح قليلة: محتاج تظبط طريقة العرض. صور احترافية، إعلان بلغتين، وسرعة رد هي اللي هتغير النتايج.'
     );
   }
   return localized(
     'You are close to market-ready. Focus on the few highest-impact upgrades in the right order to reach top-tier performance.',
-    'أنت قريب من الجاهزية. ركّز على ترقيات قليلة عالية التأثير وبالترتيب الصحيح للوصول لأداء قوي.'
+    'إنت قريب جداً من الجاهزية الكاملة. ركز بس على شوية تحسينات ذكية بالترتيب الصح عشان توصل لأعلى أرباح في منطقتك.'
   );
 }
 
-function propertyAnalysisBullets(data: WizardData, scoreReasons: string[]): EvaluationReport['cardInsights']['propertyAnalysisBullets'] {
+function legacyPropertyAnalysisBullets(
+  data: WizardData,
+  scoreReasons: string[]
+): EvaluationReport['cardInsights']['propertyAnalysisBullets'] {
   const bullets: Array<{ en: string; ar: string }> = [];
   const state: PropertyStateFlag = data.stateFlag ?? 'FINISHED_EMPTY';
   const underperform = isListedUnderperform(data.listingStatus);
@@ -85,17 +63,17 @@ function propertyAnalysisBullets(data: WizardData, scoreReasons: string[]): Eval
   if (state === 'SHELL') {
     bullets.push(localized(
       'Shell stage: prioritize bathrooms first, then bedrooms, then kitchen; living room comes last for reviews.',
-      'مرحلة الشِّل: ابدأ بالحمامات ثم غرف النوم ثم المطبخ؛ غرفة المعيشة تأتي أخيراً من ناحية التقييمات.'
+      'مرحلة الطوب: ابدأ بالحمامات، وبعدها أوض النوم، والمطبخ؛ الصالة بتيجي في الآخر خالص في التقييمات.'
     ));
   } else if (state === 'FINISHED_EMPTY') {
     bullets.push(localized(
       'Finished-empty: invest first in mattress + hotel-white linen + blackout curtains; poor sleep shows up in reviews.',
-      'مُشطب وفاضي: ابدأ بالماتريس + بياضات فندقية بيضاء + ستائر بلاك آوت؛ النوم السيئ يظهر فوراً في التقييمات.'
+      'شقة متشطبة وفاضية: استثمر أول حاجة في مرتبة مريحة، ملايات بيضا فندقية، وستائر بلاك آوت؛ الضيف مبيسامحش في ليلة نوم وحشة.'
     ));
   } else if (state === 'FURNISHED' && underperform) {
     bullets.push(localized(
       'Underperforming: re-photograph before changing anything else — your photos are your storefront.',
-      'أداء ضعيف: أعد التصوير قبل أي تغيير آخر — الصور هي واجهة إعلانك.'
+      'الأداء ضعيف: صور الشقة تاني قبل ما تغير أي حاجة؛ صورك هي واجهة محلك والسبب الأول للحجز.'
     ));
   }
 
@@ -103,18 +81,18 @@ function propertyAnalysisBullets(data: WizardData, scoreReasons: string[]): Eval
   if (!hasPhotos) {
     bullets.push(localized(
       'No photos uploaded yet: add room photos (or plan professional photography) to make recommendations accurate and boost conversion.',
-      'لا توجد صور مرفوعة: أضف صور الغرف (أو خطّط لتصوير احترافي) لرفع الدقة وزيادة التحويل.'
+      'لسه مفيش صور: ارفع صور للأوض عشان نقدر نديك نصايح أدق ونساعدك تزود حجوزاتك.'
     ));
   } else if ((data.photoUpload?.aiSummary?.qualityTier ?? 'medium') === 'low') {
     bullets.push(localized(
       'Photo quality looks low: improve lighting and declutter key frames; this is often a faster win than buying new items.',
-      'جودة الصور تبدو منخفضة: حسّن الإضاءة وقلل الفوضى في اللقطات الأساسية؛ غالباً أسرع من شراء قطع جديدة.'
+      'جودة الصور ضعيفة: حسّن الإضاءة ونضف الكادر قبل ما تصور؛ دي أسرع طريقة تحسن بيها شكل شقتك من غير ما تصرف كتير.'
     ));
   } else if (data.photoUpload?.aiSummary?.visibleIssues?.length) {
     const issue = data.photoUpload.aiSummary.visibleIssues[0];
     bullets.push(localized(
       `Image insight: fix “${issue}” first — it’s a visible trust signal in listings.`,
-      `ملاحظة من الصور: أصلح “${issue}” أولاً — لأنه إشارة ثقة واضحة في الإعلان.`
+      `ملاحظة من الصور: صلح مشكلة "${issue}" أول حاجة؛ دي بتدي انطباع فوري للضيوف عن جودة المكان.`
     ));
   }
 
@@ -123,7 +101,7 @@ function propertyAnalysisBullets(data: WizardData, scoreReasons: string[]): Eval
   if (internet && internet !== 'fiber_100_plus' && internet !== 'mesh_200_plus') {
     bullets.push(localized(
       `Wi‑Fi is "${internet}": add mesh coverage and frame a speed test screenshot to reduce pre-booking doubts.`,
-      `الإنترنت "${internet}": أضف Mesh وعلّق نتيجة اختبار السرعة لإزالة الشك قبل الحجز.`
+      `النت حالياً "${internet}": محتاج تقوي التغطية بـ Mesh وتحط صورة لاختبار السرعة عشان تطمن الضيوف.`
     ));
   }
 
@@ -132,7 +110,7 @@ function propertyAnalysisBullets(data: WizardData, scoreReasons: string[]): Eval
   if (ac === 'none_or_broken' || ac === 'one_old_unit') {
     bullets.push(localized(
       'AC coverage is weak: in Egypt, cooling is a top review driver — prioritize reliable units in bedrooms first.',
-      'التكييف غير كافٍ: في مصر هو من أهم أسباب التقييم — ابدأ بوحدات موثوقة في غرف النوم.'
+      'التكييف ضعيف: في صيف مصر، التبريد هو أهم حاجة للضيف؛ ركز إنك تركب تكييفات كويسة في أوض النوم الأول.'
     ));
   }
 
@@ -141,7 +119,7 @@ function propertyAnalysisBullets(data: WizardData, scoreReasons: string[]): Eval
   if (access === 'none') {
     bullets.push(localized(
       'Guest access isn’t solved yet: smart lock or lockbox enables self check-in and reduces operational friction.',
-      'الدخول للضيوف غير محسوم: قفل ذكي أو صندوق مفاتيح يسهّل الـ self check-in ويقلل الاحتكاك التشغيلي.'
+      'طريقة الدخول لسه مش واضحة: القفل الذكي أو صندوق المفاتيح هيسهل عليك وعلى الضيف جداً ويقلل وجع الدماغ.'
     ));
   }
 
@@ -149,7 +127,7 @@ function propertyAnalysisBullets(data: WizardData, scoreReasons: string[]): Eval
   if (data.regulatory?.hasLift === false && (data.regulatory?.floorNumber ?? 0) >= 5) {
     bullets.push(localized(
       'Decree 209 risk: no lift on a high floor can block licensing — verify eligibility before investing heavily.',
-      'مخاطر قرار 209: عدم وجود مصعد مع دور مرتفع قد يمنع الترخيص — تأكد من الأهلية قبل استثمار كبير.'
+      'مخاطر قرار ٢٠٩: مفيش أسانسير في دور عالي ممكن يعطل الترخيص؛ اتأكد من النقطة دي قبل ما تصرف مبالغ كبيرة.'
     ));
   }
 
@@ -162,6 +140,31 @@ function propertyAnalysisBullets(data: WizardData, scoreReasons: string[]): Eval
     ));
   }
   return prioritized.slice(0, 5);
+}
+
+function mergeInsightItemsWithLegacy(
+  insights: PropertyAnalysisItem[],
+  legacy: Array<{ en: string; ar: string }>,
+  maxTotal = 5
+): PropertyAnalysisItem[] {
+  if (insights.length === 0) {
+    return legacy.slice(0, maxTotal).map((b) => ({ body: b }));
+  }
+  const out = [...insights];
+  let i = 0;
+  while (out.length < maxTotal && i < legacy.length && out.length - insights.length < 2) {
+    if (out.length >= 3) break;
+    out.push({ body: legacy[i] });
+    i++;
+  }
+  return out;
+}
+
+function propertyAnalysisItemsToBullets(items: PropertyAnalysisItem[]): EvaluationReport['cardInsights']['propertyAnalysisBullets'] {
+  return items.map((item) => ({
+    en: item.title ? `${item.title.en}: ${item.body.en}` : item.body.en,
+    ar: item.title ? `${item.title.ar}: ${item.body.ar}` : item.body.ar,
+  }));
 }
 
 function servicesForPackage(
@@ -204,14 +207,35 @@ export function generateReport(data: WizardData): EvaluationReport {
     planFinancialsByPackage[type] = plan;
   }
 
+  const weeklyVacancyCostEgp = computeWeeklyVacancyOpportunityEgp(
+    areaMarketBaselines.nightlyRateEgp,
+    areaMarketBaselines.occupancyPct
+  );
+
+  const ruleInsightItems: PropertyAnalysisItem[] = evaluatePropertyInsights(
+    data,
+    { weeklyVacancyCostEgp },
+    5
+  ).map((r) => ({ title: r.title, body: r.body }));
+
+  const legacyBullets = legacyPropertyAnalysisBullets(data, ruleResult.scoreResult.reasons);
+  const propertyAnalysisItems = mergeInsightItemsWithLegacy(ruleInsightItems, legacyBullets, 5);
+
+  const competitionSnapshot = buildCompetitionSnapshot(data, revenueByPackage.sweet_spot, region.name);
   const cardInsights: EvaluationReport['cardInsights'] = {
-    neighbours: neighboursBenchmarks(data.regionId),
+    neighbours: {
+      typicalMonthlyUsd: data.regionId === 'north_coast' ? null : competitionSnapshot.modeledTypicalMonthlyUsd,
+      top10MonthlyUsd: competitionSnapshot.modeledTop10MonthlyUsd,
+      peakSeasonNote: competitionSnapshot.footnote,
+      competitionSnapshot,
+    },
     readinessNarrative: readinessNarrative(data),
-    propertyAnalysisBullets: propertyAnalysisBullets(data, ruleResult.scoreResult.reasons),
+    propertyAnalysisItems,
+    propertyAnalysisBullets: propertyAnalysisItemsToBullets(propertyAnalysisItems),
   };
 
   return {
-    version: 1,
+    version: 2,
     createdAtISO: new Date().toISOString(),
     wizardData: data,
     ruleResult,

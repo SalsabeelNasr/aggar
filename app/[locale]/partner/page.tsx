@@ -122,7 +122,7 @@ export default function PartnerPage() {
         </h2>
         <p className="text-secondary-600 text-lg font-medium">
           {isAr
-            ? 'سنقوم بمراجعة طلبك والتواصل معك خلال ٤٨ ساعة لتحديد موعد مقابلة والتأكد من توافقنا.'
+            ? 'سنقوم بمراجعة طلبك والتواصل معك خلال 48 ساعة لتحديد موعد مقابلة والتأكد من توافقنا.'
             : 'We will review your application and contact you within 48 hours for an interview.'}
         </p>
       </div>
@@ -162,6 +162,7 @@ export default function PartnerPage() {
                   src="/images/towel.jpg"
                   alt="Partner network"
                   fill
+                  sizes="(max-width: 1023px) 100vw, 50vw"
                   className="object-cover object-center group-hover:scale-105 transition-transform duration-1000"
                 />
                 <div className="absolute inset-0 bg-secondary-900/10 mix-blend-multiply" />

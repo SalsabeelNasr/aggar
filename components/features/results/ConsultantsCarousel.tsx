@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { useReducedMotion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
@@ -9,6 +8,18 @@ import type { ConsultantCard } from '@/lib/results/resultsStatic';
 
 /** Slower loop on wide viewports (more cards visible = longer perceived path). */
 const MARQUEE_DURATION_SEC = 140;
+
+function usePrefersReducedMotion(): boolean {
+  const [reduce, setReduce] = React.useState(false);
+  React.useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const apply = () => setReduce(mq.matches);
+    apply();
+    mq.addEventListener('change', apply);
+    return () => mq.removeEventListener('change', apply);
+  }, []);
+  return reduce;
+}
 
 type Props = {
   consultants: ConsultantCard[];
@@ -44,7 +55,7 @@ function ConsultantCardItem({ c, lo, onBook }: { c: ConsultantCard; lo: 'en' | '
 
 export function ConsultantsCarousel({ consultants, lo, onBook }: Props) {
   const n = consultants.length;
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = usePrefersReducedMotion();
   const [paused, setPaused] = React.useState(false);
 
   if (n === 0) return null;
