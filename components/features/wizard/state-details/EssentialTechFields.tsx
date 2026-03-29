@@ -14,17 +14,17 @@ const TECH_OPTS = [
   {
     id: 'smart_lock' as const,
     en: 'Smart lock installation',
-    ar: 'تركيب قفل ذكي',
+    ar: 'تركيب قفل ذكي (Smart Lock)',
   },
   {
     id: 'mesh_wifi' as const,
     en: 'High-speed mesh Wi‑Fi setup',
-    ar: 'شبكة Wi‑Fi Mesh عالية السرعة',
+    ar: 'نت سريع جداً (Mesh Wi‑Fi)',
   },
   {
     id: 'smart_tv_sound' as const,
     en: 'Smart TV / sound system',
-    ar: 'تلفزيون ذكي / نظام صوت',
+    ar: 'تلفزيون ذكي ونظام صوت',
   },
 ] satisfies { id: EssentialTechId; en: string; ar: string }[];
 
@@ -32,7 +32,7 @@ export function EssentialTechFields({ isAr, selectedIds, onToggle }: Props) {
   return (
     <div className="mt-6">
       <div className="font-heading font-bold text-secondary-900 mb-3">
-        {isAr ? 'احتياجات تقنية أساسية (تشغيل / إيجار قصير)' : 'Essential tech (hosting / STR)'}
+        {isAr ? 'تجهيزات تكنولوجية محتاجها' : 'Essential tech (hosting / STR)'}
       </div>
       <div className="grid grid-cols-1 gap-3">
         {TECH_OPTS.map((opt) => {

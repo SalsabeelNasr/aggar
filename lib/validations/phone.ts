@@ -9,3 +9,18 @@ export function isValidPhoneForCountry(value: string, country: CountryCode = DEF
   const parsed = parsePhoneNumberFromString(trimmed, country);
   return parsed ? parsed.isValid() : false;
 }
+
+/** Split stored WhatsApp/E.164 into country + national-formatted local part for the country-selector UI. */
+export function leadWhatsappToFormFields(whatsapp: string): { countryCode: CountryCode; phone: string } {
+  const t = whatsapp.trim();
+  if (!t) return { countryCode: DEFAULT_PHONE_COUNTRY, phone: '' };
+  const p = parsePhoneNumberFromString(t);
+  if (p?.country) {
+    return { countryCode: p.country, phone: p.formatNational() };
+  }
+  const p2 = parsePhoneNumberFromString(t, DEFAULT_PHONE_COUNTRY);
+  if (p2?.country) {
+    return { countryCode: p2.country, phone: p2.formatNational() };
+  }
+  return { countryCode: DEFAULT_PHONE_COUNTRY, phone: t };
+}

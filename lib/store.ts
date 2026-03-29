@@ -81,8 +81,9 @@ export const useEvaluationStore = create<EvaluationStore>()(
         }),
     }),
     {
+      /** Per browser tab; new tab/incognito window starts fresh. Results opened in another tab won't share this snapshot. */
       name: 'aggar-evaluation-v10',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => sessionStorage),
       onRehydrateStorage: () => (state) => {
         // Backward-compatible migration: older persisted reports may not include `cardInsights`.
         // Clear stale report snapshots to avoid crashing the Results UI.

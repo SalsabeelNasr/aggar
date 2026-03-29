@@ -4,20 +4,27 @@ import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocale } from 'next-intl';
+import { ChevronDown, Lock } from 'lucide-react';
 import { useEvaluationStore } from '@/lib/store';
-import { createWizardContactSchema, type WizardContactValues } from '@/lib/validations/wizard-contact';
-import { Lock } from 'lucide-react';
+import { PHONE_COUNTRIES } from '@/lib/phone/phoneCountries';
+import { leadWhatsappToFormFields } from '@/lib/validations/phone';
+import {
+  createWizardContactSchema,
+  normalizeContactPhoneForStore,
+  type WizardContactValues,
+} from '@/lib/validations/wizard-contact';
+import { cn } from '@/lib/utils';
 
 const CONTACT_MSG = {
   en: {
     fullName: 'Enter your full name (at least 2 characters).',
     email: 'Enter a valid email address.',
-    whatsapp: 'Enter a valid phone number for this region (e.g. Egypt +20).',
+    whatsapp: 'Enter a valid phone number for this region.',
   },
   ar: {
-    fullName: 'أدخل اسمك الكامل (حرفان على الأقل).',
-    email: 'أدخل بريدًا إلكترونيًا صالحًا.',
-    whatsapp: 'أدخل رقم هاتف صالح لهذه المنطقة (مثل مصر +20).',
+    fullName: 'أدخل اسمك الكريم (حرفين على الأقل).',
+    email: 'أدخل بريد إلكتروني صح.',
+    whatsapp: 'أدخل رقم موبايل صح.',
   },
 } as const;
 
@@ -32,30 +39,58 @@ export const Step7Contact = React.forwardRef<Step7ContactHandle, object>(functio
   const messages = isAr ? CONTACT_MSG.ar : CONTACT_MSG.en;
   const schema = React.useMemo(() => createWizardContactSchema(messages), [messages]);
 
+  const phoneDefaults = React.useMemo(() => leadWhatsappToFormFields(lead.whatsapp ?? ''), [lead.whatsapp]);
+
   const form = useForm<WizardContactValues>({
     resolver: zodResolver(schema),
     defaultValues: {
       fullName: lead.fullName,
       email: lead.email,
-      whatsapp: lead.whatsapp,
+      countryCode: phoneDefaults.countryCode,
+      phone: phoneDefaults.phone,
     },
     mode: 'onTouched',
   });
 
   React.useEffect(() => {
+    const p = leadWhatsappToFormFields(lead.whatsapp ?? '');
     form.reset({
       fullName: lead.fullName,
       email: lead.email,
-      whatsapp: lead.whatsapp,
+      countryCode: p.countryCode,
+      phone: p.phone,
     });
   }, [lead.fullName, lead.email, lead.whatsapp, form]);
+
+  const selectedCountryCode = form.watch('countryCode');
+  const selectedCountry = React.useMemo(
+    () => PHONE_COUNTRIES.find((x) => x.code === selectedCountryCode) ?? PHONE_COUNTRIES[0],
+    [selectedCountryCode]
+  );
 
   React.useImperativeHandle(ref, () => ({
     validateAndSync: async () => {
       const ok = await form.trigger();
-      if (!ok) return false;
+      if (!ok) {
+        const state = form.formState;
+        const order = ['fullName', 'phone', 'email'] as const;
+        for (const name of order) {
+          if (!form.getFieldState(name, state).invalid) continue;
+          const id =
+            name === 'fullName' ? 'contact-fullName' : name === 'phone' ? 'contact-phone' : 'contact-email';
+          const el = document.getElementById(id);
+          el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el?.focus();
+          break;
+        }
+        return false;
+      }
       const v = form.getValues();
-      updateLead({ fullName: v.fullName, email: v.email, whatsapp: v.whatsapp });
+      updateLead({
+        fullName: v.fullName,
+        email: v.email,
+        whatsapp: normalizeContactPhoneForStore(v.phone, v.countryCode),
+      });
       return true;
     },
   }));
@@ -95,23 +130,52 @@ export const Step7Contact = React.forwardRef<Step7ContactHandle, object>(functio
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="font-bold text-secondary-900 font-heading" htmlFor="contact-whatsapp">
+          <label className="font-bold text-secondary-900 font-heading" htmlFor="contact-phone">
             {isAr ? 'رقم واتساب' : 'WhatsApp number'}
           </label>
-          <input
-            id="contact-whatsapp"
-            type="tel"
-            autoComplete="tel"
-            className={`border-2 rounded-lg p-3 focus:border-primary-500 outline-none transition-colors ${
-              form.formState.errors.whatsapp ? errCls : 'border-secondary-200'
-            }`}
-            placeholder="+20 1XX XXX XXXX"
-            dir="ltr"
-            aria-invalid={form.formState.errors.whatsapp ? true : undefined}
-            {...form.register('whatsapp')}
-          />
-          {form.formState.errors.whatsapp && (
-            <p className="text-sm text-red-600 font-medium">{form.formState.errors.whatsapp.message}</p>
+          <div
+            className={cn(
+              'flex overflow-hidden rounded-lg border bg-white transition-colors focus-within:border-primary-600 focus-within:ring-2 focus-within:ring-primary-500/30',
+              form.formState.errors.phone ? 'border-red-500' : 'border-secondary-200'
+            )}
+          >
+            <div className="relative w-11 shrink-0 border-e border-secondary-200 bg-secondary-50">
+              <select
+                aria-label={isAr ? 'رمز الدولة' : 'Country code'}
+                className="h-full w-full min-h-[48px] cursor-pointer appearance-none bg-transparent py-2.5 text-transparent outline-none"
+                {...form.register('countryCode')}
+              >
+                {PHONE_COUNTRIES.map((country) => (
+                  <option key={country.code} value={country.code}>
+                    {country.flag} {country.dial} - {isAr ? country.label.ar : country.label.en}
+                  </option>
+                ))}
+              </select>
+              <span
+                aria-hidden
+                className="pointer-events-none absolute inset-0 flex items-center justify-center ps-0.5"
+              >
+                <span className="flex items-center gap-0.5 text-base">
+                  {selectedCountry.flag}
+                  <ChevronDown aria-hidden className="h-3.5 w-3.5 text-secondary-500" />
+                </span>
+              </span>
+            </div>
+            <input
+              id="contact-phone"
+              type="tel"
+              dir="ltr"
+              autoComplete="tel"
+              placeholder={
+                isAr ? `${selectedCountry.dial} رقم الهاتف` : `${selectedCountry.dial} Phone number`
+              }
+              className="w-full min-h-[48px] px-3 py-2.5 text-sm outline-none"
+              aria-invalid={form.formState.errors.phone ? true : undefined}
+              {...form.register('phone')}
+            />
+          </div>
+          {form.formState.errors.phone && (
+            <p className="text-sm text-red-600 font-medium">{form.formState.errors.phone.message}</p>
           )}
         </div>
 

@@ -2,7 +2,9 @@
 
 import * as React from 'react';
 import type { ACCoverage, InternetSpeed } from '@/models';
+import { cn } from '@/lib/utils';
 import { wizardDetailSelectClassName } from '@/components/features/wizard/state-details/wizardDetailUi';
+import { WizardInlineFieldError, useWizardFieldError } from '@/components/features/wizard/WizardValidationContext';
 
 type Props = {
   isAr: boolean;
@@ -22,6 +24,8 @@ export function AcInternetFields({
 }: Props) {
   const ac = acCoverage ?? 'adequate_functional';
   const net = internetSpeed ?? 'fiber_100_plus';
+  const acFieldErr = useWizardFieldError('acCoverage');
+  const netFieldErr = useWizardFieldError('internetSpeed');
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -30,30 +34,42 @@ export function AcInternetFields({
           {isAr ? 'حالة التكييف' : 'Air conditioning coverage'}
         </div>
         <select
-          className={wizardDetailSelectClassName}
+          data-wizard-field="acCoverage"
+          className={cn(
+            wizardDetailSelectClassName,
+            acFieldErr.invalid && 'border-red-500 border-2'
+          )}
+          aria-invalid={acFieldErr.invalid || undefined}
           value={ac}
           onChange={(e) => onAcChange(e.target.value as ACCoverage)}
         >
-          <option value="none_or_broken">{isAr ? 'لا يوجد / معطل' : 'None or broken'}</option>
-          <option value="one_old_unit">{isAr ? 'وحدة واحدة قديمة' : '1 old unit'}</option>
-          <option value="adequate_functional">{isAr ? 'تغطية كافية' : 'Adequate, functional'}</option>
-          <option value="efficient_full_coverage">{isAr ? 'تغطية كاملة وكفاءة عالية' : 'Efficient, full coverage'}</option>
+          <option value="none_or_broken">{isAr ? 'مفيش / بايظ' : 'None or broken'}</option>
+          <option value="one_old_unit">{isAr ? 'تكييف واحد قديم' : '1 old unit'}</option>
+          <option value="adequate_functional">{isAr ? 'تغطية كويسة وشغال' : 'Adequate, functional'}</option>
+          <option value="efficient_full_coverage">{isAr ? 'تغطية ممتازة وموفر للكهرباء' : 'Efficient, full coverage'}</option>
         </select>
+        <WizardInlineFieldError message={acFieldErr.error} />
       </div>
       <div>
         <div className="font-heading font-bold text-secondary-900 mb-3">
-          {isAr ? 'سرعة الإنترنت' : 'Internet speed'}
+          {isAr ? 'سرعة النت' : 'Internet speed'}
         </div>
         <select
-          className={wizardDetailSelectClassName}
+          data-wizard-field="internetSpeed"
+          className={cn(
+            wizardDetailSelectClassName,
+            netFieldErr.invalid && 'border-red-500 border-2'
+          )}
+          aria-invalid={netFieldErr.invalid || undefined}
           value={net}
           onChange={(e) => onInternetChange(e.target.value as InternetSpeed)}
         >
-          <option value="none_or_adsl">{isAr ? 'لا يوجد / ADSL' : 'None / ADSL'}</option>
-          <option value="basic_under_50">{isAr ? 'أقل من 50 Mbps' : 'Under 50 Mbps'}</option>
-          <option value="fiber_100_plus">{isAr ? 'Fiber 100+ Mbps' : 'Fiber 100+ Mbps'}</option>
-          <option value="mesh_200_plus">{isAr ? '200+ Mbps مع Mesh' : '200+ Mbps + mesh'}</option>
+          <option value="none_or_adsl">{isAr ? 'مفيش / ADSL بطيء' : 'None / ADSL'}</option>
+          <option value="basic_under_50">{isAr ? 'أقل من ٥٠ ميجا' : 'Under 50 Mbps'}</option>
+          <option value="fiber_100_plus">{isAr ? 'فايبر ١٠٠ ميجا أو أكتر' : 'Fiber 100+ Mbps'}</option>
+          <option value="mesh_200_plus">{isAr ? 'سرعة عالية جداً مع Mesh' : '200+ Mbps + mesh'}</option>
         </select>
+        <WizardInlineFieldError message={netFieldErr.error} />
       </div>
     </div>
   );

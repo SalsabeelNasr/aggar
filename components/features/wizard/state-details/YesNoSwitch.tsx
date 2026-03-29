@@ -15,7 +15,7 @@ type SwitchRowProps = {
 /** No · pill switch · Yes — same as compound / lift on the property step. */
 export function YesNoSwitchRow({ isAr, yesSelected, onToggle, ariaLabel }: SwitchRowProps) {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex flex-row items-center gap-3" dir="ltr">
       <span className="text-sm font-medium text-secondary-600">{isAr ? 'لا' : 'No'}</span>
       <button
         type="button"

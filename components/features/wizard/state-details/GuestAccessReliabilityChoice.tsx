@@ -5,6 +5,7 @@ import { useEvaluationStore } from '@/lib/store';
 import type { GuestAccessSolution } from '@/models';
 import { cn } from '@/lib/utils';
 import { wizardDetailSurfaceClassName } from '@/components/features/wizard/state-details/wizardDetailUi';
+import { WizardInlineFieldError, useWizardFieldError } from '@/components/features/wizard/WizardValidationContext';
 import { Key, LockKeyhole, UserCheck } from 'lucide-react';
 
 type Props = { isAr: boolean; className?: string };
@@ -21,9 +22,9 @@ const OPTIONS: {
     id: 'bawab_concierge',
     icon: UserCheck,
     titleEn: 'Bawab or concierge',
-    titleAr: 'بواب أو كونسيرج',
+    titleAr: 'بواب أو أمن',
     descEn: 'Human handoff: bawab, concierge, or consistent key transfer.',
-    descAr: 'تسليم بشري: بواب، كونسيرج، أو تسليم مفاتيح ثابت.',
+    descAr: 'تسليم يدوي: عن طريق البواب أو أمن المبنى.',
   },
   {
     id: 'smart_lock_or_lockbox',
@@ -31,15 +32,15 @@ const OPTIONS: {
     titleEn: 'Smart lock or lockbox',
     titleAr: 'قفل ذكي أو صندوق مفاتيح',
     descEn: 'Guests self-check-in with a code, app, or lockbox.',
-    descAr: 'الضيوف يدخلون بكود أو تطبيق أو صندوق مفاتيح.',
+    descAr: 'دخول ذاتي: الضيف بيدخل بكود أو عن طريق تطبيق.',
   },
   {
     id: 'none',
     icon: Key,
     titleEn: 'Not yet',
-    titleAr: 'ليس بعد',
+    titleAr: 'لسه مفيش',
     descEn: 'I still need a reliable access solution.',
-    descAr: 'ما زلت أحتاج حل وصول موثوق للضيوف.',
+    descAr: 'محتاج حل عملي ومريح لتسليم المفاتيح.',
   },
 ];
 
@@ -47,13 +48,20 @@ const OPTIONS: {
 export function GuestAccessReliabilityChoice({ isAr, className }: Props) {
   const { data, updateData } = useEvaluationStore();
   const selected = data.regulatory?.guestAccessSolution;
+  const fieldErr = useWizardFieldError('guestAccessSolution');
 
   return (
     <div className={cn(wizardDetailSurfaceClassName, className)}>
       <div className="font-heading font-bold text-secondary-900 mb-4">
-        {isAr ? 'هل لديك حل وصول موثوق للضيوف؟' : 'Do you have a reliable guest access solution?'}
+        {isAr ? 'إزاي الضيوف بيستلموا المفاتيح؟' : 'Do you have a reliable guest access solution?'}
       </div>
-      <div className="flex flex-col gap-3">
+      <div
+        data-wizard-field="guestAccessSolution"
+        className={cn(
+          'flex flex-col gap-3 rounded-xl p-2 -mx-1',
+          fieldErr.invalid && 'border-2 border-red-500'
+        )}
+      >
         {OPTIONS.map((opt) => {
           const Icon = opt.icon;
           const isActive = selected === opt.id;
@@ -91,6 +99,7 @@ export function GuestAccessReliabilityChoice({ isAr, className }: Props) {
           );
         })}
       </div>
+      <WizardInlineFieldError message={fieldErr.error} />
     </div>
   );
 }

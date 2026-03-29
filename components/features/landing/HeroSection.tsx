@@ -14,10 +14,6 @@ export function HeroSection() {
       <div className="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
         
         <div className="flex flex-col items-start text-start max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary-100/50 text-primary-800 rounded-full text-sm font-bold border border-primary-200 mb-6 font-heading">
-            {locale === 'ar' ? 'اعرف إمكانيات شقتك… ونوصلك بالناس الصح' : 'Know your apartment\'s potential... and let us connect you with the right people'}
-          </div>
-          
           <h1 className="text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-heading font-extrabold text-secondary-900 tracking-tight leading-tight">
             {locale === 'ar' 
               ? 'خلي شقتك تشتغل وتكسب… بدل ما تفضل فاضية' 

@@ -25,7 +25,7 @@ import type {
 } from '@/models';
 import { cn } from '@/lib/utils';
 import { Hammer, PaintRoller, Sofa } from 'lucide-react';
-import { WizardStepErrorBanner, useWizardFieldError } from '@/components/features/wizard/WizardValidationContext';
+import { WizardInlineFieldError, useWizardFieldError } from '@/components/features/wizard/WizardValidationContext';
 import { getStateFieldApplicability } from '@/lib/wizard/stateFieldApplicability';
 import { AccessComplianceCard } from '@/components/features/wizard/AccessComplianceCard';
 import { DesignStyleCarousel } from '@/components/features/wizard/DesignStyleCarousel';
@@ -182,6 +182,16 @@ export function Step3State() {
   const locale = useLocale();
   const { data, updateData } = useEvaluationStore();
   const stateErr = useWizardFieldError('stateFlag');
+  const unfinishedLevelErr = useWizardFieldError('unfinishedFinishingLevel');
+  const unfinishedInfraErr = useWizardFieldError('unfinishedInfrastructure');
+  const unfinishedSmartErr = useWizardFieldError('unfinishedSmartHome');
+  const furnishingScopeErr = useWizardFieldError('furnishingScope');
+  const furnishingAestheticErr = useWizardFieldError('furnishingAesthetic');
+  const petErr = useWizardFieldError('petFriendly');
+  const furnishingDeadlineErr = useWizardFieldError('furnishingInstallDeadline');
+  const waterHeatingErr = useWizardFieldError('waterHeating');
+  const beddingErr = useWizardFieldError('beddingTier');
+  const guestPolicyErr = useWizardFieldError('guestPolicyAudiences');
   const availableStates = states;
 
   const selectedState = data.stateFlag;
@@ -269,17 +279,17 @@ export function Step3State() {
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full">
-      <WizardStepErrorBanner fieldKeys={['stateFlag']} />
       <div className="text-center mb-10">
         <h2 className="text-3xl font-heading font-bold text-secondary-900">
-          {locale === 'ar' ? 'ما هي حالة العقار الحالية؟' : 'What is the current state?'}
+          {locale === 'ar' ? 'حالة العقار إيه دلوقتي؟' : 'What is the current state?'}
         </h2>
       </div>
 
       <div
+        data-wizard-field="stateFlag"
         className={cn(
-          'flex flex-col gap-2 mb-10',
-          stateErr.invalid && 'ring-2 ring-red-500 ring-offset-2 rounded-2xl p-1 -m-1'
+          'flex flex-col gap-2 mb-10 rounded-xl p-1',
+          stateErr.invalid && 'border-2 border-red-500'
         )}
       >
         {availableStates.map((state) => {
@@ -320,13 +330,17 @@ export function Step3State() {
           );
         })}
       </div>
+      <WizardInlineFieldError message={stateErr.error} />
 
       {selectedState === 'SHELL' && (
         <div className="mb-10 space-y-8">
           <WizardDetailCard>
             <WizardDetailSelect
               id="shell-finishing-level"
-              label={locale === 'ar' ? 'مستوى التشطيب الحالي' : 'Current finishing level'}
+              dataWizardField="unfinishedFinishingLevel"
+              className={unfinishedLevelErr.invalid ? 'border-red-500 border-2' : undefined}
+              aria-invalid={unfinishedLevelErr.invalid || undefined}
+              label={locale === 'ar' ? 'وصلت لفين في التشطيب؟' : 'Current finishing level'}
               value={data.unfinishedFinishingLevel ?? ''}
               onChange={(e) =>
                 updateData({
@@ -334,21 +348,29 @@ export function Step3State() {
                 })
               }
             >
-              <option value="">{locale === 'ar' ? 'اختر' : 'Select'}</option>
+              <option value="">{locale === 'ar' ? 'اختار' : 'Select'}</option>
               <option value="shell_core">
-                {locale === 'ar' ? 'عظم / طوب أحمر — بدون مرافق أو لياسة' : 'Shell & core (red brick): no utilities or plaster'}
+                {locale === 'ar' ? 'طوب أحمر — لسه مفيش مرافق ولا محارة' : 'Shell & core (red brick): no utilities or plaster'}
               </option>
               <option value="semi_finished">
-                {locale === 'ar' ? 'نصف تشطيب: لياسة، كهرباء أساسية، وسباكة' : 'Semi-finished: plaster, basic electricity & plumbing'}
+                {locale === 'ar' ? 'نصف تشطيب: محارة، كهرباء، وسباكة أساسية' : 'Semi-finished: plaster, basic electricity & plumbing'}
               </option>
               <option value="needs_renovation">
-                {locale === 'ar' ? 'تشطيب قديم يحتاج إزالة أو تحديث' : 'Needs renovation: strip or update existing finishing'}
+                {locale === 'ar' ? 'متشطب بس محتاج يتجدد بالكامل' : 'Needs renovation: strip or update existing finishing'}
               </option>
             </WizardDetailSelect>
+            <WizardInlineFieldError message={unfinishedLevelErr.error} />
           </WizardDetailCard>
 
           <WizardDetailCard>
-            <WizardDetailHeading>{locale === 'ar' ? 'جاهزية البنية التحتية' : 'Infrastructure readiness'}</WizardDetailHeading>
+            <WizardDetailHeading>{locale === 'ar' ? 'جاهزية المرافق' : 'Infrastructure readiness'}</WizardDetailHeading>
+            <div
+              data-wizard-field="unfinishedInfrastructure"
+              className={cn(
+                'rounded-xl p-2 -mx-1',
+                unfinishedInfraErr.invalid && 'border-2 border-red-500'
+              )}
+            >
             <WizardDetailChipGrid
               options={mapOpts(SHELL_INFRA_OPTS, locale === 'ar')}
               selectedIds={data.unfinishedInfrastructure}
@@ -358,12 +380,17 @@ export function Step3State() {
                 })
               }
             />
+            </div>
+            <WizardInlineFieldError message={unfinishedInfraErr.error} />
           </WizardDetailCard>
 
           <WizardDetailCard>
             <WizardDetailSelect
               id="shell-smart-home"
-              label={locale === 'ar' ? 'متطلبات المنزل الذكي' : 'Smart home requirements'}
+              dataWizardField="unfinishedSmartHome"
+              className={unfinishedSmartErr.invalid ? 'border-red-500 border-2' : undefined}
+              aria-invalid={unfinishedSmartErr.invalid || undefined}
+              label={locale === 'ar' ? 'تجهيزات البيت الذكي' : 'Smart home requirements'}
               value={data.unfinishedSmartHome ?? ''}
               onChange={(e) =>
                 updateData({
@@ -371,19 +398,20 @@ export function Step3State() {
                 })
               }
             >
-              <option value="">{locale === 'ar' ? 'اختر' : 'Select'}</option>
-              <option value="basic">{locale === 'ar' ? 'أساسي: تمديدات عادية فقط' : 'Basic: standard wiring only'}</option>
+              <option value="">{locale === 'ar' ? 'اختار' : 'Select'}</option>
+              <option value="basic">{locale === 'ar' ? 'عادي: تمديدات تقليدية بس' : 'Basic: standard wiring only'}</option>
               <option value="smart_ready">
                 {locale === 'ar'
-                  ? 'جاهز للذكاء: تمهيد كابلات للإضاءة والتكييف والأمان'
+                  ? 'جاهز للذكاء: تمديدات جاهزة للإضاءة والتكييف والأمان'
                   : 'Smart-ready: pre-cabling for lighting, AC, security'}
               </option>
               <option value="full_automation">
                 {locale === 'ar'
-                  ? 'أتمتة كاملة: مركز متكامل (KNX / Control4 / SmartThings)'
+                  ? 'أتمتة كاملة: تحكم كامل في كل حاجة (KNX / Control4)'
                   : 'Full automation: integrated hub (KNX / Control4 / SmartThings)'}
               </option>
             </WizardDetailSelect>
+            <WizardInlineFieldError message={unfinishedSmartErr.error} />
           </WizardDetailCard>
         </div>
       )}
@@ -391,7 +419,14 @@ export function Step3State() {
       {selectedState === 'FINISHED_EMPTY' && (
         <div className="mb-10 space-y-8">
           <WizardDetailCard>
-            <WizardDetailHeading>{locale === 'ar' ? 'نطاق الفرش والتشطيب' : 'I still need to add..'}</WizardDetailHeading>
+            <WizardDetailHeading>{locale === 'ar' ? 'ناقصك إيه في الفرش؟' : 'I still need to add..'}</WizardDetailHeading>
+            <div
+              data-wizard-field="furnishingScope"
+              className={cn(
+                'rounded-xl p-2 -mx-1',
+                furnishingScopeErr.invalid && 'border-2 border-red-500'
+              )}
+            >
             <WizardDetailChipGrid
               variant="choiceRow"
               options={mapOpts(FURNISHING_SCOPE_OPTS, locale === 'ar')}
@@ -403,23 +438,46 @@ export function Step3State() {
               }
               fullWidth
             />
+            </div>
+            <WizardInlineFieldError message={furnishingScopeErr.error} />
           </WizardDetailCard>
 
           <WizardDetailCard>
-            <WizardDetailHeading>{locale === 'ar' ? 'اختر أسلوب التصميم' : 'Choose a design style'}</WizardDetailHeading>
+            <WizardDetailHeading>{locale === 'ar' ? 'اختار ستايل الديكور' : 'Choose a design style'}</WizardDetailHeading>
+            <div
+              data-wizard-field="furnishingAesthetic"
+              className={cn(
+                'rounded-xl p-2 -mx-1',
+                furnishingAestheticErr.invalid && 'border-2 border-red-500'
+              )}
+            >
             <DesignStyleCarousel
               value={data.furnishingAesthetic}
               onChange={(id) => updateData({ furnishingAesthetic: id })}
               isAr={locale === 'ar'}
             />
+            </div>
+            <WizardInlineFieldError message={furnishingAestheticErr.error} />
           </WizardDetailCard>
 
-          <PetFriendlyToggle isAr={locale === 'ar'} />
+          <div
+            data-wizard-field="petFriendly"
+            className={cn(
+              'rounded-xl p-2 w-fit max-w-full',
+              petErr.invalid && 'border-2 border-red-500'
+            )}
+          >
+            <PetFriendlyToggle isAr={locale === 'ar'} />
+            <WizardInlineFieldError message={petErr.error} />
+          </div>
 
           <WizardDetailCard>
             <WizardDetailSelect
               id="furnishing-install-deadline"
-              label={locale === 'ar' ? 'موعد التركيب / التسليم' : 'Installation deadline'}
+              dataWizardField="furnishingInstallDeadline"
+              className={furnishingDeadlineErr.invalid ? 'border-red-500 border-2' : undefined}
+              aria-invalid={furnishingDeadlineErr.invalid || undefined}
+              label={locale === 'ar' ? 'عايز تخلص الفرش إمتى؟' : 'Installation deadline'}
               value={data.furnishingInstallDeadline ?? ''}
               onChange={(e) =>
                 updateData({
@@ -427,13 +485,14 @@ export function Step3State() {
                 })
               }
             >
-              <option value="">{locale === 'ar' ? 'اختر' : 'Select'}</option>
+              <option value="">{locale === 'ar' ? 'اختار' : 'Select'}</option>
               <option value="under_3_weeks">
-                {locale === 'ar' ? 'سريع: أقل من 3 أسابيع (جاهز-فرش)' : 'Express: under 3 weeks (ready-made focus)'}
+                {locale === 'ar' ? 'سريع جداً: أقل من ٣ أسابيع (فرش جاهز)' : 'Express: under 3 weeks (ready-made focus)'}
               </option>
-              <option value="weeks_4_8">{locale === 'ar' ? 'قياسي: 4 – 8 أسابيع' : 'Standard: 4 – 8 weeks'}</option>
-              <option value="months_3_plus">{locale === 'ar' ? 'مخصص: 3 أشهر فأكثر' : 'Custom: 3+ months'}</option>
+              <option value="weeks_4_8">{locale === 'ar' ? 'عادي: ٤ – ٨ أسابيع' : 'Standard: 4 – 8 weeks'}</option>
+              <option value="months_3_plus">{locale === 'ar' ? 'براحتي: ٣ شهور أو أكتر' : 'Custom: 3+ months'}</option>
             </WizardDetailSelect>
+            <WizardInlineFieldError message={furnishingDeadlineErr.error} />
           </WizardDetailCard>
         </div>
       )}
@@ -441,10 +500,17 @@ export function Step3State() {
       {selectedState === 'FURNISHED' && (
         <div className="space-y-6 mb-10">
           <WizardDetailCard>
-            <WizardDetailHeading className="mb-1">{locale === 'ar' ? 'المياه والتسخين' : 'Water & heating'}</WizardDetailHeading>
+            <WizardDetailHeading className="mb-1">{locale === 'ar' ? 'المياه والسخانات' : 'Water & heating'}</WizardDetailHeading>
             <WizardDetailLead>
-              {locale === 'ar' ? 'ما واقع ضغط المياه والتسخين للضيوف؟' : 'How do water pressure and hot water perform for guests?'}
+              {locale === 'ar' ? 'أخبار ضغط الميه والسخانات إيه للضيوف؟' : 'How do water pressure and hot water perform for guests?'}
             </WizardDetailLead>
+            <div
+              data-wizard-field="waterHeating"
+              className={cn(
+                'rounded-xl p-2 -mx-1',
+                waterHeatingErr.invalid && 'border-2 border-red-500'
+              )}
+            >
             <WizardDetailRadioList
               name="furnishedWaterHeating"
               options={mapOpts(FURNISHED_WATER_HEATING_OPTS, locale === 'ar')}
@@ -458,6 +524,8 @@ export function Step3State() {
                 })
               }
             />
+            </div>
+            <WizardInlineFieldError message={waterHeatingErr.error} />
           </WizardDetailCard>
 
           <WizardDetailCard>
@@ -477,13 +545,18 @@ export function Step3State() {
 
           <WizardDetailCard>
             <WizardDetailHeading className="mb-1">{locale === 'ar' ? 'المفارش والمناشف' : 'Bedding & towels'}</WizardDetailHeading>
-            <WizardDetailLead>{locale === 'ar' ? 'أسلوب المفروشات للضيوف' : 'Linens style for guests'}</WizardDetailLead>
+            <WizardDetailLead>{locale === 'ar' ? 'ستايل المفروشات اللي بتستخدمه' : 'Linens style for guests'}</WizardDetailLead>
             <label className="sr-only" htmlFor="furnished-bedding-tier">
               {locale === 'ar' ? 'نوع المفارش' : 'Bedding style'}
             </label>
             <select
               id="furnished-bedding-tier"
-              className={wizardDetailSelectClassName}
+              data-wizard-field="beddingTier"
+              className={cn(
+                wizardDetailSelectClassName,
+                beddingErr.invalid && 'border-red-500 border-2'
+              )}
+              aria-invalid={beddingErr.invalid || undefined}
               value={data.furnishedUnitLuxe?.beddingTier ?? ''}
               onChange={(e) =>
                 updateData({
@@ -494,21 +567,35 @@ export function Step3State() {
                 })
               }
             >
-              <option value="">{locale === 'ar' ? 'اختر' : 'Select'}</option>
+              <option value="">{locale === 'ar' ? 'اختار' : 'Select'}</option>
               <option value="hotel_style_white">{locale === 'ar' ? 'أبيض فندقي' : 'Hotel-style white'}</option>
               <option value="colored">{locale === 'ar' ? 'ملوّن' : 'Colored'}</option>
             </select>
+            <WizardInlineFieldError message={beddingErr.error} />
           </WizardDetailCard>
 
           <WizardDetailCard>
             <WizardDetailHeading className="mb-1">{locale === 'ar' ? 'سياسة الضيوف والحيوانات' : 'Guest & pet policy'}</WizardDetailHeading>
-            <div className="mb-6">
+            <div
+              data-wizard-field="petFriendly"
+              className={cn(
+                'mb-6 rounded-xl p-2 w-fit max-w-full',
+                petErr.invalid && 'border-2 border-red-500'
+              )}
+            >
               <PetFriendlyToggle isAr={locale === 'ar'} embedded />
+              <WizardInlineFieldError message={petErr.error} />
             </div>
             <div className="font-heading font-bold text-secondary-900 mb-2 text-sm">
-              {locale === 'ar' ? 'أنواع الضيوف المسموح بها (يمكن اختيار أكثر من خيار)' : 'Guest types allowed (select all that apply)'}
+              {locale === 'ar' ? 'مين الضيوف المسموح بيهم؟ (ممكن تختار كذا خيار)' : 'Guest types allowed (select all that apply)'}
             </div>
-            <div className="grid grid-cols-1 gap-2">
+            <div
+              data-wizard-field="guestPolicyAudiences"
+              className={cn(
+                'grid grid-cols-1 gap-2 rounded-xl p-2 -mx-1',
+                guestPolicyErr.invalid && 'border-2 border-red-500'
+              )}
+            >
               {GUEST_POLICY_OPTS.map((opt) => {
                 const selected = (data.guestPolicyAudiences ?? []).includes(opt.id);
                 return (
@@ -534,12 +621,13 @@ export function Step3State() {
                 );
               })}
             </div>
+            <WizardInlineFieldError message={guestPolicyErr.error} />
           </WizardDetailCard>
 
           <WizardDetailCard>
-            <WizardDetailHeading className="mb-1">{locale === 'ar' ? 'المنزل الذكي والمراقبة' : 'Smart home & monitoring'}</WizardDetailHeading>
+            <WizardDetailHeading className="mb-1">{locale === 'ar' ? 'البيت الذكي والأمان' : 'Smart home & monitoring'}</WizardDetailHeading>
             <WizardDetailLead>
-              {locale === 'ar' ? 'ما الموجود حاليًا في الوحدة؟ (يمكن اختيار أكثر من خيار)' : 'What’s already in the unit? (Select all that apply)'}
+              {locale === 'ar' ? 'إيه اللي موجود في الشقة فعلاً؟ (ممكن تختار كذا خيار)' : 'What’s already in the unit? (Select all that apply)'}
             </WizardDetailLead>
             <WizardDetailChipGrid
               options={mapOpts(SMART_HOME_LUXE_OPTS, locale === 'ar')}

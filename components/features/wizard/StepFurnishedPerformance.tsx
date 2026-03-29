@@ -8,36 +8,11 @@ import type {
   FurnishedLeadQualification,
   FurnishedOccupancyBand,
   FurnishedPricingStrategy,
-  ListingStatus,
   ManagementMode,
 } from '@/models';
 import { isFurnishedPerformanceSectionVisible } from '@/lib/wizard/furnishedPerformanceVisibility';
 import { cn } from '@/lib/utils';
-import { WizardStepErrorBanner } from '@/components/features/wizard/WizardValidationContext';
-
-const PERF_STEP_ERROR_KEYS = [
-  'listingStack',
-  'cleaningSupport',
-  'guestResponseTime',
-  'monthlyRevenueEgp',
-  'occupancyBand',
-  'pricingStrategy',
-] as const;
-
-function listingHint(status: ListingStatus | undefined, isAr: boolean): string {
-  switch (status) {
-    case 'not_listed':
-      return isAr ? 'لم يُنشر بعد — نركز على التوقعات.' : 'Not listed yet — we’ll focus on your expectations.';
-    case 'listed_doing_well':
-      return isAr ? 'أداء جيد — نركز على تحسين الهامش والتشغيل.' : 'Doing well — we’ll focus on margin and operations.';
-    case 'listed_underperform':
-      return isAr ? 'حجوزات أقل من المتوقع — سنعمّق الأرقام.' : 'Underperforming — we’ll dig into the numbers.';
-    case 'listed_barely_any_bookings':
-      return isAr ? 'بالكاد حجوزات — نريد فهم الفجوة.' : 'Barely any bookings — we need to understand the gap.';
-    default:
-      return isAr ? 'أكمل الأسئلة التالية لتحسين التوصية.' : 'Complete the questions below to sharpen your plan.';
-  }
-}
+import { WizardInlineFieldError, useWizardFieldError } from '@/components/features/wizard/WizardValidationContext';
 
 export function StepFurnishedPerformance() {
   const locale = useLocale();
@@ -57,9 +32,15 @@ export function StepFurnishedPerformance() {
     });
   };
 
+  const listingStackErr = useWizardFieldError('listingStack');
+  const cleaningSupportErr = useWizardFieldError('cleaningSupport');
+  const guestResponseErr = useWizardFieldError('guestResponseTime');
+  const revenueErr = useWizardFieldError('monthlyRevenueEgp');
+  const occupancyErr = useWizardFieldError('occupancyBand');
+  const pricingErr = useWizardFieldError('pricingStrategy');
+
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full space-y-8">
-      <WizardStepErrorBanner fieldKeys={[...PERF_STEP_ERROR_KEYS]} />
       {vis('listingContext') && (
         <>
           <div className="text-center mb-6">
@@ -74,15 +55,20 @@ export function StepFurnishedPerformance() {
       {vis('listingStack') && (
         <div className="bg-white border border-secondary-200 rounded-2xl p-6 shadow-sm space-y-4">
           <div className="font-heading font-bold text-secondary-900">
-            {isAr ? 'البرمجيات الحالية' : 'Current software'}
+            {isAr ? 'البرمجيات اللي بتستخدمها' : 'Current software'}
           </div>
           <label className="font-semibold text-secondary-900 text-sm block mb-2">
             {isAr
-              ? 'هل تستخدم مدير قنوات (مثل Guesty أو Smoobu أو Hostaway) أم تدير يدويًا عبر تطبيق Airbnb؟'
+              ? 'هل بتستخدم مدير قنوات (زي Guesty أو Smoobu) ولا بتدير يدوي من تطبيق Airbnb؟'
               : 'Do you currently use a Channel Manager (e.g., Guesty, Smoobu, Hostaway), or are you managing manually via the Airbnb app?'}
           </label>
           <select
-            className="border-2 border-secondary-200 rounded-lg p-3 bg-white w-full"
+            data-wizard-field="listingStack"
+            className={cn(
+              'border-2 rounded-lg p-3 bg-white w-full',
+              listingStackErr.invalid ? 'border-red-500' : 'border-secondary-200'
+            )}
+            aria-invalid={listingStackErr.invalid || undefined}
             value={flq?.listingStack ?? ''}
             onChange={(e) =>
               patchFlq({
@@ -90,11 +76,12 @@ export function StepFurnishedPerformance() {
               })
             }
           >
-            <option value="">{isAr ? 'اختر' : 'Select'}</option>
-            <option value="channel_manager">{isAr ? 'مدير قنوات' : 'Channel manager'}</option>
-            <option value="manual_ota">{isAr ? 'يدوي عبر تطبيق OTA (مثل Airbnb)' : 'Manually via OTA app'}</option>
-            <option value="other">{isAr ? 'أخرى / مختلط' : 'Other / mixed'}</option>
+            <option value="">{isAr ? 'اختار' : 'Select'}</option>
+            <option value="channel_manager">{isAr ? 'مدير قنوات (Channel Manager)' : 'Channel manager'}</option>
+            <option value="manual_ota">{isAr ? 'يدوي من تطبيق Airbnb / Booking' : 'Manually via OTA app'}</option>
+            <option value="other">{isAr ? 'حاجة تانية / ميكس' : 'Other / mixed'}</option>
           </select>
+          <WizardInlineFieldError message={listingStackErr.error} />
         </div>
       )}
 
@@ -105,11 +92,16 @@ export function StepFurnishedPerformance() {
           </div>
           <label className="font-semibold text-secondary-900 text-sm block mb-2">
             {isAr
-              ? 'هل لديك عامل نظافة موثوق به، أم تحتاج الوصول إلى قائمة تنظيف احترافية لدينا؟'
+              ? 'هل عندك حد ثقة للتنضيف، ولا محتاج نوفر لك فريق تنضيف محترف؟'
               : 'Do you have a dedicated cleaner you trust, or do you need to tap into our professional cleaning roster?'}
           </label>
           <select
-            className="border-2 border-secondary-200 rounded-lg p-3 bg-white w-full"
+            data-wizard-field="cleaningSupport"
+            className={cn(
+              'border-2 rounded-lg p-3 bg-white w-full',
+              cleaningSupportErr.invalid ? 'border-red-500' : 'border-secondary-200'
+            )}
+            aria-invalid={cleaningSupportErr.invalid || undefined}
             value={flq?.cleaningSupport ?? ''}
             onChange={(e) =>
               patchFlq({
@@ -117,107 +109,132 @@ export function StepFurnishedPerformance() {
               })
             }
           >
-            <option value="">{isAr ? 'اختر' : 'Select'}</option>
-            <option value="trusted_cleaner">{isAr ? 'لديّ منظّف موثوق' : 'I have a trusted cleaner'}</option>
-            <option value="need_roster">{isAr ? 'أحتاج قائمة/فريق تنظيف' : 'I need your professional roster'}</option>
-            <option value="unsure">{isAr ? 'غير متأكد بعد' : 'Not sure yet'}</option>
+            <option value="">{isAr ? 'اختار' : 'Select'}</option>
+            <option value="trusted_cleaner">{isAr ? 'عندي حد ثقة' : 'I have a trusted cleaner'}</option>
+            <option value="need_roster">{isAr ? 'محتاج فريق تنضيف محترف' : 'I need your professional roster'}</option>
+            <option value="unsure">{isAr ? 'لسه مش متأكد' : 'Not sure yet'}</option>
           </select>
+          <WizardInlineFieldError message={cleaningSupportErr.error} />
         </div>
       )}
 
       {vis('responseTime') && (
         <div className="bg-white border border-secondary-200 rounded-2xl p-6 shadow-sm space-y-4">
           <label className="font-heading font-bold text-secondary-900 block mb-2">
-            {isAr ? 'وقت الاستجابة' : 'Response time'}
+            {isAr ? 'سرعة الرد' : 'Response time'}
           </label>
           <p className="text-secondary-600 text-sm mb-2">
             {isAr
-              ? 'ما متوسط وقت ردّك على استفسار ضيف؟'
+              ? 'بتاخد وقت قد إيه تقريباً عشان ترد على استفسارات الضيوف؟'
               : 'What is your average response time to a guest inquiry?'}
           </p>
           <select
-            className="border-2 border-secondary-200 rounded-lg p-3 bg-white w-full"
+            data-wizard-field="guestResponseTime"
+            className={cn(
+              'border-2 rounded-lg p-3 bg-white w-full',
+              guestResponseErr.invalid ? 'border-red-500' : 'border-secondary-200'
+            )}
+            aria-invalid={guestResponseErr.invalid || undefined}
             value={flq?.guestResponseTime ?? ''}
             onChange={(e) =>
               patchFlq({ guestResponseTime: (e.target.value || undefined) as FurnishedGuestResponseTime | undefined })
             }
           >
-            <option value="">{isAr ? 'اختر' : 'Select'}</option>
-            <option value="under_5_min">{isAr ? 'أقل من 15 دقيقة' : 'Under 15 minutes'}</option>
-            <option value="about_1_hour">{isAr ? 'حوالي ساعة' : 'About 1 hour'}</option>
-            <option value="several_hours">{isAr ? '4+ ساعات' : '4+ hours'}</option>
-            <option value="often_miss">{isAr ? 'متقطع / أغالبًا أتأخر' : 'Inconsistent / often slow to reply'}</option>
+            <option value="">{isAr ? 'اختار' : 'Select'}</option>
+            <option value="under_5_min">{isAr ? 'أقل من ١٥ دقيقة' : 'Under 15 minutes'}</option>
+            <option value="about_1_hour">{isAr ? 'في حدود ساعة' : 'About 1 hour'}</option>
+            <option value="several_hours">{isAr ? 'أكتر من ٤ ساعات' : '4+ hours'}</option>
+            <option value="often_miss">{isAr ? 'مش منتظم / برد متأخر' : 'Inconsistent / often slow to reply'}</option>
           </select>
+          <WizardInlineFieldError message={guestResponseErr.error} />
         </div>
       )}
 
       {vis('revenueDemand') && (
         <div className="bg-white border border-secondary-200 rounded-2xl p-6 shadow-sm space-y-4">
           <div className="font-heading font-bold text-secondary-900">
-            {isAr ? 'الفجوة المالية' : 'Revenue gap'}
+            {isAr ? 'الأرقام المالية' : 'Revenue gap'}
           </div>
           <div>
             <label className="font-semibold text-secondary-900 text-sm block mb-2">
               {isNotListed
                 ? isAr
-                  ? 'إيراد شهري مستهدف (ج.م) عند التشغيل'
+                  ? 'إيراد شهري مستهدف (ج.م) لما تبدأ تشغيل'
                   : 'Target monthly revenue (EGP) when you go live'
                 : isAr
-                  ? 'متوسط الإيراد الشهري الحالي (ج.م)'
+                  ? 'متوسط إيرادك الشهري الحالي (ج.م)'
                   : 'Average current monthly revenue (EGP)'}
             </label>
             <input
               type="number"
               min={0}
-              className="border-2 border-secondary-200 rounded-lg p-3 w-full focus:border-primary-500 outline-none"
-              placeholder={isAr ? 'مثال: 25000' : 'e.g. 25000'}
+              data-wizard-field="monthlyRevenueEgp"
+              className={cn(
+                'border-2 rounded-lg p-3 w-full focus:border-primary-500 outline-none',
+                revenueErr.invalid ? 'border-red-500' : 'border-secondary-200'
+              )}
+              aria-invalid={revenueErr.invalid || undefined}
+              placeholder={isAr ? 'مثلاً: ٢٥٠٠٠' : 'e.g. 25000'}
               value={flq?.monthlyRevenueEgp ?? ''}
               onChange={(e) => {
                 const v = e.target.value;
                 patchFlq({ monthlyRevenueEgp: v === '' ? undefined : Number(v) });
               }}
             />
+            <WizardInlineFieldError message={revenueErr.error} />
           </div>
           <div>
             <label className="font-semibold text-secondary-900 text-sm block mb-2">
               {isNotListed
                 ? isAr
-                  ? 'نطاق الإشغال المتوقع بعد الإطلاق'
+                  ? 'نسبة الإشغال اللي بتطمح ليها'
                   : 'Expected occupancy band once live'
                 : isAr
-                  ? 'معدل الإشغال الحالي'
+                  ? 'نسبة الإشغال الحالية'
                   : 'Current occupancy band'}
             </label>
             <select
-              className="border-2 border-secondary-200 rounded-lg p-3 bg-white w-full"
+              data-wizard-field="occupancyBand"
+              className={cn(
+                'border-2 rounded-lg p-3 bg-white w-full',
+                occupancyErr.invalid ? 'border-red-500' : 'border-secondary-200'
+              )}
+              aria-invalid={occupancyErr.invalid || undefined}
               value={flq?.occupancyBand ?? ''}
               onChange={(e) =>
                 patchFlq({ occupancyBand: (e.target.value || undefined) as FurnishedOccupancyBand | undefined })
               }
             >
-              <option value="">{isAr ? 'اختر' : 'Select'}</option>
-              <option value="under_30">{isAr ? 'أقل من 30% (ضعيف)' : 'Under 30% (struggling)'}</option>
-              <option value="between_30_60">{isAr ? '30% – 60% (متوسط)' : '30% – 60% (average)'}</option>
+              <option value="">{isAr ? 'اختار' : 'Select'}</option>
+              <option value="under_30">{isAr ? 'أقل من ٣٠٪ (ضعيف)' : 'Under 30% (struggling)'}</option>
+              <option value="between_30_60">{isAr ? '٣٠٪ – ٦٠٪ (متوسط)' : '30% – 60% (average)'}</option>
               <option value="over_60">
-                {isAr ? '60%+ (مرتفع — ربما السعر منخفض؟)' : '60%+ (high — maybe underpriced?)'}
+                {isAr ? 'أكتر من ٦٠٪ (ممتاز)' : '60%+ (high — maybe underpriced?)'}
               </option>
             </select>
+            <WizardInlineFieldError message={occupancyErr.error} />
           </div>
           <div>
             <div className="font-semibold text-secondary-900 text-sm mb-2">{isAr ? 'استراتيجية التسعير' : 'Pricing strategy'}</div>
-            <div className="flex flex-col gap-2">
+            <div
+              data-wizard-field="pricingStrategy"
+              className={cn(
+                'flex flex-col gap-2 rounded-xl p-2 -mx-1',
+                pricingErr.invalid && 'border-2 border-red-500'
+              )}
+            >
               {(
                 [
-                  { id: 'flat_rate' as const, en: 'Flat rate year-round', ar: 'سعر ثابت طوال العام' },
+                  { id: 'flat_rate' as const, en: 'Flat rate year-round', ar: 'سعر ثابت طول السنة' },
                   {
                     id: 'manual_seasonal' as const,
                     en: 'I change prices manually (weekends/holidays)',
-                    ar: 'أغيّر الأسعار يدويًا (عطل/عطلات)',
+                    ar: 'بغير الأسعار يدوي (في الويك إند والأعياد)',
                   },
                   {
                     id: 'dynamic_tool' as const,
                     en: 'Dynamic pricing tool (e.g. PriceLabs, Wheelhouse)',
-                    ar: 'أداة تسعير ديناميكي (مثل PriceLabs أو Wheelhouse)',
+                    ar: 'بستخدم أداة تسعير ديناميكي (زي PriceLabs)',
                   },
                 ] satisfies { id: FurnishedPricingStrategy; en: string; ar: string }[]
               ).map((opt) => (
@@ -239,6 +256,7 @@ export function StepFurnishedPerformance() {
                 </label>
               ))}
             </div>
+            <WizardInlineFieldError message={pricingErr.error} />
           </div>
         </div>
       )}

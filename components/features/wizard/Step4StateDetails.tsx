@@ -41,27 +41,6 @@ import {
   WizardDetailSelect,
   wizardDetailSelectClassName,
 } from '@/components/features/wizard/state-details/wizardDetailUi';
-import { WizardStepErrorBanner } from '@/components/features/wizard/WizardValidationContext';
-
-const STEP4_ERROR_KEYS = [
-  'unfinishedFinishingLevel',
-  'unfinishedInfrastructure',
-  'unfinishedSmartHome',
-  'unfinishedBudgetPerSqm',
-  'unfinishedFinancingPreference',
-  'furnishingScope',
-  'furnishingAesthetic',
-  'petFriendly',
-  'furnishingInstallDeadline',
-  'furnishingBudgetBand',
-  'furnishingPaymentPreference',
-  'waterHeating',
-  'acCoverage',
-  'internetSpeed',
-  'beddingTier',
-  'guestPolicyAudiences',
-] as const;
-
 const VALID_FURNISHING_AESTHETICS = new Set<FurnishingAesthetic>([
   'boho',
   'hotel_like',
@@ -372,7 +351,6 @@ export function Step4StateDetails() {
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full">
-      <WizardStepErrorBanner fieldKeys={[...STEP4_ERROR_KEYS]} />
       <div className="text-center mb-10">
         <h2 className="text-3xl font-heading font-bold text-secondary-900">
           {isAr ? 'ما تفاصيل حالة العقار؟' : 'What are the property details?'}

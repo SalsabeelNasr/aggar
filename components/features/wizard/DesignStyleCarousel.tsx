@@ -19,19 +19,19 @@ const STYLES: {
     id: 'boho',
     image: '/images/design-styles/boho.png',
     en: 'Boho',
-    ar: 'بوهو',
+    ar: 'بوهو (Boho)',
   },
   {
     id: 'hotel_like',
     image: '/images/design-styles/hotel.png',
     en: 'Hotel',
-    ar: 'أسلوب فندقي',
+    ar: 'فندقي راقي',
   },
   {
     id: 'classic',
     image: '/images/design-styles/classic.png',
     en: 'Classic',
-    ar: 'كلاسيكي',
+    ar: 'كلاسيك',
   },
   {
     id: 'coastal',
@@ -43,19 +43,19 @@ const STYLES: {
     id: 'industrial',
     image: '/images/design-styles/artistic.png',
     en: 'Artistic',
-    ar: 'فني',
+    ar: 'فني / مودرن',
   },
   {
     id: 'fun',
     image: '/images/design-styles/fun.png',
     en: 'Fun',
-    ar: 'مرح',
+    ar: 'مبهج وعصري',
   },
   {
     id: 'modern_minimalist',
     image: '/images/design-styles/modern.png',
     en: 'Modern',
-    ar: 'حديث',
+    ar: 'مودرن بسيط',
   },
 ];
 

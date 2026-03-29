@@ -32,7 +32,7 @@ function ConsultantCardItem({ c, lo, onBook }: { c: ConsultantCard; lo: 'en' | '
           ★ {c.rating} · {c.consultations}+ {lo === 'ar' ? 'جلسات' : 'sessions'}
         </p>
         <p className="text-center text-sm font-semibold text-secondary-900">
-          {c.priceEgp.min}–{c.priceEgp.max} {lo === 'ar' ? 'ج.م' : 'EGP'}
+          {c.priceEgp.toLocaleString('en-US')} {lo === 'ar' ? 'ج.م' : 'EGP'}
         </p>
         <Button type="button" className="mt-auto w-full shadow-xs" size="sm" onClick={() => onBook(c)}>
           {lo === 'ar' ? `احجز مع ${c.name.ar.split(' ')[0]}` : `Book with ${c.name.en.split(' ')[0]}`}

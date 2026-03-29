@@ -7,7 +7,7 @@ import type { BudgetBand } from '@/lib/data/budgetBands';
 import { BUDGET_BAND_OPTIONS } from '@/lib/data/budgetBands';
 import { cn } from '@/lib/utils';
 import { Wallet } from 'lucide-react';
-import { WizardStepErrorBanner, useWizardFieldError } from '@/components/features/wizard/WizardValidationContext';
+import { WizardInlineFieldError, useWizardFieldError } from '@/components/features/wizard/WizardValidationContext';
 import type { FurnishingBudgetBand, FurnishingPaymentPreference, UnfinishedBudgetPerSqm, UnfinishedFinancingPreference } from '@/models';
 
 export function StepBudgetSize() {
@@ -18,24 +18,40 @@ export function StepBudgetSize() {
   const unfinishedFinanceErr = useWizardFieldError('unfinishedFinancingPreference');
   const furnishingBudgetErr = useWizardFieldError('furnishingBudgetBand');
   const furnishingPayErr = useWizardFieldError('furnishingPaymentPreference');
+  const sqmErr = useWizardFieldError('propertySizeSqm');
 
   const isAr = locale === 'ar';
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full">
-      <WizardStepErrorBanner
-        fieldKeys={[
-          'budgetBand',
-          'unfinishedBudgetPerSqm',
-          'unfinishedFinancingPreference',
-          'furnishingBudgetBand',
-          'furnishingPaymentPreference',
-        ]}
-      />
       <div className="text-center mb-10">
         <h2 className="text-3xl font-heading font-bold text-secondary-900">
-          {isAr ? 'ما هي ميزانيتك للاستثمار؟' : 'What is your investment budget?'}
+          {isAr ? 'ميزانيتك للاستثمار في حدود كام؟' : 'What is your investment budget?'}
         </h2>
+      </div>
+
+      <div className="mb-8 bg-white border border-secondary-200 rounded-2xl p-6 shadow-sm w-full">
+        <label className="font-heading font-bold text-secondary-900 block mb-2">
+          {isAr ? 'مساحة العقار (متر مربع)' : 'Property size (sqm)'}
+        </label>
+        <input
+          type="number"
+          min={10}
+          max={2000}
+          data-wizard-field="propertySizeSqm"
+          value={data.propertySizeSqm ?? ''}
+          onChange={(e) => {
+            const val = e.target.value === '' ? undefined : Number(e.target.value);
+            updateData({ propertySizeSqm: val });
+          }}
+          placeholder={isAr ? 'مثلاً: ١٢٠' : 'e.g. 120'}
+          className={cn(
+            'w-full border-2 rounded-lg p-3 outline-none transition-colors',
+            sqmErr.invalid ? 'border-red-500 focus:border-red-500' : 'border-secondary-200 focus:border-primary-500'
+          )}
+          aria-invalid={sqmErr.invalid || undefined}
+        />
+        <WizardInlineFieldError message={sqmErr.error} />
       </div>
 
       {/* Budget band selection */}
@@ -43,13 +59,14 @@ export function StepBudgetSize() {
         <div className="flex items-center gap-2 mb-4">
           <Wallet className="w-5 h-5 text-primary-600" />
           <h3 className="font-heading font-bold text-lg text-secondary-900">
-            {isAr ? 'ما هي ميزانيتك للاستثمار؟' : 'What is your investment budget?'}
+            {isAr ? 'ميزانيتك للاستثمار كام؟' : 'What is your investment budget?'}
           </h3>
         </div>
         <div
+          data-wizard-field="budgetBand"
           className={cn(
-            'grid grid-cols-1 sm:grid-cols-2 gap-3 rounded-xl p-1 -m-1',
-            budgetErr.invalid && 'ring-2 ring-red-500 ring-offset-2'
+            'grid grid-cols-1 sm:grid-cols-2 gap-3 rounded-xl p-1',
+            budgetErr.invalid && 'border-2 border-red-500'
           )}
         >
           {BUDGET_BAND_OPTIONS.map((opt) => {
@@ -72,36 +89,38 @@ export function StepBudgetSize() {
             );
           })}
         </div>
+        <WizardInlineFieldError message={budgetErr.error} />
       </div>
 
       {data.stateFlag === 'SHELL' && (
         <div className="space-y-6">
-          <div
-            className={cn(
-              'bg-white border rounded-2xl p-6 shadow-sm w-full',
-              unfinishedBudgetErr.invalid ? 'border-red-500 border-2' : 'border-secondary-200'
-            )}
-          >
+          <div className="bg-white border border-secondary-200 rounded-2xl p-6 shadow-sm w-full">
             <div className="font-heading font-bold text-secondary-900 mb-3">
-              {isAr ? 'ميزانية التشطيب للمتر المربع' : 'Finishing budget per sqm'}
+              {isAr ? 'ميزانية التشطيب للمتر' : 'Finishing budget per sqm'}
             </div>
-            <div className="flex flex-col gap-2">
+            <div
+              data-wizard-field="unfinishedBudgetPerSqm"
+              className={cn(
+                'flex flex-col gap-2 rounded-xl p-2 -mx-1',
+                unfinishedBudgetErr.invalid && 'border-2 border-red-500'
+              )}
+            >
               {(
                 [
                   {
                     id: 'economy' as const,
                     en: 'Economy: 2,500 – 4,000 EGP / sqm',
-                    ar: 'اقتصادي: 2,500 – 4,000 ج.م / م²',
+                    ar: 'اقتصادي: ٢,٥٠٠ – ٤,٠٠٠ ج.م / م²',
                   },
                   {
                     id: 'premium' as const,
                     en: 'Premium: 4,000 – 7,000 EGP / sqm',
-                    ar: 'مميز: 4,000 – 7,000 ج.م / م²',
+                    ar: 'مميز: ٤,٠٠٠ – ٧,٠٠٠ ج.م / م²',
                   },
                   {
                     id: 'luxury_custom' as const,
                     en: 'Luxury / custom: 7,000+ EGP / sqm',
-                    ar: 'فاخر/مخصص: 7,000+ ج.م / م²',
+                    ar: 'فاخر/مخصص: ٧,٠٠٠+ ج.م / م²',
                   },
                 ] satisfies { id: UnfinishedBudgetPerSqm; en: string; ar: string }[]
               ).map((opt) => {
@@ -126,34 +145,36 @@ export function StepBudgetSize() {
                 );
               })}
             </div>
+            <WizardInlineFieldError message={unfinishedBudgetErr.error} />
           </div>
 
-          <div
-            className={cn(
-              'bg-white border rounded-2xl p-6 shadow-sm w-full',
-              unfinishedFinanceErr.invalid ? 'border-red-500 border-2' : 'border-secondary-200'
-            )}
-          >
+          <div className="bg-white border border-secondary-200 rounded-2xl p-6 shadow-sm w-full">
             <div className="font-heading font-bold text-secondary-900 mb-3">
-              {isAr ? 'تفضيل التمويل' : 'Financing preference'}
+              {isAr ? 'بتفضل تمول المشروع إزاي؟' : 'Financing preference'}
             </div>
-            <div className="flex flex-col gap-2">
+            <div
+              data-wizard-field="unfinishedFinancingPreference"
+              className={cn(
+                'flex flex-col gap-2 rounded-xl p-2 -mx-1',
+                unfinishedFinanceErr.invalid && 'border-2 border-red-500'
+              )}
+            >
               {(
                 [
                   {
                     id: 'lump_sum' as const,
                     en: 'Lump sum (cash discount preferred)',
-                    ar: 'دفعة واحدة (يفضّل خصم نقدي)',
+                    ar: 'كاش (أفضل خصم نقدي)',
                   },
                   {
                     id: 'installment_12_24' as const,
                     en: 'Installment plan (12–24 months, e.g. valU / contact consumer finance)',
-                    ar: 'تقسيط (12–24 شهرًا، تمويل استهلاكي مثل valU / contact)',
+                    ar: 'تقسيط (١٢–٢٤ شهر، زي valU أو Contact)',
                   },
                   {
                     id: 'bank_loan_3_5y' as const,
                     en: 'Long-term bank loan (3–5 years refurbishment loan)',
-                    ar: 'قرض بنكي طويل (3–5 سنوات لتشطيب/تجديد)',
+                    ar: 'قرض بنكي طويل (٣–٥ سنوات لتشطيب/تجديد)',
                   },
                 ] satisfies { id: UnfinishedFinancingPreference; en: string; ar: string }[]
               ).map((opt) => {
@@ -178,27 +199,29 @@ export function StepBudgetSize() {
                 );
               })}
             </div>
+            <WizardInlineFieldError message={unfinishedFinanceErr.error} />
           </div>
         </div>
       )}
 
       {data.stateFlag === 'FINISHED_EMPTY' && (
         <div className="space-y-6">
-          <div
-            className={cn(
-              'bg-white border rounded-2xl p-6 shadow-sm w-full',
-              furnishingBudgetErr.invalid ? 'border-red-500 border-2' : 'border-secondary-200'
-            )}
-          >
+          <div className="bg-white border border-secondary-200 rounded-2xl p-6 shadow-sm w-full">
             <div className="font-heading font-bold text-secondary-900 mb-3">
-              {isAr ? 'ميزانية الفرش (تقريبية)' : 'Furnishing budget range'}
+              {isAr ? 'ميزانية الفرش المتوقعة' : 'Furnishing budget range'}
             </div>
-            <div className="flex flex-col gap-2">
+            <div
+              data-wizard-field="furnishingBudgetBand"
+              className={cn(
+                'flex flex-col gap-2 rounded-xl p-2 -mx-1',
+                furnishingBudgetErr.invalid && 'border-2 border-red-500'
+              )}
+            >
               {(
                 [
-                  { id: 'budget_250_450k' as const, en: 'Budget: EGP 250k – 450k', ar: 'اقتصادي: 250 – 450 ألف ج.م' },
-                  { id: 'premium_500_850k' as const, en: 'Premium: EGP 500k – 850k', ar: 'مميز: 500 – 850 ألف ج.م' },
-                  { id: 'luxury_1m_plus' as const, en: 'Luxury: EGP 1M+', ar: 'فاخر: مليون ج.م فأكثر' },
+                  { id: 'budget_250_450k' as const, en: 'Budget: EGP 250k – 450k', ar: 'اقتصادي: ٢٥٠ – ٤٥٠ ألف ج.م' },
+                  { id: 'premium_500_850k' as const, en: 'Premium: EGP 500k – 850k', ar: 'مميز: ٥٠٠ – ٨٥٠ ألف ج.م' },
+                  { id: 'luxury_1m_plus' as const, en: 'Luxury: EGP 1M+', ar: 'فاخر: مليون ج.م أو أكتر' },
                 ] satisfies { id: FurnishingBudgetBand; en: string; ar: string }[]
               ).map((opt) => {
                 const checked = data.furnishingBudgetBand === opt.id;
@@ -222,24 +245,26 @@ export function StepBudgetSize() {
                 );
               })}
             </div>
+            <WizardInlineFieldError message={furnishingBudgetErr.error} />
           </div>
 
-          <div
-            className={cn(
-              'bg-white border rounded-2xl p-6 shadow-sm w-full',
-              furnishingPayErr.invalid ? 'border-red-500 border-2' : 'border-secondary-200'
-            )}
-          >
+          <div className="bg-white border border-secondary-200 rounded-2xl p-6 shadow-sm w-full">
             <div className="font-heading font-bold text-secondary-900 mb-3">
-              {isAr ? 'تفضيل الدفع / التمويل' : 'Payment & financing preference'}
+              {isAr ? 'بتفضل تدفع أو تمول الفرش إزاي؟' : 'Payment & financing preference'}
             </div>
-            <div className="flex flex-col gap-2">
+            <div
+              data-wizard-field="furnishingPaymentPreference"
+              className={cn(
+                'flex flex-col gap-2 rounded-xl p-2 -mx-1',
+                furnishingPayErr.invalid && 'border-2 border-red-500'
+              )}
+            >
               {(
                 [
-                  { id: 'cash_package_discount' as const, en: 'Cash (package discount)', ar: 'نقدًا (خصم على الباقة)' },
-                  { id: 'short_installments_card_6_12' as const, en: 'Short installments (6–12 months, card)', ar: 'تقسيط قصير (6–12 شهرًا - بطاقة)' },
-                  { id: 'long_finance_valu_contact_halan' as const, en: 'Long-term financing (24–60 mo. via valU / Contact / Halan)', ar: 'تمويل طويل (24–60 شهرًا - valU / Contact / Halan)' },
-                  { id: 'revenue_share_management' as const, en: 'Revenue share (furnishing for mgmt %)', ar: 'مشاركة إيرادات (فرش مقابل نسبة تشغيل)' },
+                  { id: 'cash_package_discount' as const, en: 'Cash (package discount)', ar: 'كاش (عشان تاخد خصم الباقة)' },
+                  { id: 'short_installments_card_6_12' as const, en: 'Short installments (6–12 months, card)', ar: 'تقسيط قصير (٦–١٢ شهر - بطاقة)' },
+                  { id: 'long_finance_valu_contact_halan' as const, en: 'Long-term financing (24–60 mo. via valU / Contact / Halan)', ar: 'تمويل طويل (٢٤–٦٠ شهر - valU / Contact)' },
+                  { id: 'revenue_share_management' as const, en: 'Revenue share (furnishing for mgmt %)', ar: 'مشاركة أرباح (فرش مقابل نسبة من الإيراد)' },
                 ] satisfies { id: FurnishingPaymentPreference; en: string; ar: string }[]
               ).map((opt) => {
                 const checked = data.furnishingPaymentPreference === opt.id;
@@ -263,6 +288,7 @@ export function StepBudgetSize() {
                 );
               })}
             </div>
+            <WizardInlineFieldError message={furnishingPayErr.error} />
           </div>
         </div>
       )}

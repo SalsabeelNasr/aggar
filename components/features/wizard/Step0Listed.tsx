@@ -6,7 +6,7 @@ import { useEvaluationStore } from '@/lib/store';
 import { cn } from '@/lib/utils';
 import type { ListingStatus, PropertyStateFlag } from '@/models';
 import { Building2, TrendingDown, TrendingUp, Wand2 } from 'lucide-react';
-import { WizardStepErrorBanner, useWizardFieldError } from '@/components/features/wizard/WizardValidationContext';
+import { WizardInlineFieldError, useWizardFieldError } from '@/components/features/wizard/WizardValidationContext';
 
 const options: Array<{
   id: ListingStatus;
@@ -21,35 +21,35 @@ const options: Array<{
     id: 'not_listed',
     icon: Building2,
     en: 'No, not listed yet',
-    ar: 'لا، ليس مُعلنًا بعد',
+    ar: 'لا، لسه مابدأتش',
     hintEn: 'We’ll run the full evaluation.',
-    hintAr: 'سنقوم بالتقييم الكامل.',
+    hintAr: 'هنعمل تقييم كامل لكل تفاصيل العقار.',
   },
   {
     id: 'listed_doing_well',
     icon: TrendingUp,
     en: "Yes, and it's doing well",
-    ar: 'نعم، الأداء ممتاز',
+    ar: 'أيوه، وشغال كويس جداً',
     hintEn: 'We’ll focus on optimization and management.',
-    hintAr: 'سنركز على التحسين والتشغيل.',
+    hintAr: 'هنركز إزاي نعلي أرباحك أكتر ونريحك من الإدارة.',
     impliedStateFlag: 'FURNISHED',
   },
   {
     id: 'listed_underperform',
     icon: TrendingDown,
     en: "Yes, but it's not getting enough bookings",
-    ar: 'نعم، لكن الحجوزات ضعيفة',
+    ar: 'أيوه، بس الحجوزات قليلة',
     hintEn: 'We’ll diagnose performance and suggest fixes.',
-    hintAr: 'سنشخص سبب الضعف ونقترح حلولًا.',
+    hintAr: 'هنشوف إيه اللي معطل الحجوزات ونقترح حلول فورية.',
     impliedStateFlag: 'FURNISHED',
   },
   {
     id: 'listed_barely_any_bookings',
     icon: Wand2,
     en: 'Yes, barely any bookings',
-    ar: 'نعم، بالكاد توجد حجوزات',
+    ar: 'أيوه، بس مفيش حجوزات تقريباً',
     hintEn: 'We’ll run a deeper performance audit.',
-    hintAr: 'سنقوم بتدقيق أعمق للأداء.',
+    hintAr: 'هنعمل مراجعة عميقة للأداء ونعرف السبب فين.',
     impliedStateFlag: 'FURNISHED',
   },
 ];
@@ -64,7 +64,6 @@ export function Step0Listed() {
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full">
-      <WizardStepErrorBanner fieldKeys={['listingStatus']} />
       <div className="text-center mb-10">
         <h2 className="text-3xl font-heading font-bold text-secondary-900">
           {locale === 'ar'
@@ -74,9 +73,10 @@ export function Step0Listed() {
       </div>
 
       <div
+        data-wizard-field="listingStatus"
         className={cn(
-          'grid grid-cols-1 gap-4 rounded-xl p-1 -m-1',
-          listingErr.invalid && 'ring-2 ring-red-500 ring-offset-2'
+          'grid grid-cols-1 gap-4 rounded-xl p-1',
+          listingErr.invalid && 'border-2 border-red-500'
         )}
       >
         {options.map((opt) => {
@@ -124,6 +124,7 @@ export function Step0Listed() {
           );
         })}
       </div>
+      <WizardInlineFieldError message={listingErr.error} />
     </div>
   );
 }

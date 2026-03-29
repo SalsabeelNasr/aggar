@@ -50,6 +50,8 @@ export function WizardDetailSelect({
   onChange,
   children,
   className,
+  dataWizardField,
+  'aria-invalid': ariaInvalid,
 }: {
   id?: string;
   label: React.ReactNode;
@@ -57,6 +59,9 @@ export function WizardDetailSelect({
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   children: React.ReactNode;
   className?: string;
+  /** Scroll target for wizard validation */
+  dataWizardField?: string;
+  'aria-invalid'?: boolean;
 }) {
   return (
     <>
@@ -67,9 +72,11 @@ export function WizardDetailSelect({
       )}
       <select
         id={id}
+        data-wizard-field={dataWizardField}
         className={cn(wizardDetailSelectClassName, className)}
         value={value}
         onChange={onChange}
+        aria-invalid={ariaInvalid || undefined}
       >
         {children}
       </select>

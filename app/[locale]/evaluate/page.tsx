@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useLocale } from 'next-intl';
 import { useRouter } from '@/lib/navigation';
 import { listingStatusSkipsPropertyStateStep } from '@/models';
+import { furnishedPerformanceStepHasVisibleCards } from '@/lib/wizard/furnishedPerformanceVisibility';
 import { useEvaluationStore } from '@/lib/store';
 import type { EvaluationReport } from '@/lib/evaluation/types';
 import { Stepper } from '@/components/ui/Stepper';
@@ -23,21 +24,29 @@ import { StepPhotos } from '@/components/features/wizard/StepPhotos';
 import { StepBudgetSize } from '@/components/features/wizard/StepBudgetSize';
 import { WizardValidationContext } from '@/components/features/wizard/WizardValidationContext';
 import { validateEvaluationStep } from '@/lib/validations/wizard-steps';
+import { firstWizardErrorFieldKey } from '@/lib/wizard/error-order';
+
+function wizardErrorsShallowEqual(a: Record<string, string>, b: Record<string, string>): boolean {
+  const ka = Object.keys(a);
+  const kb = Object.keys(b);
+  if (ka.length !== kb.length) return false;
+  return ka.every((k) => a[k] === b[k]);
+}
 
 /** Non-furnished: Property → Location → Listed? → State → Budget → Photos → Operations → Results */
-const stepsAR_NF = ['العقار', 'الموقع', 'هل عقارك مُعلن؟', 'حالة العقار', 'الميزانية', 'الصور', 'التشغيل', 'بيانات التواصل'];
+const stepsAR_NF = ['نوع العقار', 'المكان', 'هل هو معلن؟', 'حالة العقار', 'الميزانية', 'الصور', 'التشغيل', 'بيانات التواصل'];
 const stepsEN_NF = ['Property', 'Location', 'Listed?', 'State', 'Budget', 'Photos', 'Operations', 'Contact'];
 
 /** Furnished: + Pain points + Performance before Results */
 const stepsAR_F = [
-  'العقار',
-  'الموقع',
-  'هل عقارك مُعلن؟',
+  'نوع العقار',
+  'المكان',
+  'هل هو معلن؟',
   'حالة العقار',
   'الميزانية',
   'الصور',
   'التشغيل',
-  'نقاط الألم',
+  'التحديات',
   'الأداء',
   'بيانات التواصل',
 ];
@@ -77,6 +86,8 @@ export default function EvaluatePage() {
 
   const isFurnished = data.stateFlag === 'FURNISHED';
   const skipPropertyStateStep = listingStatusSkipsPropertyStateStep(data.listingStatus);
+  const skipFurnishedPerformanceStep =
+    isFurnished && !furnishedPerformanceStepHasVisibleCards(data.mode);
   const finalStep = isFurnished ? 9 : 7;
 
   const steps = React.useMemo(() => {
@@ -86,11 +97,20 @@ export default function EvaluatePage() {
       ar.splice(3, 1);
       en.splice(3, 1);
     }
+    if (isFurnished && skipFurnishedPerformanceStep) {
+      const perfIndex = skipPropertyStateStep ? 7 : 8;
+      ar.splice(perfIndex, 1);
+      en.splice(perfIndex, 1);
+    }
     return locale === 'ar' ? ar : en;
-  }, [locale, isFurnished, skipPropertyStateStep]);
+  }, [locale, isFurnished, skipPropertyStateStep, skipFurnishedPerformanceStep]);
 
-  const stepperCurrentStep =
-    skipPropertyStateStep && currentStep >= 4 ? currentStep - 1 : currentStep;
+  const stepperCurrentStep = React.useMemo(() => {
+    let s = currentStep;
+    if (skipPropertyStateStep && currentStep >= 4) s -= 1;
+    if (isFurnished && skipFurnishedPerformanceStep && currentStep >= 9) s -= 1;
+    return s;
+  }, [currentStep, skipPropertyStateStep, isFurnished, skipFurnishedPerformanceStep]);
 
   React.useEffect(() => {
     if (!skipPropertyStateStep || currentStep !== 3) return;
@@ -99,8 +119,46 @@ export default function EvaluatePage() {
   }, [skipPropertyStateStep, currentStep, setStep, updateData]);
 
   React.useEffect(() => {
+    if (!isFurnished || !skipFurnishedPerformanceStep || currentStep !== 8) return;
+    setStep(9);
+  }, [isFurnished, skipFurnishedPerformanceStep, currentStep, setStep]);
+
+  React.useEffect(() => {
     if (currentStep > finalStep) setStep(finalStep);
   }, [currentStep, finalStep, setStep]);
+
+  React.useEffect(() => {
+    const keys = Object.keys(wizardFieldErrors);
+    if (keys.length === 0) return;
+    const field = firstWizardErrorFieldKey(currentStep, wizardFieldErrors);
+    if (!field) return;
+    const scrollField = field === 'hassleLevel' ? 'mode' : field;
+    const run = () => {
+      const el = document.querySelector(`[data-wizard-field="${scrollField}"]`);
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+    requestAnimationFrame(() => requestAnimationFrame(run));
+  }, [wizardFieldErrors, currentStep]);
+
+  /** Clear or shrink field errors as soon as the user fixes inputs (no need to press Next). */
+  React.useEffect(() => {
+    setWizardFieldErrors((prev) => {
+      if (Object.keys(prev).length === 0) return prev;
+      const d = useEvaluationStore.getState().data;
+      const furnished = d.stateFlag === 'FURNISHED';
+      const fStep = furnished ? 9 : 7;
+      const v = validateEvaluationStep({
+        currentStep,
+        data: d,
+        isFurnished: furnished,
+        finalStep: fStep,
+        locale: locale === 'ar' ? 'ar' : 'en',
+      });
+      if (v.ok) return {};
+      if (wizardErrorsShallowEqual(prev, v.errors)) return prev;
+      return v.errors;
+    });
+  }, [data, currentStep, locale]);
 
   const runStepValidation = React.useCallback(() => {
     return validateEvaluationStep({
@@ -124,9 +182,35 @@ export default function EvaluatePage() {
       return;
     }
 
+    if (currentStep === 7 && isFurnished && skipFurnishedPerformanceStep) {
+      const v = runStepValidation();
+      if (!v.ok) {
+        setWizardFieldErrors(v.errors);
+        return;
+      }
+      setWizardFieldErrors({});
+      setStep(9);
+      return;
+    }
+
     if (currentStep === finalStep) {
       const ok = await contactRef.current?.validateAndSync();
       if (ok !== true) return;
+
+      const snapshotPre = useEvaluationStore.getState().data;
+      const locV = validateEvaluationStep({
+        currentStep: 1,
+        data: snapshotPre,
+        isFurnished,
+        finalStep,
+        locale: locale === 'ar' ? 'ar' : 'en',
+      });
+      if (!locV.ok) {
+        setWizardFieldErrors(locV.errors);
+        setStep(1);
+        return;
+      }
+
       setWizardFieldErrors({});
       setSubmitError(null);
       setSubmitting(true);
@@ -184,6 +268,11 @@ export default function EvaluatePage() {
       return;
     }
 
+    if (currentStep === 9 && isFurnished && skipFurnishedPerformanceStep) {
+      setStep(7);
+      return;
+    }
+
     prevStep();
   };
 
@@ -193,7 +282,7 @@ export default function EvaluatePage() {
       <CookieConsent variant="inline" />
 
       <WizardValidationContext.Provider value={{ errors: wizardFieldErrors }}>
-        <div className="flex-grow flex flex-col relative w-full overflow-hidden">
+        <div className="flex-grow flex flex-col relative w-full min-w-0 overflow-x-visible overflow-y-visible px-0.5 sm:px-1">
           {currentStep === 0 && <Step2Asset />}
           {currentStep === 1 && <Step1Location />}
           {currentStep === 2 && <Step0Listed />}

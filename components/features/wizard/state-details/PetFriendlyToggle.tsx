@@ -18,7 +18,7 @@ export function PetFriendlyToggle({ isAr, embedded = false }: Props) {
     <YesNoToggleField
       isAr={isAr}
       embedded={embedded}
-      title={isAr ? 'مناسب للحيوانات الأليفة؟' : 'Pet-friendly setup?'}
+      title={isAr ? 'هل الشقة مسموح فيها بالحيوانات الأليفة؟' : 'Pet-friendly setup?'}
       yesSelected={yes}
       onToggle={() => updateData({ petFriendly: !yes })}
       ariaLabel={isAr ? 'تبديل مناسب للحيوانات الأليفة' : 'Toggle pet-friendly'}

@@ -6,30 +6,30 @@ import type { WizardData } from '@/models';
 import { cn } from '@/lib/utils';
 import { YesNoSwitchRow } from '@/components/features/wizard/state-details/YesNoSwitch';
 import { wizardDetailSurfaceClassName } from '@/components/features/wizard/state-details/wizardDetailUi';
+import { WizardInlineFieldError, useWizardFieldError } from '@/components/features/wizard/WizardValidationContext';
 
 type Props = { isAr: boolean; className?: string };
 
 /** Managed mode: property manager or PMC already in place (parent supplies outer layout when needed). */
 export function ManagedPropertyManagerField({ isAr, className }: Props) {
   const { data, updateData } = useEvaluationStore();
+  const fieldErr = useWizardFieldError('hasPropertyManagerOrCompany');
   if (data.mode !== 'MANAGED') return null;
 
   const yes = data.hasPropertyManagerOrCompany === 'yes';
 
   return (
     <div className={className}>
-      <div
-        className={cn(
-          wizardDetailSurfaceClassName,
-          'flex flex-row flex-wrap items-center justify-between gap-x-4 gap-y-2'
-        )}
-      >
+      <div className={cn(wizardDetailSurfaceClassName, 'flex flex-row flex-wrap items-center justify-between gap-x-4 gap-y-2')}>
         <div className="min-w-0 flex-1 text-secondary-900 font-semibold">
           {isAr
-            ? 'هل لديك مدير عقار أو شركة إدارة عقارات حاليًا؟'
+            ? 'هل عندك مدير عقار أو شركة إدارة حالياً؟'
             : 'Do you already have a property manager or property management company?'}
         </div>
-        <div className="shrink-0">
+        <div
+          data-wizard-field="hasPropertyManagerOrCompany"
+          className={cn('shrink-0 rounded-xl p-1', fieldErr.invalid && 'border-2 border-red-500')}
+        >
           <YesNoSwitchRow
             isAr={isAr}
             yesSelected={yes}
@@ -44,6 +44,7 @@ export function ManagedPropertyManagerField({ isAr, className }: Props) {
           />
         </div>
       </div>
+      <WizardInlineFieldError message={fieldErr.error} />
     </div>
   );
 }
@@ -51,22 +52,21 @@ export function ManagedPropertyManagerField({ isAr, className }: Props) {
 /** Managed mode: dedicated cleaning / housekeeping for turnovers. */
 export function ManagedCleaningTeamField({ isAr, className }: Props) {
   const { data, updateData } = useEvaluationStore();
+  const fieldErr = useWizardFieldError('hasDedicatedCleaningTeam');
   if (data.mode !== 'MANAGED') return null;
 
   const yes = data.hasDedicatedCleaningTeam === 'yes';
 
   return (
     <div className={className}>
-      <div
-        className={cn(
-          wizardDetailSurfaceClassName,
-          'flex flex-row flex-wrap items-center justify-between gap-x-4 gap-y-2'
-        )}
-      >
+      <div className={cn(wizardDetailSurfaceClassName, 'flex flex-row flex-wrap items-center justify-between gap-x-4 gap-y-2')}>
         <div className="min-w-0 flex-1 text-secondary-900 font-semibold">
-          {isAr ? 'هل لديك فريق نظافة لمغادرة الضيوف والتجهيز؟' : 'Do you already have a cleaning team for turnovers?'}
+          {isAr ? 'هل عندك فريق تنضيف لتجهيز الشقة بين الضيوف؟' : 'Do you already have a cleaning team for turnovers?'}
         </div>
-        <div className="shrink-0">
+        <div
+          data-wizard-field="hasDedicatedCleaningTeam"
+          className={cn('shrink-0 rounded-xl p-1', fieldErr.invalid && 'border-2 border-red-500')}
+        >
           <YesNoSwitchRow
             isAr={isAr}
             yesSelected={yes}
@@ -79,6 +79,7 @@ export function ManagedCleaningTeamField({ isAr, className }: Props) {
           />
         </div>
       </div>
+      <WizardInlineFieldError message={fieldErr.error} />
     </div>
   );
 }

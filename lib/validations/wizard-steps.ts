@@ -15,11 +15,11 @@ const T = {
     furnishedChecklist: 'Select at least one photo you can provide',
   },
   ar: {
-    selectOption: 'اختر خيارًا',
-    fillField: 'يرجى إكمال هذا الحقل',
-    selectAtLeastOne: 'اختر خيارًا واحدًا على الأقل',
-    zipPhotos: 'ارفع الصور وأكمل التحليل',
-    furnishedChecklist: 'حدد صورة واحدة على الأقل يمكنك توفيرها',
+    selectOption: 'اختار خيار',
+    fillField: 'يا ريت تكمل الخانة دي',
+    selectAtLeastOne: 'اختار خيار واحد على الأقل',
+    zipPhotos: 'ارفع الصور وخلص التحليل',
+    furnishedChecklist: 'اختار صورة واحدة على الأقل تقدر توفرها',
   },
 } as const;
 
@@ -87,7 +87,7 @@ function validateStepAsset(data: WizardData, locale: Locale): WizardStepValidati
 function validateStepLocation(data: WizardData, locale: Locale): WizardStepValidationResult {
   const s = m(locale);
   const errors: Record<string, string> = {};
-  if (!data.regionId) errors.regionId = s.selectOption;
+  if (!data.regionId || data.regionId === 'other') errors.regionId = s.selectOption;
   const addr = (data.address ?? '').trim();
   if (addr.length < 2) errors.address = s.fillField;
   return Object.keys(errors).length ? fail(errors) : { ok: true };

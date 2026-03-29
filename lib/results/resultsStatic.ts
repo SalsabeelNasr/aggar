@@ -12,55 +12,55 @@ export interface DiyChecklistItem {
 export const DIY_CHECKLIST_ITEMS: DiyChecklistItem[] = [
   {
     id: 'netflix',
-    name: { en: 'Netflix Standard', ar: 'Netflix Standard' },
+    name: { en: 'Netflix Standard', ar: 'اشتراك نتفليكس' },
     cost: { en: '165–210 EGP/mo', ar: '١٦٥–٢١٠ ج.م/شهر' },
     tip: {
       en: 'Create a guest profile, not your personal account.',
-      ar: 'أنشئ ملفًا للضيوف، ليس حسابك الشخصي.',
+      ar: 'اعمل بروفايل خاص للضيوف، بلاش تستخدم حسابك الشخصي.',
     },
     whyItHelps: {
       en: 'Streaming is a quiet “value per night” signal — happy guests mention it, and that sentiment feeds how strong your listing feels overall.',
-      ar: 'البث يعطي إحساساً بقيمة الإقامة — الضيوف الراضون يذكرونه، وهذا يغذي انطباع قوة الإعلان.',
+      ar: 'وجود خدمات ترفيهية بيدي إحساس بقيمة الليلة، والضيوف بيحبوا يذكروا ده في تقييماتهم.',
     },
   },
   {
     id: 'shahid',
-    name: { en: 'Shahid VIP', ar: 'Shahid VIP' },
+    name: { en: 'Shahid VIP', ar: 'اشتراك شاهد VIP' },
     cost: { en: '100–150 EGP/mo', ar: '١٠٠–١٥٠ ج.م/شهر' },
-    tip: { en: 'Essential for Arabic-speaking guests.', ar: 'مهم لضيوف يتحدثون العربية.' },
+    tip: { en: 'Essential for Arabic-speaking guests.', ar: 'مهم جداً للضيوف العرب والمصريين.' },
     whyItHelps: {
       en: 'For many regional guests this matters as much as Wi‑Fi — it is an easy way to lift perceived hospitality without touching your floorplan.',
-      ar: 'لكثير من الضيوف المحليين يهم مثل الواي فاي — رفع بسيط لإحساس الضيافة دون تغيير المساحة.',
+      ar: 'بالنسبة لكتير من الضيوف، "شاهد" مهم زي الواي فاي بالظبط، وبيرفع مستوى الضيافة بسهولة.',
     },
   },
   {
     id: 'mesh',
-    name: { en: 'Mesh Wi‑Fi (TP-Link Deco)', ar: 'Mesh Wi‑Fi (TP-Link Deco)' },
+    name: { en: 'Mesh Wi‑Fi (TP-Link Deco)', ar: 'مقوي واي فاي (Mesh)' },
     cost: { en: '2,500–4,500 EGP', ar: '٢٬٥٠٠–٤٬٥٠٠ ج.م' },
-    tip: { en: 'Post tested speed visibly in the unit.', ar: 'اعرض سرعة الاختبار بوضوح في الوحدة.' },
+    tip: { en: 'Post tested speed visibly in the unit.', ar: 'اعرض سرعة النت بوضوح في الشقة عشان الضيف يطمن.' },
     whyItHelps: {
       en: 'Dead zones kill reviews. Solid Wi‑Fi is one of the fastest paths to “great stay” mentions — platforms weight that heavily in practice.',
-      ar: 'المناطق الميتة تقتل التقييمات. واي فاي قوي من أسرع الطرق لذكر «إقامة ممتازة» — والمنصات تعتبره مهماً عملياً.',
+      ar: 'النت الضعيف بيقتل التقييمات. واي فاي قوي في كل ركن هو أسرع طريق لتقييم ٥ نجوم.',
     },
   },
   {
     id: 'welcome',
-    name: { en: 'Welcome basket (water, sweets, fruit)', ar: 'سلة ترحيب (مياه، حلوى، فاكهة)' },
+    name: { en: 'Welcome basket (water, sweets, fruit)', ar: 'سلة ترحيب (مياه، سناكس، فاكهة)' },
     cost: { en: '200–400 EGP/stay', ar: '٢٠٠–٤٠٠ ج.م/إقامة' },
-    tip: { en: 'Guests mention this in reviews.', ar: 'الضيوف يذكرونها في التقييمات.' },
+    tip: { en: 'Guests mention this in reviews.', ar: 'الضيوف دايماً بيشكروا في الحركة دي في التقييمات.' },
     whyItHelps: {
       en: 'Tiny touches often become five-star sentences — they do not replace photos, but they nudge review tone in your favor.',
-      ar: 'لمسات صغيرة غالباً تتحول لجمل خمس نجوم — لا تحل محل الصور، لكنها تدفع نبرة التقييم لصالحك.',
+      ar: 'اللمسات الصغيرة هي اللي بتخلي الضيف يكتب عنك كلام حلو، وبتحسسه إنه في بيته.',
     },
   },
   {
     id: 'first_aid',
-    name: { en: 'First aid kit', ar: 'حقيبة إسعافات أولية' },
+    name: { en: 'First aid kit', ar: 'شنطة إسعافات أولية' },
     cost: { en: '300–500 EGP', ar: '٣٠٠–٥٠٠ ج.م' },
-    tip: { en: 'Panadol, plasters, antiseptic wipes.', ar: 'مسكن، لاصقات، مناديل مطهرة.' },
+    tip: { en: 'Panadol, plasters, antiseptic wipes.', ar: 'بنادول، بلاستر، ومناديل مطهرة.' },
     whyItHelps: {
       en: 'Safety and care read as professionalism — families notice, and calmer guests write calmer reviews.',
-      ar: 'الأمان والعناية يبدوان احترافاً — العائلات تلاحظ، والضيف الأهدأ يكتب تقييماً أهدأ.',
+      ar: 'الأمان والاهتمام بيبين إنك مضيف محترف، والعائلات بالذات بتهتم جداً بالتفاصيل دي.',
     },
   },
 ];
@@ -87,19 +87,19 @@ export const SCORE_IMPROVEMENT_ROWS: ScoreImprovementRow[] = [
   },
   {
     id: 'linen',
-    title: { en: 'Linen upgrade to triple par', ar: 'ترقية مفروشات فندقية (طقم ثلاثي)' },
+    title: { en: 'Linen upgrade to triple par', ar: 'مفروشات فندقية (طقم ثلاثي)' },
     scoreGain: { en: '+4 pts', ar: '+٤ نقاط' },
     cost: { en: '9,000–10,500 EGP', ar: '٩٬٠٠٠–١٠٬٥٠٠ ج.م' },
   },
   {
     id: 'bath',
-    title: { en: 'Bathroom non-slip + fixtures', ar: 'حمام مانع انزلاق + خلاطات' },
+    title: { en: 'Bathroom non-slip + fixtures', ar: 'تجديد الحمام (أمان + خلاطات)' },
     scoreGain: { en: '+3 pts', ar: '+٣ نقاط' },
     cost: { en: '8,000–20,000 EGP', ar: '٨٬٠٠٠–٢٠٬٠٠٠ ج.م' },
   },
   {
     id: 'workspace',
-    title: { en: 'Add workspace (desk + chair)', ar: 'إضافة مكتب عمل' },
+    title: { en: 'Add workspace (desk + chair)', ar: 'إضافة ركن للعمل' },
     scoreGain: { en: '+2 pts', ar: '+٢ نقاط' },
     cost: { en: '3,500–7,000 EGP', ar: '٣٬٥٠٠–٧٬٠٠٠ ج.م' },
   },
@@ -114,7 +114,8 @@ export interface ConsultantCard {
   rating: number;
   consultations: number;
   availability: LocalizedString;
-  priceEgp: { min: number; max: number };
+  /** Fixed consultation rate in EGP (per session). */
+  priceEgp: number;
   /** Used for spec “matching logic” ordering */
   specialties: Array<'reno' | 'styling' | 'ops' | 'licensing' | 'invest'>;
 }
@@ -126,58 +127,58 @@ export const CONSULTANT_MOCK: ConsultantCard[] = [
     title: { en: 'Renovation & interior design', ar: 'تشطيب وتصميم داخلي' },
     bio: {
       en: '15+ renewals in New Cairo & Sheikh Zayed. STR-first floorplans.',
-      ar: 'أكثر من ١٥ مشروع تجديد في القاهرة الجديدة والشيخ زايد بتركيز STR.',
+      ar: 'أكتر من ١٥ مشروع تجديد في التجمع وزايد بتركيز خاص على الإيجار القصير.',
     },
     regionIds: ['new_cairo', 'sheikh_zayed', 'north_coast'],
     rating: 4.9,
     consultations: 214,
-    availability: { en: 'Next slot: Thu 3pm', ar: 'أقرب موعد: الخميس ٣ م' },
-    priceEgp: { min: 800, max: 1200 },
+    availability: { en: 'Next slot: Thu 3pm', ar: 'الموعد الجاي: الخميس ٣ م' },
+    priceEgp: 1000,
     specialties: ['reno', 'styling'],
   },
   {
     id: 'c2',
     name: { en: 'Omar Hassanein', ar: 'عمر حسنين' },
-    title: { en: 'STR operations & listing optimization', ar: 'تشغيل STR وتحسين الإعلان' },
+    title: { en: 'STR operations & listing optimization', ar: 'تشغيل STR وتحسين الإعلانات' },
     bio: {
       en: 'Former OTA host advisor; focuses on Hurghada & Sharm performance.',
-      ar: 'خبير سابق في منصات الحجز؛ يركز على أداء الغردقة وشرم.',
+      ar: 'خبير سابق في منصات الحجز؛ متخصص في رفع أداء عقارات الغردقة وشرم.',
     },
     regionIds: ['hurghada', 'sharm', 'el_gouna'],
     rating: 4.8,
     consultations: 176,
-    availability: { en: 'Available today', ar: 'متاح اليوم' },
-    priceEgp: { min: 600, max: 900 },
+    availability: { en: 'Available today', ar: 'متاح النهاردة' },
+    priceEgp: 750,
     specialties: ['ops', 'invest'],
   },
   {
     id: 'c3',
     name: { en: 'Layla Khaled', ar: 'ليلى خالد' },
-    title: { en: 'Decree 209 & licensing', ar: 'قرار ٢٠٩ والتراخيص' },
+    title: { en: 'Decree 209 & licensing', ar: 'تراخيص سياحية (قرار ٢٠٩)' },
     bio: {
       en: 'Compliance-first onboarding for Zamalek & Maadi mixed-use.',
-      ar: 'امتثال وترخيص للمباني المختلطة في الزمالك والمعادي.',
+      ar: 'متخصصة في التراخيص والامتثال القانوني، خصوصاً في الزمالك والمعادي.',
     },
     regionIds: ['zamalek', 'maadi', 'new_cairo'],
     rating: 5.0,
     consultations: 132,
-    availability: { en: 'Next slot: Wed 11am', ar: 'أقرب موعد: الأربعاء ١١ ص' },
-    priceEgp: { min: 900, max: 1500 },
+    availability: { en: 'Next slot: Wed 11am', ar: 'الموعد الجاي: الأربعاء ١١ ص' },
+    priceEgp: 1200,
     specialties: ['licensing'],
   },
   {
     id: 'c4',
     name: { en: 'Karim Fadel', ar: 'كريم فاضل' },
-    title: { en: 'Investment & ROI strategy', ar: 'استثمار واستراتيجية عائد' },
+    title: { en: 'Investment & ROI strategy', ar: 'استراتيجيات الاستثمار والعائد' },
     bio: {
       en: 'Bundles capex, yield, and payback for coastal & Cairo portfolios.',
-      ar: 'يربط الاستثمار والعائد واسترداد رأس المال للساحل والقاهرة.',
+      ar: 'بيساعدك تحسب العائد على استثمارك وفترة استرداد رأس المال في الساحل والقاهرة.',
     },
     regionIds: ['north_coast', 'el_gouna', 'new_cairo'],
     rating: 4.7,
     consultations: 98,
-    availability: { en: 'Next slot: Fri 10am', ar: 'أقرب موعد: الجمعة ١٠ ص' },
-    priceEgp: { min: 700, max: 1100 },
+    availability: { en: 'Next slot: Fri 10am', ar: 'الموعد الجاي: الجمعة ١٠ ص' },
+    priceEgp: 900,
     specialties: ['invest'],
   },
 ];
@@ -215,11 +216,11 @@ export function rankConsultantsForProperty(
 }
 
 export const PARTNER_CATEGORY_KEYS = [
-  { id: 'reno', name: { en: 'Renovation', ar: 'تشطيب' } },
-  { id: 'photo', name: { en: 'Photography', ar: 'تصوير' } },
-  { id: 'mgmt', name: { en: 'Property management', ar: 'إدارة تشغيل' } },
+  { id: 'reno', name: { en: 'Renovation', ar: 'تشطيب وتجديد' } },
+  { id: 'photo', name: { en: 'Photography', ar: 'تصوير احترافي' } },
+  { id: 'mgmt', name: { en: 'Property management', ar: 'إدارة وتشغيل' } },
   { id: 'lock', name: { en: 'Smart access', ar: 'دخول ذكي' } },
-  { id: 'license', name: { en: 'STR licensing', ar: 'ترخيص STR' } },
+  { id: 'license', name: { en: 'STR licensing', ar: 'تراخيص سياحية' } },
 ] as const;
 
 export type PartnerCategoryId = (typeof PARTNER_CATEGORY_KEYS)[number]['id'];

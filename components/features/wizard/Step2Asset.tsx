@@ -6,18 +6,8 @@ import { useEvaluationStore } from '@/lib/store';
 import type { OutdoorSpaceId, PropertyType } from '@/models';
 import { cn } from '@/lib/utils';
 import { YesNoSwitchRow } from '@/components/features/wizard/state-details/YesNoSwitch';
-import { WizardStepErrorBanner, useWizardFieldError } from '@/components/features/wizard/WizardValidationContext';
+import { WizardInlineFieldError, useWizardFieldError } from '@/components/features/wizard/WizardValidationContext';
 import { Home, Building, Blocks, Tent } from 'lucide-react';
-
-const STEP0_ERROR_KEYS = [
-  'propertyType',
-  'bedrooms',
-  'bathrooms',
-  'sleepCapacity',
-  'propertySizeSqm',
-  'inGatedCompound',
-  'hasLift',
-] as const;
 
 function toggleId<T extends string>(list: T[] | undefined, id: T): T[] {
   const next = new Set(list ?? []);
@@ -41,23 +31,22 @@ export function Step2Asset() {
   const brErr = useWizardFieldError('bedrooms');
   const bathErr = useWizardFieldError('bathrooms');
   const sleepErr = useWizardFieldError('sleepCapacity');
-  const sqmErr = useWizardFieldError('propertySizeSqm');
   const gatedErr = useWizardFieldError('inGatedCompound');
   const liftErr = useWizardFieldError('hasLift');
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <WizardStepErrorBanner fieldKeys={[...STEP0_ERROR_KEYS]} />
       <div className="text-center mb-10">
         <h2 className="text-3xl font-heading font-bold text-secondary-900">
-          {locale === 'ar' ? 'ما هو نوع عقارك؟' : 'What type of property is it?'}
+          {locale === 'ar' ? 'إيه نوع عقارك؟' : 'What type of property is it?'}
         </h2>
       </div>
 
       <div
+        data-wizard-field="propertyType"
         className={cn(
-          'grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 rounded-xl p-1 -m-1',
-          ptErr.invalid && 'ring-2 ring-red-500 ring-offset-2'
+          'grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 rounded-xl p-1',
+          ptErr.invalid && 'border-2 border-red-500'
         )}
       >
         {types.map((type) => {
@@ -79,15 +68,17 @@ export function Step2Asset() {
           );
         })}
       </div>
+      <WizardInlineFieldError message={ptErr.error} />
 
       <div className="mt-6 bg-white border border-secondary-200 rounded-2xl p-6 shadow-sm w-full">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="flex flex-col gap-2">
-            <label className="font-bold text-secondary-900">{locale === 'ar' ? 'غرف النوم' : 'Bedrooms'}</label>
+            <label className="font-bold text-secondary-900">{locale === 'ar' ? 'عدد غرف النوم' : 'Bedrooms'}</label>
             <input
               type="number"
               min="0"
               max="10"
+              data-wizard-field="bedrooms"
               className={cn(
                 'border-2 rounded-lg p-3 outline-none transition-colors',
                 brErr.invalid ? 'border-red-500 focus:border-red-500' : 'border-secondary-200 focus:border-primary-500'
@@ -96,13 +87,15 @@ export function Step2Asset() {
               value={data.bedrooms}
               onChange={(e) => updateData({ bedrooms: Number(e.target.value) })}
             />
+            <WizardInlineFieldError message={brErr.error} />
           </div>
           <div className="flex flex-col gap-2">
-            <label className="font-bold text-secondary-900">{locale === 'ar' ? 'الحمامات' : 'Bathrooms'}</label>
+            <label className="font-bold text-secondary-900">{locale === 'ar' ? 'عدد الحمامات' : 'Bathrooms'}</label>
             <input
               type="number"
               min="1"
               max="10"
+              data-wizard-field="bathrooms"
               className={cn(
                 'border-2 rounded-lg p-3 outline-none transition-colors',
                 bathErr.invalid ? 'border-red-500 focus:border-red-500' : 'border-secondary-200 focus:border-primary-500'
@@ -111,15 +104,17 @@ export function Step2Asset() {
               value={data.bathrooms}
               onChange={(e) => updateData({ bathrooms: Number(e.target.value) })}
             />
+            <WizardInlineFieldError message={bathErr.error} />
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-bold text-secondary-900">
-              {locale === 'ar' ? 'يرحب بعدد ضيوف (السعة)' : 'Sleep Capacity'}
+              {locale === 'ar' ? 'بيشيل كام ضيف؟ (السعة)' : 'Sleep Capacity'}
             </label>
             <input
               type="number"
               min="1"
               max="20"
+              data-wizard-field="sleepCapacity"
               className={cn(
                 'border-2 rounded-lg p-3 outline-none transition-colors',
                 sleepErr.invalid ? 'border-red-500 focus:border-red-500' : 'border-secondary-200 focus:border-primary-500'
@@ -128,17 +123,13 @@ export function Step2Asset() {
               value={data.sleepCapacity}
               onChange={(e) => updateData({ sleepCapacity: Number(e.target.value) })}
             />
+            <WizardInlineFieldError message={sleepErr.error} />
           </div>
         </div>
       </div>
 
       <div className="mt-8 flex flex-col gap-4 w-full">
-        <div
-          className={cn(
-            'bg-white border rounded-2xl p-6 shadow-sm w-full',
-            sqmErr.invalid ? 'border-red-500 border-2' : 'border-secondary-200'
-          )}
-        >
+        <div className="bg-white border border-secondary-200 rounded-2xl p-6 shadow-sm w-full">
           <div className="flex flex-col gap-2">
             <label className="font-bold text-secondary-900 font-heading">
               {isAr ? 'مساحة العقار (متر مربع)' : 'Property size (sqm)'}
@@ -152,27 +143,24 @@ export function Step2Asset() {
                 const val = e.target.value === '' ? undefined : Number(e.target.value);
                 updateData({ propertySizeSqm: val });
               }}
-              placeholder={isAr ? 'مثال: ١٢٠' : 'e.g. 120'}
-              className={cn(
-                'w-full border-2 rounded-lg p-3 outline-none transition-colors',
-                sqmErr.invalid ? 'border-red-500 focus:border-red-500' : 'border-secondary-200 focus:border-primary-500'
-              )}
-              aria-invalid={sqmErr.invalid || undefined}
+              placeholder={isAr ? 'مثلاً: ١٢٠' : 'e.g. 120'}
+              className="w-full border-2 border-secondary-200 rounded-lg p-3 outline-none transition-colors focus:border-primary-500"
             />
           </div>
         </div>
 
-        <div
-          className={cn(
-            'bg-white border rounded-2xl p-6 shadow-sm w-full',
-            gatedErr.invalid ? 'border-red-500 border-2' : 'border-secondary-200'
-          )}
-        >
+        <div className="bg-white border border-secondary-200 rounded-2xl p-6 shadow-sm w-full">
           <div className="flex flex-row flex-wrap items-center justify-between gap-x-4 gap-y-2">
             <div className="min-w-0 flex-1 text-secondary-900 font-semibold">
-              {locale === 'ar' ? 'هل العقار داخل كمبوند؟' : 'Is the property in a gated compound?'}
+              {locale === 'ar' ? 'هل العقار جوه كمبوند؟' : 'Is the property in a gated compound?'}
             </div>
-            <div className="shrink-0">
+            <div
+              data-wizard-field="inGatedCompound"
+              className={cn(
+                'shrink-0 rounded-xl p-1',
+                gatedErr.invalid && 'border-2 border-red-500'
+              )}
+            >
               <YesNoSwitchRow
                 isAr={isAr}
                 yesSelected={data.regulatory?.inGatedCompound === true}
@@ -188,19 +176,21 @@ export function Step2Asset() {
               />
             </div>
           </div>
+          <WizardInlineFieldError message={gatedErr.error} />
         </div>
 
-        <div
-          className={cn(
-            'bg-white border rounded-2xl p-6 shadow-sm w-full',
-            liftErr.invalid ? 'border-red-500 border-2' : 'border-secondary-200'
-          )}
-        >
+        <div className="bg-white border border-secondary-200 rounded-2xl p-6 shadow-sm w-full">
           <div className="flex flex-row flex-wrap items-center justify-between gap-x-4 gap-y-2">
             <div className="min-w-0 flex-1 text-secondary-900 font-semibold">
-              {locale === 'ar' ? 'هل يوجد مصعد؟' : 'Does the building have a lift?'}
+              {locale === 'ar' ? 'هل فيه أسانسير؟' : 'Does the building have a lift?'}
             </div>
-            <div className="shrink-0">
+            <div
+              data-wizard-field="hasLift"
+              className={cn(
+                'shrink-0 rounded-xl p-1',
+                liftErr.invalid && 'border-2 border-red-500'
+              )}
+            >
               <YesNoSwitchRow
                 isAr={isAr}
                 yesSelected={data.regulatory?.hasLift === true}
@@ -216,12 +206,13 @@ export function Step2Asset() {
               />
             </div>
           </div>
+          <WizardInlineFieldError message={liftErr.error} />
         </div>
 
         <div className="bg-white border border-secondary-200 rounded-2xl p-6 shadow-sm w-full">
           <div className="flex flex-col gap-2">
             <label className="font-bold text-secondary-900 font-heading">
-              {locale === 'ar' ? 'الدور' : 'Floor'}
+              {locale === 'ar' ? 'الدور الكام؟' : 'Floor'}
             </label>
             <input
               type="number"
@@ -247,8 +238,8 @@ export function Step2Asset() {
             {(
               [
                 { id: 'balcony' as const, en: 'Balcony', ar: 'بلكونة' },
-                { id: 'terrace' as const, en: 'Terrace', ar: 'تراس' },
-                { id: 'garden' as const, en: 'Garden', ar: 'حديقة' },
+                { id: 'terrace' as const, en: 'تراس', ar: 'تراس' },
+                { id: 'garden' as const, en: 'Garden', ar: 'جنينة' },
               ] satisfies { id: OutdoorSpaceId; en: string; ar: string }[]
             ).map((opt) => {
               const selected = (data.outdoorSpace ?? []).includes(opt.id);

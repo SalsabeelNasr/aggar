@@ -1,5 +1,14 @@
 import type { ManagementMode } from '@/models';
 
+/** Sections that render a bordered card on `StepFurnishedPerformance` (not the standalone heading). */
+const PERFORMANCE_STEP_CARD_SECTIONS: FurnishedPerformanceSectionId[] = [
+  'listingStack',
+  'cleaningSupport',
+  'responseTime',
+  'revenueDemand',
+  'compliance',
+];
+
 export type FurnishedPerformanceSectionId =
   | 'listingContext'
   | 'gapAudit'
@@ -45,4 +54,11 @@ export function isFurnishedPerformanceSectionVisible(
   section: FurnishedPerformanceSectionId
 ): boolean {
   return getFurnishedPerformanceSections(mode).has(section);
+}
+
+/** When false, the Performance wizard step has no cards — hide it from the stepper and skip navigation. */
+export function furnishedPerformanceStepHasVisibleCards(mode: ManagementMode | undefined): boolean {
+  return PERFORMANCE_STEP_CARD_SECTIONS.some((section) =>
+    isFurnishedPerformanceSectionVisible(mode, section)
+  );
 }

@@ -6,7 +6,7 @@ import { useEvaluationStore } from '@/lib/store';
 import type { ManagementMode } from '@/models';
 import { cn } from '@/lib/utils';
 import { Building2, Hand, Wrench } from 'lucide-react';
-import { WizardStepErrorBanner, useWizardFieldError } from '@/components/features/wizard/WizardValidationContext';
+import { WizardInlineFieldError, useWizardFieldError } from '@/components/features/wizard/WizardValidationContext';
 
 /** Aligns with access-step gating: higher = more operational burden DIY */
 const HASSLE_BY_MODE: Record<ManagementMode, number> = {
@@ -19,20 +19,21 @@ export function Step5Hassle() {
   const locale = useLocale();
   const { data, updateData } = useEvaluationStore();
   const modeErr = useWizardFieldError('mode');
+  const hassleErr = useWizardFieldError('hassleLevel');
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full">
-      <WizardStepErrorBanner fieldKeys={['mode', 'hassleLevel']} />
       <div className="text-center mb-10">
         <h2 className="text-3xl font-heading font-bold text-secondary-900">
-          {locale === 'ar' ? 'كيف تخطط لإدارة العقار؟' : 'How do you plan to manage the property?'}
+          {locale === 'ar' ? 'ناوي تدير العقار إزاي؟' : 'How do you plan to manage the property?'}
         </h2>
       </div>
 
       <div
+        data-wizard-field="mode"
         className={cn(
-          'flex flex-col gap-4 mt-8 sm:mt-10 rounded-xl p-1 -m-1',
-          modeErr.invalid && 'ring-2 ring-red-500 ring-offset-2'
+          'flex flex-col gap-4 mt-8 sm:mt-10 rounded-xl p-1',
+          (modeErr.invalid || hassleErr.invalid) && 'border-2 border-red-500'
         )}
       >
         {[
@@ -40,25 +41,25 @@ export function Step5Hassle() {
             id: 'MANAGED',
             icon: Building2,
             en: 'A management company handles everything',
-            ar: 'شركة تشغيل تدير كل شيء',
+            ar: 'شركة إدارة متخصصة تشيل عني كل حاجة',
             descEn: 'Fully passive income. We handle keys, cleaning, and guest ops.',
-            descAr: 'دخل شبه سلبي بالكامل. نحن نتولى المفاتيح والنظافة وتشغيل الضيوف.',
+            descAr: 'دخل سلبي بالكامل. إحنا بنستلم المفاتيح، وبنهتم بالتنضيف، وكل رسايل الضيوف.',
           },
           {
             id: 'DIY_ASSISTED',
             icon: Wrench,
             en: 'Co-management: I’ll run it, but I need help with some things',
-            ar: 'إدارة مشتركة: سأدير بنفسي لكن أحتاج مساعدة في بعض الأشياء',
+            ar: 'إدارة مشتركة: هدير بنفسي بس محتاج مساعدة في حاجات معينة',
             descEn: 'You stay hands-on; we fill gaps with targeted services.',
-            descAr: 'أنت تبقى يدك على التشغيل؛ ونحن نسد الفجوات بخدمات موجهة.',
+            descAr: 'إنت بتدير بنفسك، وإحنا بنسد الفجوات بخدماتنا المتخصصة.',
           },
           {
             id: 'DIY_FULL',
             icon: Hand,
             en: 'Full DIY: I’ll do everything myself',
-            ar: 'DIY كامل: سأفعل كل شيء بنفسي',
+            ar: 'هدير كل حاجة بنفسي بالكامل',
             descEn: 'Deep checklist and optional consult: you own every detail.',
-            descAr: 'قائمة تفصيلية واستشارة اختيارية: كل التفاصيل عندك.',
+            descAr: 'هنديك قائمة بكل التفاصيل، وإنت اللي بتتحكم في كل صغيرة وكبيرة.',
           },
         ].map((opt) => {
           const isSelected = data.mode === opt.id;
@@ -105,6 +106,8 @@ export function Step5Hassle() {
           );
         })}
       </div>
+      <WizardInlineFieldError message={modeErr.error} />
+      <WizardInlineFieldError message={hassleErr.error} />
     </div>
   );
 }

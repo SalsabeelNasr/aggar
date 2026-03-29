@@ -11,23 +11,15 @@ import {
   ManagedPropertyManagerField,
 } from '@/components/features/wizard/state-details/ManagedOpsFields';
 import { cn } from '@/lib/utils';
-import { WizardStepErrorBanner } from '@/components/features/wizard/WizardValidationContext';
-
-const PAIN_STEP_ERROR_KEYS = [
-  'hasPropertyManagerOrCompany',
-  'hasDedicatedCleaningTeam',
-  'guestAccessSolution',
-  'furnishedAreas',
-  'operationalPainIds',
-] as const;
+import { WizardInlineFieldError, useWizardFieldError } from '@/components/features/wizard/WizardValidationContext';
 
 const RENO_AREA_OPTIONS: { id: string; en: string; ar: string }[] = [
   { id: 'kitchen', en: 'Kitchen', ar: 'المطبخ' },
   { id: 'bathrooms', en: 'Bathrooms', ar: 'الحمامات' },
-  { id: 'walls_paint', en: 'Walls & paint', ar: 'الحوائط والدهان' },
+  { id: 'walls_paint', en: 'Walls & paint', ar: 'الحوائط والدهانات' },
   { id: 'electrical', en: 'Electrical', ar: 'الكهرباء' },
   { id: 'ac_units', en: 'AC units', ar: 'التكييفات' },
-  { id: 'all', en: 'All of it', ar: 'كل شيء' },
+  { id: 'all', en: 'All of it', ar: 'كل حاجة' },
 ];
 
 const GAP_OPTIONS: {
@@ -40,39 +32,39 @@ const GAP_OPTIONS: {
   {
     id: 'pain_operations',
     titleEn: 'Operations:',
-    titleAr: 'العمليات:',
+    titleAr: 'العمليات والتشغيل:',
     detailEn: '(Cleaning, Maintenance, Restocking, Key Handover).',
-    detailAr: '(التنظيف، الصيانة، إعادة التموين، تسليم المفاتيح).',
+    detailAr: '(تنضيف، صيانة، تموين المستلزمات، تسليم مفاتيح).',
   },
   {
     id: 'pain_management',
     titleEn: 'Management:',
-    titleAr: 'الإدارة:',
+    titleAr: 'الإدارة والمراسلة:',
     detailEn: '(Messaging, Booking, Review Management).',
-    detailAr: '(المراسلة، الحجوزات، إدارة التقييمات).',
+    detailAr: '(رد على رسايل، حجوزات، ومتابعة تقييمات).',
   },
   {
     id: 'pain_financial',
     titleEn: 'Financial:',
-    titleAr: 'المالية:',
+    titleAr: 'الحسابات والتسعير:',
     detailEn: '(Dynamic Pricing, Utility Monitoring, Tax Filing).',
-    detailAr: '(التسعير الديناميكي، مراقبة المرافق والخدمات، الإقرارات الضريبية).',
+    detailAr: '(تسعير ديناميكي، متابعة فواتير، وضرائب).',
   },
   {
     id: 'pain_compliance',
     titleEn: 'Compliance:',
-    titleAr: 'الامتثال:',
+    titleAr: 'الامتثال والقانون:',
     detailEn: '(Tourism Licensing, Fire Safety Standards).',
-    detailAr: '(الترخيص السياحي، معايير السلامة من الحريق).',
+    detailAr: '(تراخيص سياحية، ومعايير أمان).',
   },
   {
     id: 'pain_restocking_consumables',
     titleEn: 'Restocking Consumables:',
-    titleAr: 'مستلزمات إعادة التموين:',
+    titleAr: 'توفير المستلزمات:',
     detailEn:
       'Constantly buying and refilling coffee, toiletries, toilet paper, and cleaning supplies.',
     detailAr:
-      'شراء وإعادة تعبئة القهوة ومستلزمات النظافة وورق التواليت ومستلزمات التنظيف باستمرار.',
+      'شراء وتوفير القهوة، المناديل، وأدوات النظافة باستمرار.',
   },
 ];
 
@@ -93,6 +85,9 @@ export function StepPainPoints() {
     });
   };
 
+  const furnishedAreasErr = useWizardFieldError('furnishedAreas');
+  const operationalPainErr = useWizardFieldError('operationalPainIds');
+
   const togglePain = (id: FurnishedOperationalPainId) => {
     const current = new Set(flq?.operationalPainIds ?? []);
     if (current.has(id)) current.delete(id);
@@ -102,10 +97,9 @@ export function StepPainPoints() {
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full space-y-8">
-      <WizardStepErrorBanner fieldKeys={[...PAIN_STEP_ERROR_KEYS]} />
       <div className="text-center mb-6">
         <h2 className="text-3xl font-heading font-bold text-secondary-900">
-          {isAr ? 'نقاط الألم' : 'Pain points'}
+          {isAr ? 'إيه اللي تعبك في العقار؟' : 'Pain points'}
         </h2>
       </div>
 
@@ -117,9 +111,15 @@ export function StepPainPoints() {
 
       <div className="bg-white border border-secondary-200 rounded-2xl p-6 shadow-sm">
         <div className="font-heading font-bold text-secondary-900 mb-4">
-          {isAr ? 'أي أجزاء تحتاج أكبر شغل؟' : 'Which areas need the most work?'}
+          {isAr ? 'إيه الأجزاء اللي محتاجة شغل أكتر؟' : 'Which areas need the most work?'}
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <div
+          data-wizard-field="furnishedAreas"
+          className={cn(
+            'grid grid-cols-2 sm:grid-cols-3 gap-3 rounded-xl p-2 -mx-1',
+            furnishedAreasErr.invalid && 'border-2 border-red-500'
+          )}
+        >
           {RENO_AREA_OPTIONS.map((opt) => {
             type RenoId = NonNullable<typeof data.furnishedAreas>[number];
             const selected = (data.furnishedAreas ?? []).includes(opt.id as RenoId);
@@ -144,16 +144,23 @@ export function StepPainPoints() {
             );
           })}
         </div>
+        <WizardInlineFieldError message={furnishedAreasErr.error} />
       </div>
 
       {vis('gapAudit') && (
         <div className="bg-white border border-secondary-200 rounded-2xl p-6 shadow-sm space-y-4">
           <div className="font-heading font-bold text-secondary-900 mb-4">
             {isAr
-              ? 'أي من هذه المهام أكثر ما يزعجك حاليًا؟ (يمكنك اختيار أكثر من واحد)'
+              ? 'إيه أكتر مهام بتسبب لك صداع دلوقتي؟ (ممكن تختار كذا حاجة)'
               : 'Which of these tasks is currently your biggest headache? (Select all that apply)'}
           </div>
-          <div className="flex flex-col gap-3">
+          <div
+            data-wizard-field="operationalPainIds"
+            className={cn(
+              'flex flex-col gap-3 rounded-xl p-2 -mx-1',
+              operationalPainErr.invalid && 'border-2 border-red-500'
+            )}
+          >
             {GAP_OPTIONS.map((opt) => {
               const selected = (flq?.operationalPainIds ?? []).includes(opt.id);
               const title = isAr ? opt.titleAr : opt.titleEn;
@@ -182,6 +189,7 @@ export function StepPainPoints() {
               );
             })}
           </div>
+          <WizardInlineFieldError message={operationalPainErr.error} />
         </div>
       )}
 
