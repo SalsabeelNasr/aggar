@@ -98,14 +98,13 @@ export default function TermsPage({ params }: Props) {
           <>
             <li>
               قد تستخدم المنصة ملفات تعريف الارتباط (كوكيز) والتخزين المحلي والمعرّفات المماثلة
-              لتشغيل الخدمة وتخزين تفضيلاتك (بما في ذلك حفظ موافقتك على الكوكيز)، والجلسات،
+              لتشغيل الخدمة وتخزين تفضيلاتك، والجلسات،
               والأمان، والقياس والتحليلات، واختبار الأداء، إلى الحد الذي تسمح به إعدادات جهازك
               والقانون.
             </li>
             <li>
-              بالموافقة عبر نافذة الكوكيز أو باستمرارك في استخدام الموقع بعد عرض الإشعار، توافق على
-              استخدام تقنيات تتبع وقياس غير ضرورية للتشغيل الأساسي للموقع حيث يُسمح بذلك وفق هذه
-              الشروط.
+              باستمرارك في استخدام الموقع، توافق على استخدام تقنيات تتبع وقياس غير ضرورية للتشغيل
+              الأساسي للموقع حيث يُسمح بذلك وفق هذه الشروط.
             </li>
             <li>يمكنك تغيير إعدادات المتصفح لتقييد الكوكيز؛ قد يؤثر ذلك على عمل بعض الميزات.</li>
           </>
@@ -235,14 +234,13 @@ export default function TermsPage({ params }: Props) {
         <>
           <li>
             The platform may use cookies, local storage, and similar identifiers to operate the
-            service, store your preferences (including saving your cookie consent), sessions,
+            service, store your preferences, sessions,
             security, measurement and analytics, and performance testing, subject to your device
             settings and applicable law.
           </li>
           <li>
-            By accepting via the cookie notice or by continuing to use the site after the notice is
-            shown, you agree to the use of non-strictly-necessary tracking or measurement
-            technologies where permitted under these terms.
+            By continuing to use the site, you agree to the use of non-strictly-necessary tracking
+            or measurement technologies where permitted under these terms.
           </li>
           <li>You can change browser settings to restrict cookies; some features may not work fully.</li>
         </>

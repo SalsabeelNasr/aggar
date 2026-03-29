@@ -8,7 +8,6 @@ import { furnishedPerformanceStepHasVisibleCards } from '@/lib/wizard/furnishedP
 import { useEvaluationStore } from '@/lib/store';
 import { submitEvaluation } from '@/lib/evaluationApi/client';
 import { Stepper } from '@/components/ui/Stepper';
-import { CookieConsent } from '@/components/layout/CookieConsent';
 import { Button } from '@/components/ui/Button';
 import { ReportLoadingStatus } from '@/components/ui/ReportLoadingStatus';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
@@ -299,7 +298,6 @@ export default function EvaluatePage() {
         </div>
       )}
       <Stepper steps={steps} currentStep={stepperCurrentStep} className="mb-12" />
-      <CookieConsent variant="inline" />
 
       <WizardValidationContext.Provider value={{ errors: wizardFieldErrors }}>
         <div className="flex-grow flex flex-col relative w-full min-w-0 overflow-x-visible overflow-y-visible px-0.5 sm:px-1">
