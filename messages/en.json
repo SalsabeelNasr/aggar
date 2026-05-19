@@ -1,31 +1,31 @@
 {
   "Index": {
-    "title": "Evaluate Your Property's Earning Potential",
-    "subtitle": "Find out how much your property could earn, what is stopping it from performing better, and who can help you fix that."
+    "title": "Discover your property's true potential",
+    "subtitle": "Find out how much your property can really make, what you need to boost your profits, and who the experts are that'll help you reach the top."
   },
   "ResultsPlan": {
-    "potentiallyWillBe": "Potentially will be:",
+    "potentiallyWillBe": "Expected net income:",
     "selectPlan": "Choose your path",
     "introCustomTitle": "Build your own plan",
-    "introCustomBody": "Toggle upgrades from the full catalog. Modeled income uses the same rules as the fixed packages — turn lines on or off and watch costs and net update.",
+    "introCustomBody": "Toggle upgrades on or off and see the change in cost and income instantly. It's the same accurate math as our ready-made packages, just with your personal touch.",
     "columns": {
       "service": "Service",
       "fee": "Est. fee",
-      "why": "Why it helps / score",
+      "why": "Why this matters / Points",
       "subtotal": "Services subtotal (est.)"
     },
     "intro": {
       "quick_start": {
-        "title": "Get live fast",
-        "body": "Get listed this month with the essentials: cleaning, photos, listing setup, and optional management. Every line below includes its estimated fee — the totals match the services range in the summary cards."
+        "title": "Quick Start",
+        "body": "Get going this month with the essentials: professional cleaning, eye-catching photos, and listing setup. Every item shows its cost so you can start right with zero hassle."
       },
       "sweet_spot": {
-        "title": "Level up look and yield",
-        "body": "Styling, furniture, lighting, bath refresh, photos, and pricing setup so you rank and photograph closer to the top of your area. Each row shows cost and why it moves guest perception and score."
+        "title": "Level Up Your Returns",
+        "body": "Styling, artistic furniture, lighting that pops in photos, and smart bathroom refreshes. This package helps you compete with the best in your area and snag those top-tier reviews."
       },
       "asset_flip": {
-        "title": "Full repositioning",
-        "body": "Renovation-scale scope: structure per sqm, kitchen, baths, HVAC, locks, licensing. Big-ticket items are separated so you can eyeball how the total forms."
+        "title": "Total Transformation",
+        "body": "A complete top-to-bottom renovation: kitchen, bathrooms, AC, smart locks, and licenses. We handle all the heavy lifting to turn your property into a serious profit machine."
       }
     }
   }

@@ -23,9 +23,9 @@ export function ServicesSection() {
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
               {[
-                locale === 'ar' ? 'تفهم شقتك جاهزة للإيجار ولا لأ' : 'Understand if your apartment is rental-ready',
-                locale === 'ar' ? 'تعرف الدخل المتوقع منها' : 'Know the expected revenue',
-                locale === 'ar' ? 'تعرف إيه التحسينات اللي تزود دخلها' : 'Know what improvements to make',
+                locale === 'ar' ? 'تفهم شقتك جاهزة للإيجار ولا لأ' : 'See if your place is ready to rent',
+                locale === 'ar' ? 'تعرف الدخل المتوقع منها' : 'Find out how much you could be making',
+                locale === 'ar' ? 'تعرف إيه التحسينات اللي تزود دخلها' : 'Get tips on how to boost your income',
               ].map((item, i) => (
                 <div key={i} className="flex flex-col items-center justify-center text-center p-8 bg-white/5 hover:bg-white/10 transition-colors backdrop-blur-sm rounded-3xl border border-white/10 shadow-xl">
                   <span className="font-bold text-white font-heading text-xl leading-relaxed">{item}</span>
@@ -46,7 +46,7 @@ export function ServicesSection() {
           <p className="text-lg text-secondary-600">
             {locale === 'ar' 
               ? 'بعد التقييم، هنرشح لك شركاء متخصصين يقدروا يساعدوك توصل لأفضل نتيجة.'
-              : 'After the assessment, we recommend specialized partners who can help you achieve the best outcome.'}
+              : 'After the assessment, we’ll recommend specialized partners who can help you achieve the best outcome.'}
           </p>
         </div>
 
@@ -58,15 +58,15 @@ export function ServicesSection() {
             </div>
             <CardContent className="p-8 flex-1 flex flex-col">
               <h3 className="font-heading font-bold text-2xl text-secondary-900 mb-3">
-                {locale === 'ar' ? 'التشطيب' : 'Renovation'}
+                {locale === 'ar' ? 'التشطيب' : 'Finishing & Renovation'}
               </h3>
               <p className="text-secondary-600 leading-relaxed mb-6 flex-1 text-lg">
                 {locale === 'ar' 
                   ? 'نوصلك بشركات تشطيب تقدر تحول الشقة من محارة أو نصف تشطيب إلى شقة جاهزة تماماً للإيجار.'
-                  : 'We connect you with finishing companies that turn a shell & core to a rental-ready unit.'}
+                  : 'We’ll link you up with pros who can turn your shell-and-core unit into a guest-ready home.'}
               </p>
               <div className="p-4 bg-secondary-50 justify-self-end rounded-xl text-sm font-bold text-secondary-800 border border-secondary-200">
-                {locale === 'ar' ? 'منهم من يقدم أنظمة تقسيط لتقليل الضغط المالي.' : 'Crucially, some offer installment plans to reduce financial pressure.'}
+                {locale === 'ar' ? 'منهم من يقدم أنظمة تقسيط لتقليل الضغط المالي.' : 'Some even offer payment plans to keep things easy on your wallet.'}
               </div>
             </CardContent>
           </Card>
@@ -81,10 +81,10 @@ export function ServicesSection() {
                 {locale === 'ar' ? 'الديكور' : 'Styling'}
               </h3>
               <p className="text-secondary-600 leading-relaxed text-lg font-medium mb-3">
-                {locale === 'ar' ? 'متخصصين التصميم والتجهيز للإيجار السياحي.' : 'STR design Specialists.'}
+                {locale === 'ar' ? 'متخصصين التصميم والتجهيز للإيجار السياحي.' : 'Experts in short-term rental design.'}
               </p>
               <p className="text-secondary-600 leading-relaxed text-lg flex-1">
-                {locale === 'ar' ? 'مش مجرد أثاث… بل تجهيز ساحر يجذب الضيوف ويرفع سعر ليلتك.' : 'Not just buying furniture... but setting up the apartment to attract guests and boost nightly rates.'}
+                {locale === 'ar' ? 'مش مجرد أثاث… بل تجهيز ساحر يجذب الضيوف ويرفع سعر ليلتك.' : 'It’s not just about furniture—it’s about creating a vibe that guests love and that boosts your nightly rate.'}
               </p>
             </CardContent>
           </Card>
@@ -101,7 +101,7 @@ export function ServicesSection() {
               <p className="text-secondary-600 leading-relaxed text-lg flex-1 font-medium">
                 {locale === 'ar' 
                   ? 'نوصلك بمصورين متخصصين في العقارات مع كتابة وصف احترافي للإعلان بالعربي والإنجليزي علشان يظهر في أول نتائج البحث.'
-                  : 'We connect you with real estate photographers and professional bilingual copywriters to maximize bookings.'}
+                  : 'We’ll connect you with pro real estate photographers and copywriters who know how to make your listing stand out.'}
               </p>
             </CardContent>
           </Card>
@@ -111,10 +111,10 @@ export function ServicesSection() {
         <div className="w-full">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-heading font-bold text-secondary-900 mb-4">
-              {locale === 'ar' ? 'لو الشقة جاهزة للتأجير' : 'If it is ready to rent'}
+              {locale === 'ar' ? 'لو الشقة جاهزة للتأجير' : 'Already good to go?'}
             </h2>
             <p className="text-secondary-600 font-bold text-xl leading-relaxed">
-              {locale === 'ar' ? 'نوصلك بشركات تشغيل لضمان استمرار الإيجار بدون صداع.' : 'We connect you with operators, so renting happens headache-free.'}
+              {locale === 'ar' ? 'نوصلك بشركات تشغيل لضمان استمرار الإيجار بدون صداع.' : 'We’ll connect you with operators who handle everything, so you can earn without the headache.'}
             </p>
           </div>
           
@@ -126,7 +126,7 @@ export function ServicesSection() {
               <CardContent className="p-6 flex-1 flex flex-col items-center justify-start text-center">
                 <span className="font-bold font-heading text-secondary-900 text-xl mb-2">{locale === 'ar' ? 'التنظيف' : 'Cleaning'}</span>
                 <p className="text-secondary-600 font-medium text-sm">
-                  {locale === 'ar' ? 'فرق متخصصة تعتني بشقتك بعد كل ضيف' : 'Specialized teams handling turnovers'}
+                  {locale === 'ar' ? 'فرق متخصصة تعتني بشقتك بعد كل ضيف' : 'Pro teams that keep your place spotless after every guest.'}
                 </p>
               </CardContent>
             </Card>
@@ -138,7 +138,7 @@ export function ServicesSection() {
               <CardContent className="p-6 flex-1 flex flex-col items-center justify-start text-center">
                 <span className="font-bold font-heading text-secondary-900 text-xl mb-2">{locale === 'ar' ? 'المفروشات' : 'Linens'}</span>
                 <p className="text-secondary-600 font-medium text-sm">
-                  {locale === 'ar' ? 'توفير وتغيير الملايات والفوط الفندقية' : 'Providing and swapping hotel-quality linens'}
+                  {locale === 'ar' ? 'توفير وتغيير الملايات والفوط الفندقية' : 'Hotel-quality linens, delivered and swapped for you.'}
                 </p>
               </CardContent>
             </Card>
@@ -150,7 +150,7 @@ export function ServicesSection() {
               <CardContent className="p-6 flex-1 flex flex-col items-center justify-start text-center">
                 <span className="font-bold font-heading text-secondary-900 text-xl mb-2">{locale === 'ar' ? 'الإدارة' : 'Management'}</span>
                 <p className="text-secondary-600 font-medium text-sm">
-                  {locale === 'ar' ? 'احترافية في التسعير والتواصل مع الضيوف' : 'Professional pricing and guest communication'}
+                  {locale === 'ar' ? 'احترافية في التسعير والتواصل مع الضيوف' : 'Pro pricing and guest support to keep things running smooth.'}
                 </p>
               </CardContent>
             </Card>
@@ -162,7 +162,7 @@ export function ServicesSection() {
               <CardContent className="p-6 flex-1 flex flex-col items-center justify-start text-center">
                 <span className="font-bold font-heading text-secondary-900 text-xl mb-2">{locale === 'ar' ? 'التراخيص' : 'Licensing'}</span>
                 <p className="text-secondary-600 font-medium text-sm">
-                  {locale === 'ar' ? 'مساعدة في استخراج التصاريح القانونية' : 'Assistance with required legal permits'}
+                  {locale === 'ar' ? 'مساعدة في استخراج التصاريح القانونية' : 'Help getting all the legal paperwork sorted.'}
                 </p>
               </CardContent>
             </Card>

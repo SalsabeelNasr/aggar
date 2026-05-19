@@ -40,10 +40,10 @@ export function YourNeighboursPerformanceCard({ lo, locale, regionName, snapshot
   const responseLine = isAr ? snapshot.responseDeltaLine.ar : snapshot.responseDeltaLine.en;
   const footnote = isAr ? snapshot.footnote.ar : snapshot.footnote.en;
 
-  const title = isAr ? 'تحليل السوق والمنافسة' : 'Market Intelligence & Analysis';
+  const title = isAr ? 'تحليل السوق والمنافسة' : 'Market & Competition Analysis';
   const subtitle = isAr 
     ? 'رؤى حقيقية عشان توصل عقارك لأعلى فئة ربحية' 
-    : 'Data-driven insights to unlock your property\'s top-tier potential';
+    : 'Real insights to help your property reach its peak earning potential.';
 
   return (
     <Card className="overflow-hidden border-secondary-200 bg-white shadow-sm">
@@ -102,7 +102,7 @@ export function YourNeighboursPerformanceCard({ lo, locale, regionName, snapshot
               </div>
               <div className="space-y-1">
                 <div className="text-[10px] font-bold uppercase tracking-widest text-primary-700">
-                  {isAr ? 'ميزة التجهيز' : 'Competitive Amenity Gap'}
+                  {isAr ? 'ميزة التجهيز' : 'The Setup Advantage'}
                 </div>
                 <p className="text-sm leading-relaxed text-secondary-700 font-medium">
                   {amenityLine}
@@ -115,7 +115,7 @@ export function YourNeighboursPerformanceCard({ lo, locale, regionName, snapshot
         {/* 3. The Property Audit: Specific Analysis Items (Compact Flat List) */}
         <div className="p-5 md:p-6">
           <h4 className="mb-4 text-[10px] font-bold uppercase tracking-widest text-secondary-400">
-            {isAr ? 'مراجعة تفاصيل العقار' : 'Property Audit Details'}
+            {isAr ? 'مراجعة تفاصيل العقار' : 'Property Details Review'}
           </h4>
           <ul className="space-y-4">
             {analysisItems.map((item, idx) => {
@@ -146,7 +146,7 @@ export function YourNeighboursPerformanceCard({ lo, locale, regionName, snapshot
               </div>
               <div className="space-y-0.5 pt-0.5">
                 <p className="text-xs font-bold text-secondary-900">
-                  {isAr ? 'توقعات السوق' : 'Market Demand Outlook'}
+                  {isAr ? 'توقعات السوق' : 'Market Outlook'}
                 </p>
                 <p className="text-xs leading-relaxed text-secondary-600">
                   {footnote}
@@ -161,7 +161,7 @@ export function YourNeighboursPerformanceCard({ lo, locale, regionName, snapshot
               </div>
               <div className="space-y-0.5 pt-0.5">
                 <p className="text-xs font-bold text-secondary-900">
-                  {isAr ? 'ستايل الديكور' : 'Design Standard'}
+                  {isAr ? 'ستايل الديكور' : 'Design Style'}
                 </p>
                 <p className="text-xs leading-relaxed text-secondary-600">
                   {designLine}
@@ -176,7 +176,7 @@ export function YourNeighboursPerformanceCard({ lo, locale, regionName, snapshot
               </div>
               <div className="space-y-0.5 pt-0.5">
                 <p className="text-xs font-bold text-secondary-900">
-                  {isAr ? 'سرعة الرد' : 'Response Time'}
+                  {isAr ? 'سرعة الرد' : 'Response Speed'}
                 </p>
                 <p className="text-xs leading-relaxed text-secondary-600">
                   {responseLine}

@@ -1,5 +1,10 @@
 'use client';
 
+export default function FullResultsContent() {
+  return null;
+}
+
+/*
 import * as React from 'react';
 import { useLocale } from 'next-intl';
 import { useEvaluationStore } from '@/lib/store';
@@ -28,7 +33,6 @@ import { diyChecklistItemsForMissingFurnishedPhotos } from '@/lib/results/furnis
 import { formatMoney } from './utils';
 import { SpecialistHelpSection } from './SpecialistHelpSection';
 
-/** Radial readiness chart. */
 function ScoreRadial({ score, className }: { score: number; className?: string }) {
   const r = 44;
   const c = 2 * Math.PI * r;
@@ -168,21 +172,12 @@ export default function FullResultsContent() {
     <div className="min-h-screen bg-secondary-50">
       <div className="border-b border-secondary-200 bg-white shadow-xs">
         <div className="container mx-auto max-w-5xl px-4 py-10 md:py-12">
-          {/* {mgmtMode === 'DIY_FULL' && (
-            <div className="mb-8 rounded-xl border border-primary-200 bg-primary-50/80 p-4 text-sm text-secondary-800 shadow-xs">
-              {lo === 'ar'
-                ? 'وضع DIY كامل — ركّز على الدليل المجاني واحجز مستشاراً عند الحاجة.'
-                : 'Full DIY mode — focus on the free guide below and book a consultant when you need help.'}
-            </div>
-          )} */}
-
           <header className="mb-10 space-y-2">
             <h1 className="font-heading text-3xl font-semibold tracking-tight text-secondary-900 md:text-4xl">
               {lo === 'ar' ? 'تقرير جاهزية عقارك' : 'Market readiness report'}
             </h1>
           </header>
 
-          {/* ── Score + Area Stats + Image Analysis ──────────────────────── */}
           <section className="mb-10 space-y-4 md:space-y-5">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-5 md:items-start md:gap-5 lg:gap-6">
               <div className="flex min-w-0 flex-col gap-4 md:col-span-1 lg:gap-5">
@@ -225,9 +220,7 @@ export default function FullResultsContent() {
               </div>
             </div>
 
-            {/* ── Income bar ───────────────────────────────────────────── */}
             <div className="w-full min-w-0 overflow-hidden rounded-xl border border-secondary-200 bg-white">
-              {/* ── Package tabs + detail ──────────────────────────────── */}
               <div className="space-y-6 px-4 py-5 md:px-6 md:py-6">
                   <h2 className="font-heading text-lg font-semibold text-secondary-900">
                     {lo === 'ar' ? 'إزاي تحسن أداء عقارك؟' : 'How do you improve?'}
@@ -331,7 +324,6 @@ export default function FullResultsContent() {
         </div>
       </div>
 
-      {/* ── Consultant booking slide-in ──────────────────────────────── */}
       {bookConsultant && (
         <div className="fixed inset-0 z-[100] flex justify-end">
           <button type="button" className="absolute inset-0 bg-secondary-900/40 backdrop-blur-[2px]" aria-label={lo === 'ar' ? 'إغلاق' : 'Close'} onClick={() => setBookConsultant(null)} />
@@ -371,3 +363,4 @@ export default function FullResultsContent() {
     </div>
   );
 }
+*/

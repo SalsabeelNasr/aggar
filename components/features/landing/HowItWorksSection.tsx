@@ -5,13 +5,13 @@ export function HowItWorksSection() {
   const locale = useLocale();
   
   const steps = locale === 'ar' ? [
-    { icon: MapPin, desc: 'اختار المنطقة ونوع الشقة وعدد الغرف.' },
+    { icon: MapPin, desc: 'قولنا المنطقة ونوع الشقة وعدد الغرف.' },
     { icon: Camera, desc: 'حمّل كام صورة علشان نقدر نقيّم حالتها.' },
     { icon: ClipboardCheck, desc: 'هتعرف شقتك ممكن تكسب كام، إيه اللي ناقصها، ونوصلك بالمتخصصين اللي يقدروا يساعدوك.' }
   ] : [
-    { icon: MapPin, desc: 'Select the region, property type, and number of rooms.' },
-    { icon: Camera, desc: 'Upload a few photos so we can assess its condition.' },
-    { icon: ClipboardCheck, desc: 'Know how much it can earn, what is missing, and get matched with experts to help you.' }
+    { icon: MapPin, desc: 'Tell us the area, property type, and number of rooms.' },
+    { icon: Camera, desc: 'Upload a few photos so we can check out its condition.' },
+    { icon: ClipboardCheck, desc: 'See how much your place could make, what it’s missing, and get matched with experts who can help.' }
   ];
 
   return (

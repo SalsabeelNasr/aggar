@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { useEvaluationStore } from '@/lib/store';
 import { PHONE_COUNTRIES } from '@/lib/phone/phoneCountries';
 import { isValidPhoneForCountry } from '@/lib/validations/phone';
+import { submitLeadQuietly } from '@/lib/leadsApi/client';
 
 type DiyLeadValues = {
   fullName: string;
@@ -96,11 +97,19 @@ export function QuoteOrDiyLeadSection({
   const onSubmit = form.handleSubmit((values) => {
     const cleanPhone = values.phone.trim();
     const normalizedPhone = cleanPhone.startsWith('+') ? cleanPhone : `${selectedCountry.dial} ${cleanPhone}`;
-    updateDiyGuideLead({
+    const payload = {
       fullName: values.fullName.trim(),
       email: values.email.trim(),
       phone: normalizedPhone,
       requestedAtISO: new Date().toISOString(),
+    };
+    updateDiyGuideLead(payload);
+    submitLeadQuietly({
+      type: 'diy_guide',
+      locale: lo,
+      fullName: payload.fullName,
+      email: payload.email,
+      phone: payload.phone,
     });
   });
 
@@ -116,14 +125,14 @@ export function QuoteOrDiyLeadSection({
                 <Mail className="h-5 w-5 text-secondary-600" />
               </div>
               <h3 className="font-heading text-base font-semibold text-secondary-900">
-                {isAr ? 'حابب نبدأ في التنفيذ؟' : 'Reach out to us'}
+                {isAr ? 'حابب نبدأ في التنفيذ؟' : 'Ready to get started?'}
               </h3>
             </div>
             <div className="py-2">
               <div className="flex flex-col gap-3">
                 <div className="flex items-center justify-between gap-2 border-b border-secondary-100 pb-2">
                   <span className="font-heading text-xs font-extrabold uppercase tracking-wider text-secondary-700">
-                    {isAr ? 'استثمار' : 'Invest'}
+                    {isAr ? 'استثمار' : 'Investment'}
                   </span>
                   <span className="font-heading text-sm font-bold text-secondary-900">
                     {payAmountText}
@@ -133,7 +142,7 @@ export function QuoteOrDiyLeadSection({
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-heading text-xs font-extrabold uppercase tracking-tight text-primary-700">
-                      {isAr ? 'العائد المتوقع' : 'get'}
+                      {isAr ? 'العائد المتوقع' : 'Target income'}
                     </span>
                     <span className="font-heading text-sm font-bold text-primary-700">
                       {optimizedMonthlyText}
@@ -144,7 +153,7 @@ export function QuoteOrDiyLeadSection({
                   </div>
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-heading text-xs font-extrabold uppercase tracking-tight text-primary-700">
-                      {isAr ? 'بدل ما تاخد' : 'Instead of'}
+                      {isAr ? 'بدل ما تاخد' : 'Instead of today’s'}
                     </span>
                     <span className="text-sm font-bold text-secondary-400 line-through decoration-red-400/50">
                       {currentMonthlyText}
@@ -155,7 +164,7 @@ export function QuoteOrDiyLeadSection({
             </div>
             <div className={cn('mt-auto flex flex-col gap-2', isAr ? 'justify-start' : 'justify-start')}>
               <Button type="button" className="mt-auto w-full shadow-xs" onClick={onRequestQuote}>
-                {isAr ? 'اطلب عرض سعر' : 'Email me a qoute'}
+                {isAr ? 'اطلب عرض سعر' : 'Get a custom quote'}
               </Button>
             </div>
           </div>
@@ -167,7 +176,7 @@ export function QuoteOrDiyLeadSection({
               </div>
               <div>
                 <h3 className="font-heading text-base font-semibold text-secondary-900">
-                  {isAr ? 'مش جاهز دلوقتي؟ خد دليل الـ DIY مجاناً' : 'Wanna do everything yourself? Request our free guide'}
+                  {isAr ? 'مش جاهز دلوقتي؟ خد دليل الـ DIY مجاناً' : 'Prefer to DIY? Grab our free guide'}
                 </h3>
               </div>
             </div>

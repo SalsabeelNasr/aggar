@@ -24,7 +24,11 @@ export function createPartnerApplicationSchema(messages: PartnerApplicationMessa
         messages.primaryService
       ),
     operatingZones: z.string().trim().min(2, messages.operatingZones),
-    portfolioUrl: z.string().trim().url(messages.portfolioUrl),
+    portfolioUrl: z
+      .string()
+      .trim()
+      .min(1, messages.portfolioUrl)
+      .regex(/^(https?:\/\/|www\.)[^\s/$.?#].[^\s]*$/i, messages.portfolioUrl),
     phone: z
       .string()
       .trim()

@@ -1,3 +1,8 @@
+# Netlify deploy config for Aggar (Next.js 14)
+#
+# Secrets (AIRTABLE_PAT) must be set in the Netlify UI — see netlify.env.example
+# Non-secret Airtable IDs/names are set below so production builds work out of the box.
+
 [build]
   command = "npm run build"
   publish = ".next"
@@ -7,3 +12,19 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  # Airtable — public IDs / table names (token is NOT here; set AIRTABLE_PAT in Netlify UI)
+  AIRTABLE_BASE_ID = "app35phakMmxSxxIe"
+  AIRTABLE_PARTNERS_TABLE = "Partner Applications"
+  AIRTABLE_LEADS_TABLE = "Evaluation Leads"
+
+# Same vars for production deploys (inherits build.environment; explicit for clarity)
+[context.production.environment]
+  AIRTABLE_BASE_ID = "app35phakMmxSxxIe"
+  AIRTABLE_PARTNERS_TABLE = "Partner Applications"
+  AIRTABLE_LEADS_TABLE = "Evaluation Leads"
+
+# Preview deploys: inherit base/table names; add AIRTABLE_PAT in UI with "Deploy Previews" scope if needed
+[context.deploy-preview.environment]
+  AIRTABLE_BASE_ID = "app35phakMmxSxxIe"
+  AIRTABLE_PARTNERS_TABLE = "Partner Applications"
+  AIRTABLE_LEADS_TABLE = "Evaluation Leads"

@@ -52,17 +52,17 @@ const states: Array<{
   {
     id: 'SHELL',
     icon: Hammer,
-    titleEn: 'Shell',
-    titleAr: 'عظم',
-    subtitleEn: 'Concrete or brick shell only, no finishes.',
-    subtitleAr: 'خرسانة أو طوب فقط، دون أي تشطيب.',
+    titleEn: 'Semi-finished',
+    titleAr: 'نصف تشطيب',
+    subtitleEn: 'Plaster or red brick stage—not quite finished or furnished yet.',
+    subtitleAr: 'محارة أو طوب أحمر، بدون تشطيب كامل أو فرش.',
   },
   {
     id: 'FINISHED_EMPTY',
     icon: PaintRoller,
     titleEn: 'Finished (unfurnished)',
     titleAr: 'تشطيب كامل (غير مفروش)',
-    subtitleEn: 'Fully finished and unfurnished.',
+    subtitleEn: 'Fully finished but empty.',
     subtitleAr: 'مكتملة التشطيب وغير مفروشة.',
   },
   {
@@ -70,7 +70,7 @@ const states: Array<{
     icon: Sofa,
     titleEn: 'Furnished',
     titleAr: 'مفروش',
-    subtitleEn: 'Furnished, ready to move in or needs light updates.',
+    subtitleEn: 'Furnished and ready to go, or just needs some light touches.',
     subtitleAr: 'مفروشة، جاهزة للسكن أو لتحسينات بسيطة.',
   },
 ];
@@ -280,7 +280,7 @@ export function Step3State() {
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full">
       <div className="text-center mb-10">
         <h2 className="text-3xl font-heading font-bold text-secondary-900">
-          {locale === 'ar' ? 'حالة العقار إيه دلوقتي؟' : 'What is the current state?'}
+          {locale === 'ar' ? 'حالة العقار إيه دلوقتي؟' : 'What’s the current state of your place?'}
         </h2>
       </div>
 
@@ -349,7 +349,9 @@ export function Step3State() {
             >
               <option value="">{locale === 'ar' ? 'اختار' : 'Select'}</option>
               <option value="shell_core">
-                {locale === 'ar' ? 'طوب أحمر — لسه مفيش مرافق ولا محارة' : 'Shell & core (red brick): no utilities or plaster'}
+                {locale === 'ar'
+                  ? 'نصف تشطيب: طوب أحمر — لسه مفيش مرافق ولا محارة'
+                  : 'Semi-finished (red brick): no utilities or plaster'}
               </option>
               <option value="semi_finished">
                 {locale === 'ar' ? 'نصف تشطيب: محارة، كهرباء، وسباكة أساسية' : 'Semi-finished: plaster, basic electricity & plumbing'}
@@ -418,7 +420,7 @@ export function Step3State() {
       {selectedState === 'FINISHED_EMPTY' && (
         <div className="mb-10 space-y-8">
           <WizardDetailCard>
-            <WizardDetailHeading>{locale === 'ar' ? 'ناقصك إيه في الفرش؟' : 'I still need to add..'}</WizardDetailHeading>
+            <WizardDetailHeading>{locale === 'ar' ? 'ناقصك إيه في الفرش؟' : 'I still need to add...'}</WizardDetailHeading>
             <div
               data-wizard-field="furnishingScope"
               className={cn(
@@ -442,7 +444,7 @@ export function Step3State() {
           </WizardDetailCard>
 
           <WizardDetailCard>
-            <WizardDetailHeading>{locale === 'ar' ? 'اختار ستايل الديكور' : 'Choose a design style'}</WizardDetailHeading>
+            <WizardDetailHeading>{locale === 'ar' ? 'اختار ستايل الديكور' : 'Pick a design style'}</WizardDetailHeading>
             <div
               data-wizard-field="furnishingAesthetic"
               className={cn(
@@ -501,7 +503,7 @@ export function Step3State() {
           <WizardDetailCard>
             <WizardDetailHeading className="mb-1">{locale === 'ar' ? 'المياه والسخانات' : 'Water & heating'}</WizardDetailHeading>
             <WizardDetailLead>
-              {locale === 'ar' ? 'أخبار ضغط الميه والسخانات إيه للضيوف؟' : 'How do water pressure and hot water perform for guests?'}
+              {locale === 'ar' ? 'أخبار ضغط الميه والسخانات إيه للضيوف؟' : 'How’s the water pressure and hot water for guests?'}
             </WizardDetailLead>
             <div
               data-wizard-field="waterHeating"
@@ -544,7 +546,7 @@ export function Step3State() {
 
           <WizardDetailCard>
             <WizardDetailHeading className="mb-1">{locale === 'ar' ? 'المفارش والمناشف' : 'Bedding & towels'}</WizardDetailHeading>
-            <WizardDetailLead>{locale === 'ar' ? 'ستايل المفروشات اللي بتستخدمه' : 'Linens style for guests'}</WizardDetailLead>
+            <WizardDetailLead>{locale === 'ar' ? 'ستايل المفروشات اللي بتستخدمه' : 'What’s the linen style for guests?'}</WizardDetailLead>
             <label className="sr-only" htmlFor="furnished-bedding-tier">
               {locale === 'ar' ? 'نوع المفارش' : 'Bedding style'}
             </label>
@@ -586,7 +588,7 @@ export function Step3State() {
               <WizardInlineFieldError message={petErr.error} />
             </div>
             <div className="font-heading font-bold text-secondary-900 mb-2 text-sm">
-              {locale === 'ar' ? 'مين الضيوف المسموح بيهم؟ (ممكن تختار كذا خيار)' : 'Guest types allowed (select all that apply)'}
+              {locale === 'ar' ? 'مين الضيوف المسموح بيهم؟ (ممكن تختار كذا خيار)' : 'Who’s allowed to stay? (Select all that apply)'}
             </div>
             <div
               data-wizard-field="guestPolicyAudiences"

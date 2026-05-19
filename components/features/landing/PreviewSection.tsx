@@ -52,12 +52,12 @@ export function PreviewSection() {
   const gapSample =
     lo === 'ar'
       ? 'عقارات قريبة بنفس المساحة بتسجّل دخل أعلى بسبب التعرّض والتجهيز.'
-      : 'Similar nearby listings are earning more due to positioning and fit-out.';
+      : 'Nearby properties with the same layout are making more because of better setup and exposure.';
   const amenitySample =
     lo === 'ar'
       ? 'زيادة عرض الصور الاحترافية والتأسيس المناسب بترفع ترتيبك ضمن المنطقة.'
-      : 'Stronger listing photos and guest-ready basics lift you in local comps.';
-  const tagline = lo === 'ar' ? 'استثمار في الشكل لرفع الأداء.' : 'Invest in the look. Unlock the top 20% of your neighborhood.';
+      : 'Pro photos and the right essentials will push you to the top of the search results.';
+  const tagline = lo === 'ar' ? 'استثمار في الشكل لرفع الأداء.' : 'Invest in the look. Join the top 20% of earners in your area.';
   const investmentMin = 85_000;
   const investmentMax = 120_000;
   const currentNet = 22_000;
@@ -69,12 +69,14 @@ export function PreviewSection() {
     <section className="relative w-full overflow-hidden border-y border-secondary-200 bg-secondary-100 py-24">
       <div className="container relative z-10 mx-auto px-4 text-center">
         <h2 className="mb-6 font-heading text-3xl font-extrabold text-secondary-900 md:text-5xl">
-          {lo === 'ar' ? 'تقرير مليان تفاصيل بتهمك' : 'A report full of insights you care about'}
+          {lo === 'ar'
+            ? 'تقدر تطلب تقرير تحليلي لمنافسينك و ازاي تتفوق عليهم في منطقتك'
+            : 'A detailed report with all the insights you need'}
         </h2>
         <p className="mx-auto mb-16 max-w-2xl text-xl font-medium text-secondary-600">
           {lo === 'ar'
-            ? 'شوف بعينك شكل تقرير الجاهزية اللي هتاخده بعد التقييم — مقفول دلوقتي لحد ما تخلص خطواتك.'
-            : 'See the same readiness report layout you get after evaluation — locked until you finish your steps.'}
+            ? 'بندرس الأسعار ونسبة الإشغال ونعملك خطة مناسبة لميزانيتك ترفع من مردود استثمارك'
+            : 'Get a peek at the market analysis, occupancy rates, and a custom plan to boost your returns.'}
         </p>
 
         <div className="relative mx-auto mb-12 max-w-5xl text-start">
@@ -369,7 +371,7 @@ export function PreviewSection() {
                   onClick={() => router.push('/evaluate')}
                   className="h-14 px-10 text-lg shadow-xl shadow-primary-500/30 md:h-16 md:px-12 md:text-xl"
                 >
-                  {lo === 'ar' ? 'افتح التقرير الخاص بيا' : 'Unlock My Custom Report'}
+                  {lo === 'ar' ? 'اطلب تقرير شامل لوحدتي' : 'Unlock My Custom Report'}
                 </Button>
               </div>
             </div>

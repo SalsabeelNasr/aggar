@@ -18,10 +18,10 @@ export function FAQSection() {
     { q: 'هل التقييم مجاني؟', a: 'أيوه. التقييم بالكامل مجاني ولا يتطلب أي التزامات.' },
     { q: 'هل النتائج دقيقة؟', a: 'التقدير مبني على بيانات السوق السياحي في نفس المنطقة مع تحليل وتحديد حالة الشقة باستخدام الصور.' }
   ] : [
-    { q: 'Does Aggar manage the apartments?', a: 'No. We assess your apartment and connect you with service companies.' },
-    { q: 'Do I have to use your partners?', a: 'No. The assessment is useful even if you want to manage the apartment yourself.' },
-    { q: 'Is the assessment free?', a: 'Yes. The assessment is completely free.' },
-    { q: 'Are the results accurate?', a: 'The estimate is based on market data in the same area along with analysis of the apartment\'s condition and photos.' }
+    { q: 'Does Aggar manage properties?', a: 'Nope! We evaluate your place and connect you with the right pros to do the work.' },
+    { q: 'Do I have to work with your partners?', a: 'Not at all. The report is yours to use, even if you decide to handle everything yourself.' },
+    { q: 'Is the evaluation free?', a: 'Yes! It’s 100% free with no strings attached.' },
+    { q: 'How accurate are the results?', a: 'Our estimates are based on real-time market data from your area and an AI analysis of your property’s photos.' }
   ];
 
   return (
@@ -30,12 +30,12 @@ export function FAQSection() {
         
         <div className="text-center mb-16">
           <div className="inline-block px-5 py-2 bg-primary-100 text-primary-800 rounded-full text-base font-bold border border-primary-200 mb-6 font-heading shadow-sm">
-            {locale === 'ar' ? 'دور Aggar إيه؟' : 'What is Aggar\'s role?'}
+            {locale === 'ar' ? 'دور Aggar إيه؟' : 'What does Aggar do?'}
           </div>
           <h2 className="text-3xl lg:text-4xl font-heading font-extrabold text-secondary-900 tracking-tight">
             {locale === 'ar'
               ? 'اكتشف إمكانات تأجير شقتك وتواصل مع شركاء موثوقين'
-              : 'Discover your apartment\'s rental potential and connect with trusted partners.'}
+              : 'See your property’s true potential and get matched with pros you can trust.'}
           </h2>
         </div>
 
@@ -65,13 +65,13 @@ export function FAQSection() {
         <div className="text-center bg-white p-12 rounded-3xl border border-secondary-200 shadow-xl shadow-secondary-900/5 relative overflow-hidden group">
           <div className="absolute inset-0 bg-gradient-to-tr from-primary-50/50 to-transparent -z-10 group-hover:from-primary-100/50 transition-colors duration-500" />
           <h2 className="text-4xl md:text-5xl font-heading font-extrabold text-secondary-900 mb-6 tracking-tight">
-            {locale === 'ar' ? 'شقتك ممكن تكسب أكتر بكتير' : 'Your apartment could earn much more'}
+            {locale === 'ar' ? 'شقتك ممكن تكسب أكتر بكتير' : 'Your place could be making so much more'}
           </h2>
           <p className="text-xl text-secondary-600 font-medium mb-10 max-w-lg mx-auto leading-relaxed">
-            {locale === 'ar' ? 'اعرف إمكانياتها… وخلي الخبراء يساعدوك توصل لأفضل نتيجة.' : 'Find out its potential... and let the experts help you achieve the best outcome.'}
+            {locale === 'ar' ? 'اعرف إمكانياتها… وخلي الخبراء يساعدوك توصل لأفضل نتيجة.' : 'Find out what it’s really worth and let the experts help you get there.'}
           </p>
-          <Button size="lg" onClick={() => router.push('/evaluate')} className="w-full sm:w-auto px-12 shadow-lg shadow-primary-500/20 text-xl h-16">
-            {locale === 'ar' ? 'ابدأ تقييم شقتك مجاناً' : 'Start Free Assessment'}
+          <Button size="lg" onClick={() => router.push('/consultation')} className="w-full sm:w-auto px-12 shadow-lg shadow-primary-500/20 text-xl h-16">
+            {locale === 'ar' ? 'احجز استشارة' : 'Book a consultation'}
           </Button>
         </div>
 

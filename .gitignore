@@ -1,5 +1,7 @@
 node_modules
 .next
+.env.local
+.env*.local
 tsconfig.tsbuildinfo
 
 # Local Claude / worktree tooling (not part of the app)

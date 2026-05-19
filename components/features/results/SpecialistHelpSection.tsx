@@ -24,7 +24,7 @@ export function SpecialistHelpSection({
     <div id="consultants" className="scroll-mt-8 space-y-6">
       <section className="space-y-1" aria-labelledby="consultants-help-heading">
         <h2 id="consultants-help-heading" className="font-heading text-lg font-semibold text-secondary-900">
-          {lo === 'ar' ? 'تحتاج مساعدة؟ تحدث مع مختص' : 'Need help? Talk to a specialist'}
+          {lo === 'ar' ? 'تحتاج مساعدة؟ تحدث مع مختص' : 'Need a hand? Talk to a specialist'}
         </h2>
       </section>
 

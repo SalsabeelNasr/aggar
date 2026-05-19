@@ -5,6 +5,7 @@ import { useEvaluationStore } from '@/lib/store';
 import { cn } from '@/lib/utils';
 import { BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { submitLeadQuietly } from '@/lib/leadsApi/client';
 
 interface DiyGuideCtaProps {
   lo: 'en' | 'ar';
@@ -20,11 +21,19 @@ export function DiyGuideCta({ lo }: DiyGuideCtaProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !email.trim() || !phone.trim()) return;
-    updateDiyGuideLead({
+    const payload = {
       fullName: name.trim(),
       email: email.trim(),
       phone: phone.trim(),
       requestedAtISO: new Date().toISOString(),
+    };
+    updateDiyGuideLead(payload);
+    submitLeadQuietly({
+      type: 'diy_guide',
+      locale: lo,
+      fullName: payload.fullName,
+      email: payload.email,
+      phone: payload.phone,
     });
     setSubmitted(true);
   };

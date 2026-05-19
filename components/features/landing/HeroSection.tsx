@@ -16,19 +16,19 @@ export function HeroSection() {
         <div className="flex flex-col items-start text-start max-w-2xl">
           <h1 className="text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-heading font-extrabold text-secondary-900 tracking-tight leading-tight">
             {locale === 'ar' 
-              ? 'خلي شقتك تشتغل وتكسب… بدل ما تفضل فاضية' 
-              : 'Find out how much your apartment could earn'}
+              ? 'عقارك ممكن يحقق دخل أكتر بكتير' 
+              : 'Your property could be earning so much more'}
           </h1>
           
           <p className="mt-6 text-lg md:text-xl text-secondary-600 font-medium leading-relaxed">
             {locale === 'ar'
-              ? 'اعرف شقتك ممكن تكسب كام من التأجير القصير خلال دقيقتين بس. وهنوصلك بالخبراء اللي يقدروا يجهزوها علشان تحقق أعلى دخل.'
-              : 'Evaluate your property in minutes and discover the fastest path to rental income.'}
+              ? 'اعرف شقتك ممكن تكسب كام من التأجير القصير. وهنوصلك بالخبراء اللي يقدروا يجهزوها علشان تحقق أعلى دخل.'
+              : 'Find out how much your apartment can earn from short-term rentals. We’ll connect you with experts who can set it up for maximum income.'}
           </p>
           
           <div className="mt-10 flex flex-col sm:flex-row gap-4 items-center w-full sm:w-auto">
-            <Button size="lg" onClick={() => router.push('/evaluate')} className="w-full sm:w-auto px-10 shadow-lg shadow-primary-500/20 text-lg">
-              {locale === 'ar' ? 'ابدأ تقييم شقتك' : 'Start your evaluation'}
+            <Button size="lg" onClick={() => router.push('/consultation')} className="w-full sm:w-auto px-10 shadow-lg shadow-primary-500/20 text-lg">
+              {locale === 'ar' ? 'احجز استشارة' : 'Book a consultation'}
             </Button>
           </div>
           

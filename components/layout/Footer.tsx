@@ -1,4 +1,6 @@
-import { Link } from '@/lib/navigation';
+'use client';
+
+import { Link, usePathname } from '@/lib/navigation';
 import { Instagram } from 'lucide-react';
 
 function WhatsAppIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -11,6 +13,9 @@ function WhatsAppIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 
 export function Footer() {
+  const pathname = usePathname();
+  if (pathname === '/consultation') return null;
+
   return (
     <footer className="border-t border-secondary-200 bg-white py-8 mt-auto">
       <div className="container mx-auto px-4 flex flex-col md:flex-row justify-center items-center gap-6">
@@ -21,24 +26,24 @@ export function Footer() {
           <Link href="/terms" className="text-secondary-600 hover:text-primary-600 text-sm font-bold font-heading">
             Terms
           </Link>
-          <div className="flex items-center -space-x-1">
+          <div className="flex items-center gap-3">
             <a
-              href="https://www.instagram.com/"
+              href="https://www.instagram.com/aggar.eg/"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"
-              className="inline-flex items-center justify-center rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 h-9 w-9 bg-white text-secondary-700 hover:bg-secondary-50"
+              className="text-secondary-600 hover:text-primary-600 transition-colors"
             >
-              <Instagram className="h-4 w-4" />
+              <Instagram className="h-4 w-4" aria-hidden />
             </a>
             <a
               href="https://wa.me/201140988255"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="WhatsApp +201140988255"
-              className="inline-flex items-center justify-center rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 h-9 w-9 bg-white text-green-600 hover:bg-green-50"
+              className="text-green-600 hover:text-green-700 transition-colors"
             >
-              <WhatsAppIcon className="h-4 w-4" />
+              <WhatsAppIcon className="h-4 w-4" aria-hidden />
             </a>
           </div>
         </div>

@@ -46,7 +46,7 @@ export class WizardPage {
   }
 
   async clickGenerateReport() {
-    const text = this.locale === 'ar' ? 'إنشاء تقريري' : 'Generate my report';
+    const text = this.locale === 'ar' ? 'اطلب تقريري' : 'Request my report';
     await this.navBar.getByRole('button', { name: text }).click();
   }
 
@@ -55,7 +55,7 @@ export class WizardPage {
   }
 
   getGenerateButton(): Locator {
-    return this.navBar.getByRole('button', { name: this.locale === 'ar' ? 'إنشاء تقريري' : 'Generate my report' });
+    return this.navBar.getByRole('button', { name: this.locale === 'ar' ? 'اطلب تقريري' : 'Request my report' });
   }
 
   // ─── Error Selectors ──────────────────────────────────────
@@ -153,7 +153,7 @@ export class WizardPage {
   async selectState(flag: 'SHELL' | 'FINISHED_EMPTY' | 'FURNISHED') {
     // Use exact heading text to avoid "Finished" matching both "Finished (unfurnished)" and "Furnished"
     const labels: Record<string, Record<Locale, string>> = {
-      SHELL: { en: 'Shell', ar: 'عظم' },
+      SHELL: { en: 'Semi-finished', ar: 'نصف تشطيب' },
       FINISHED_EMPTY: { en: 'Finished (unfurnished)', ar: 'تشطيب كامل (غير مفروش)' },
       FURNISHED: { en: 'Furnished', ar: 'مفروش' },
     };

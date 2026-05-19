@@ -1,5 +1,13 @@
 'use client';
 
+import { notFound } from 'next/navigation';
+
+export default function ResultsPage() {
+  notFound();
+  return null;
+}
+
+/*
 import * as React from 'react';
 import { useLocale } from 'next-intl';
 import { useEvaluationStore } from '@/lib/store';
@@ -75,3 +83,4 @@ export default function ResultsPage() {
 
   return <FullResultsContent />;
 }
+*/

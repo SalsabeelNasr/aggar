@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/Button';
 import { Briefcase, TrendingUp, CheckCircle, Sparkles, MapPin, Phone, Mail } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { createPartnerApplicationSchema, type PartnerApplicationValues } from '@/lib/validations/partner';
+import { submitLead } from '@/lib/leadsApi/client';
 
 const PARTNER_MSG = {
   en: {
@@ -35,6 +36,7 @@ export default function PartnerPage() {
   const isAr = locale === 'ar';
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [isSuccess, setIsSuccess] = React.useState(false);
+  const [submitError, setSubmitError] = React.useState<string | null>(null);
 
   const messages = isAr ? PARTNER_MSG.ar : PARTNER_MSG.en;
   const schema = React.useMemo(() => createPartnerApplicationSchema(messages), [messages]);
@@ -52,12 +54,23 @@ export default function PartnerPage() {
     mode: 'onTouched',
   });
 
-  const onSubmit = form.handleSubmit(() => {
+  const onSubmit = form.handleSubmit(async (values) => {
+    setSubmitError(null);
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      await submitLead({
+        type: 'partner',
+        locale: isAr ? 'ar' : 'en',
+        partner: values,
+      });
       setIsSuccess(true);
-    }, 1500);
+    } catch {
+      setSubmitError(
+        isAr ? 'تعذر إرسال الطلب. حاول مرة أخرى.' : 'Could not submit your application. Please try again.'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   });
 
   const benefits = isAr
@@ -114,7 +127,7 @@ export default function PartnerPage() {
   if (isSuccess) {
     return (
       <div className="container mx-auto px-4 py-24 text-center max-w-lg min-h-[60vh] flex flex-col justify-center animate-in zoom-in duration-500">
-        <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+        <div className="w-20 h-20 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center mx-auto mb-6">
           <CheckCircle className="w-10 h-10" />
         </div>
         <h2 className="text-3xl font-heading font-bold text-secondary-900 mb-4">
@@ -267,7 +280,7 @@ export default function PartnerPage() {
                       type="url"
                       className={err('portfolioUrl')}
                       dir="ltr"
-                      placeholder="https://"
+                      placeholder={isAr ? 'www.example.com' : 'www.example.com'}
                       aria-invalid={form.formState.errors.portfolioUrl ? true : undefined}
                       {...form.register('portfolioUrl')}
                     />
@@ -318,6 +331,12 @@ export default function PartnerPage() {
                     )}
                   </div>
                 </div>
+
+                {submitError && (
+                  <p className="text-sm text-red-600 font-medium" role="alert">
+                    {submitError}
+                  </p>
+                )}
 
                 <div className="pt-6 border-t border-secondary-100">
                   <Button type="submit" size="lg" className="w-full h-16 text-xl shadow-lg shadow-primary-500/20" disabled={isSubmitting}>

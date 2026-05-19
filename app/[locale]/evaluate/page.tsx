@@ -7,6 +7,7 @@ import { listingStatusSkipsPropertyStateStep } from '@/models';
 import { furnishedPerformanceStepHasVisibleCards } from '@/lib/wizard/furnishedPerformanceVisibility';
 import { useEvaluationStore } from '@/lib/store';
 import { submitEvaluation } from '@/lib/evaluationApi/client';
+import { submitLeadQuietly } from '@/lib/leadsApi/client';
 import { Stepper } from '@/components/ui/Stepper';
 import { Button } from '@/components/ui/Button';
 import { ReportLoadingStatus } from '@/components/ui/ReportLoadingStatus';
@@ -83,6 +84,7 @@ export default function EvaluatePage() {
   const [wizardFieldErrors, setWizardFieldErrors] = React.useState<Record<string, string>>({});
   const [submitError, setSubmitError] = React.useState<string | null>(null);
   const [submitting, setSubmitting] = React.useState(false);
+  const [isSubmitted, setIsSubmitted] = React.useState(false);
   const contactRef = React.useRef<Step7ContactHandle | null>(null);
 
   const isFurnished = data.stateFlag === 'FURNISHED';
@@ -239,6 +241,15 @@ export default function EvaluatePage() {
         setReportId(reportId ?? null);
         setResultsAccess('full');
         updateLead({ submittedAtISO: new Date().toISOString() });
+
+        const { lead: leadSnapshot } = useEvaluationStore.getState();
+        submitLeadQuietly({
+          type: 'evaluation',
+          locale: locale === 'ar' ? 'ar' : 'en',
+          lead: { ...leadSnapshot, submittedAtISO: new Date().toISOString() },
+          wizard: snapshot,
+          reportId: reportId ?? null,
+        });
       } catch {
         setSubmitError(locale === 'ar' ? 'تعذر إنشاء التقرير. حاول مرة أخرى.' : 'Could not generate the report. Please try again.');
         setSubmitting(false);
@@ -252,7 +263,8 @@ export default function EvaluatePage() {
         phone: (lead.whatsapp ?? '').trim(),
         requestedAtISO: new Date().toISOString(),
       });
-      router.push('/results');
+      setIsSubmitted(true);
+      setSubmitting(false);
       return;
     }
 
@@ -284,6 +296,41 @@ export default function EvaluatePage() {
 
     prevStep();
   };
+
+  if (isSubmitted) {
+    return (
+      <div className="container mx-auto px-4 py-16 md:py-24 max-w-2xl text-center">
+        <div className="mb-8 flex justify-center">
+          <div className="w-20 h-20 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center">
+            <svg
+              className="w-10 h-10"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path>
+            </svg>
+          </div>
+        </div>
+        <h1 className="text-3xl md:text-4xl font-heading font-bold text-secondary-900 mb-6">
+          {locale === 'ar' ? 'تم استلام طلبك!' : 'Request Received!'}
+        </h1>
+        <p className="text-lg text-secondary-600 mb-10 leading-relaxed">
+          {locale === 'ar'
+            ? 'شكراً لك! سنتواصل معك قريباً لإرسال تقريرك المخصص. إذا كنت ترغب في حجز استشارة مجانية، يمكنك القيام بذلك من خلال الرابط أدناه.'
+            : 'Thank you! You will be contacted shortly with your custom report. If you need to book a free consultation, you can do so via the link below.'}
+        </p>
+        <Button
+          size="lg"
+          onClick={() => router.push('/consultation')}
+          className="w-full sm:w-auto px-10 shadow-lg shadow-primary-500/20 text-lg"
+        >
+          {locale === 'ar' ? 'احجز استشارة مجانية' : 'Book a free consultation'}
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12 max-w-3xl flex flex-col min-h-[calc(100vh-200px)]">
@@ -335,13 +382,13 @@ export default function EvaluatePage() {
           {locale === 'ar'
             ? currentStep === finalStep
               ? submitting
-                ? '...جاري الإنشاء'
-                : 'إنشاء تقريري'
+                ? '...جاري الطلب'
+                : 'اطلب تقريري'
               : 'التالي'
             : currentStep === finalStep
               ? submitting
-                ? 'Generating...'
-                : 'Generate my report'
+                ? 'Requesting...'
+                : 'Request my report'
               : 'Next'}
           {locale === 'ar' ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
         </Button>

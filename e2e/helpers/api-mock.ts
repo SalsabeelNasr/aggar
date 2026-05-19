@@ -11,6 +11,17 @@ interface MockOptions {
  * Intercept POST /api/evaluate and return a mock response.
  * Must be called BEFORE the page makes the request (before or after goto is fine).
  */
+/** Stub lead capture so tests do not require Airtable. */
+export async function mockLeadsApi(page: Page) {
+  await page.route('**/api/leads', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ ok: true, skipped: true }),
+    });
+  });
+}
+
 export async function mockEvaluateApi(page: Page, options: MockOptions = {}) {
   const { status = 200, body = { report: MOCK_REPORT }, delay = 0 } = options;
 

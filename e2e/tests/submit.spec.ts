@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { WizardPage } from '../helpers/wizard-page';
-import { mockEvaluateApi, mockEvaluateApiError } from '../helpers/api-mock';
+import { mockEvaluateApi, mockEvaluateApiError, mockLeadsApi } from '../helpers/api-mock';
 import { getWizardState } from '../helpers/store';
 import { VALID_CONTACT } from '../helpers/mock-data';
 
@@ -8,6 +8,7 @@ test.describe('Submission Tests', () => {
   test('SUB-1: Successful submission redirects to results', async ({ page }) => {
     const wizard = new WizardPage(page, 'en');
     await mockEvaluateApi(page);
+    await mockLeadsApi(page);
     await wizard.goto();
     await wizard.quickFillToStep(7);
 
@@ -75,6 +76,7 @@ test.describe('Submission Tests', () => {
   test('SUB-5: diyGuideLead populated after success', async ({ page }) => {
     const wizard = new WizardPage(page, 'en');
     await mockEvaluateApi(page);
+    await mockLeadsApi(page);
     await wizard.goto();
     await wizard.quickFillToStep(7);
 

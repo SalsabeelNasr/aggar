@@ -49,7 +49,7 @@ test.describe('Happy Path - Full Wizard Journeys', () => {
     await wizard.fillContact(VALID_CONTACT.fullName, VALID_CONTACT.whatsapp, VALID_CONTACT.email);
     await wizard.clickGenerateReport();
 
-    await expect(page).toHaveURL(/\/results/, { timeout: 15000 });
+    await expect(page.getByText(/Request Received/i)).toBeVisible({ timeout: 15000 });
 
     wizard.cleanup();
   });
@@ -111,7 +111,7 @@ test.describe('Happy Path - Full Wizard Journeys', () => {
     await wizard.fillContact(VALID_CONTACT.fullName, VALID_CONTACT.whatsapp, VALID_CONTACT.email);
     await wizard.clickGenerateReport();
 
-    await expect(page).toHaveURL(/\/results/, { timeout: 15000 });
+    await expect(page.getByText(/Request Received/i)).toBeVisible({ timeout: 15000 });
 
     wizard.cleanup();
   });
@@ -162,7 +162,7 @@ test.describe('Happy Path - Full Wizard Journeys', () => {
     await wizard.fillContact(VALID_CONTACT.fullName, VALID_CONTACT.whatsapp, VALID_CONTACT.email);
     await wizard.clickGenerateReport();
 
-    await expect(page).toHaveURL(/\/results/, { timeout: 15000 });
+    await expect(page.getByText(/Request Received/i)).toBeVisible({ timeout: 15000 });
 
     wizard.cleanup();
   });
@@ -214,7 +214,7 @@ test.describe('Happy Path - Full Wizard Journeys', () => {
     await wizard.fillContact(VALID_CONTACT.fullName, VALID_CONTACT.whatsapp, VALID_CONTACT.email);
     await wizard.clickGenerateReport();
 
-    await expect(page).toHaveURL(/\/results/, { timeout: 15000 });
+    await expect(page.getByText(/Request Received/i)).toBeVisible({ timeout: 15000 });
 
     wizard.cleanup();
   });
@@ -262,10 +262,10 @@ test.describe('Happy Path - Full Wizard Journeys', () => {
 
     // Step 7: Contact
     await wizard.fillContact(VALID_CONTACT.fullName, VALID_CONTACT.whatsapp, VALID_CONTACT.email);
-    await expect(wizard.getGenerateButton()).toHaveText(/إنشاء تقريري/);
+    await expect(wizard.getGenerateButton()).toHaveText(/اطلب تقريري/);
     await wizard.clickGenerateReport();
 
-    await expect(page).toHaveURL(/\/results/, { timeout: 15000 });
+    await expect(page.getByText(/تم استلام طلبك/)).toBeVisible({ timeout: 15000 });
 
     wizard.cleanup();
   });
