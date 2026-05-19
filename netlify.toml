@@ -4,7 +4,7 @@
 # Non-secret Airtable IDs/names are set below so production builds work out of the box.
 
 [build]
-  command = "npm run build"
+  command = "node scripts/require-airtable-on-netlify.mjs && npm run build"
   publish = ".next"
 
 [[plugins]]

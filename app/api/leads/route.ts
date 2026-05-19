@@ -17,6 +17,14 @@ export async function POST(req: Request) {
     }
 
     if (result.skipped) {
+      const isProd = process.env.NODE_ENV === 'production' || process.env.CONTEXT === 'production';
+      if (isProd) {
+        console.error('[api/leads] Airtable not configured: set AIRTABLE_PAT in Netlify environment variables');
+        return NextResponse.json(
+          { error: 'Lead storage is not configured on the server' },
+          { status: 503 }
+        );
+      }
       return NextResponse.json({ ok: true, skipped: true });
     }
 
